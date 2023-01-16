@@ -31,7 +31,7 @@ public class Ventana extends JFrame{
         add(pestañas);
     }
     
-    /*  public void setControlador(Controlador putojo){
+    /*  public void setControlador(Controlador putojulio){
         
     }
     public void setControladorEntrada(Controlador putocoria){

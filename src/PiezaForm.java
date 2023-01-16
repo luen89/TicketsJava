@@ -8,18 +8,23 @@ import javax.swing.*;
 
 /**
  *
- * @author luen8
+ * @author luen89
  */
+
 public class PiezaForm extends JPanel{
        private JLabel lbNPiezas, lbAcero , lbpeso;
-       private String acero[] = {"Selecciona tipo", "Suave", "Semisuave", "Semiduro","Duro","Extraduro"};
+       private String Servicio[] = {"Selecciona Servicio","Pavonado","Templado","Templado y Pavonado"};
+       private String acero[] = {"Selecciona tipo", "4140", "8620", "1045","Colled Rolled","Q1","D2"};
        private SpinnerModel smNpiezas;
        private JSpinner sNpiezas;
-       private JComboBox cbAcero;
+       private JComboBox cbServicios, cbAcero;
        private JTextField txtPeso;
-       
-       public PiezaForm(){
+       private Elemento elemento;
+
+
+       public PiezaForm(){// Aqui
            super(new FlowLayout(FlowLayout.LEFT));
+           cbServicios = new JComboBox(Servicio);
            smNpiezas = new SpinnerNumberModel(0,0,100,1);
             sNpiezas = new JSpinner(smNpiezas);
             lbNPiezas = new JLabel("Numero de Piezas");
@@ -31,6 +36,7 @@ public class PiezaForm extends JPanel{
             
        }
        public void preDisplay(){
+          this.add(cbServicios);
             this.add(lbNPiezas);
             this.add(sNpiezas);
             this.add(lbAcero);
@@ -38,5 +44,13 @@ public class PiezaForm extends JPanel{
             this.add(lbpeso);
             this.add(txtPeso);
        }
+
+
+          public void sumaKilos(Double kilos){
+               //
+          }
+          public void sumaPieza(Integer piezas){
+               //
+          }
     
 }
