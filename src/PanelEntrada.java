@@ -145,13 +145,14 @@ public class PanelEntrada extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        //Agregar nuevo elemento
         if(e.getSource()==btplus){
             pformsP.add(new PiezaForm());
             pformsP.get(pformsP.size()-1).preDisplay();
             pListTemplado.add(pformsP.get(pformsP.size()-1));
             this.updateUI();
         }   
-
+        //Quitar elemento
         if(e.getSource()==btless){
             pformsP.remove(pformsP.size()-1);
             pListTemplado.removeAll();
