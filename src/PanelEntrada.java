@@ -12,6 +12,7 @@ import javax.swing.border.*;
  *
  * @author Luis Enrique Pérez González
  */
+
 public class PanelEntrada extends JPanel implements ActionListener{
     private JLabel  lbTotPiezas, lbTotKg, lbRD,lbGD, lbImagen;
     private JButton btImprimir, btPago, btplus, btless;
@@ -151,6 +152,7 @@ public class PanelEntrada extends JPanel implements ActionListener{
             pformsP.get(pformsP.size()-1).preDisplay();
             pListTemplado.add(pformsP.get(pformsP.size()-1));
             this.updateUI();
+            System.out.println("Presionaste mas");
         }   
         //Quitar elemento
         if(e.getSource()==btless){
