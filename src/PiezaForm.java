@@ -5,6 +5,9 @@
  */
 import java.awt.*;
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 /**
  *
@@ -25,6 +28,26 @@ public class PiezaForm extends JPanel{
        public PiezaForm(){// Aqui
            super(new FlowLayout(FlowLayout.LEFT));
            cbServicios = new JComboBox(Servicio);
+           cbServicios.addActionListener(new ActionListener () {                         
+               @Override
+               public void actionPerformed(ActionEvent e) {                                       
+                    cbAcero.setSelectedItem(0);
+                    switch(cbServicios.getSelectedIndex()){
+                         case 1:
+                              cbAcero.setModel(new DefaultComboBoxModel<>( acero ));
+                              cbAcero.setEnabled(true);
+                              break;
+                         case 2, 3:
+                              cbAcero.setModel(new DefaultComboBoxModel<>( 
+                                   Arrays.stream(acero).filter(x -> x != "Colled Rolled").toArray()
+                              ));
+                              cbAcero.setEnabled(true);
+                              break;
+                         default:
+                              cbAcero.setEnabled(false);                         
+                    }
+               }
+           });
            smNpiezas = new SpinnerNumberModel(0,0,100,1);
             sNpiezas = new JSpinner(smNpiezas);
             lbNPiezas = new JLabel("Numero de Piezas");
@@ -32,7 +55,7 @@ public class PiezaForm extends JPanel{
             lbpeso= new JLabel("        Peso en Kg");
             cbAcero = new JComboBox(acero);
             txtPeso = new JTextField(" ", 8);
-            
+            cbAcero.setEnabled(false);
             
        }
        public void preDisplay(){
