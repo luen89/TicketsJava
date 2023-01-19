@@ -174,7 +174,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(pEncabezado);
         add(pTemplado);
-        add(pDatos);
+        //add(pDatos);
         add(pImprimir);
 
         /*for(int i=0; i < pformsP.size();i++){
@@ -239,7 +239,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
         double costoTemplado = 0.0;
 
         double costoTotal = 0.0;
-        Ticket ticket = new Ticket(0,0,0,0,0,new ArrayList<Elemento>());
+        Ticket ticket = new Ticket(0,0,0,0,0,initDate,iva.isSelected(),new ArrayList<Elemento>());
         for (int i = 0; i < pformsT.size(); i++) {
             System.out.println("Servicio: " + pformsT.get(i).getElemento().getServicio());
 

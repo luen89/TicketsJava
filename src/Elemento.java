@@ -1,6 +1,7 @@
 public class Elemento {
     private String acero;
     private String servicio;
+    private String servAbr;
     private Integer piezas;
     private Double kilos;
 
@@ -8,12 +9,32 @@ public class Elemento {
         super();
         this.acero = acero;
         this.servicio = servicio;
+        switch(servicio){
+            case "Pavonado" : 
+                            servAbr = "PAV";
+                            break;
+            case "Templado y Pavonado" :
+                            System.out.println("Si marca el abreviado");
+                            servAbr = "PA_TE";
+                            break;
+            case "Templado" : 
+                            servAbr = "TEMP";
+                            break;
+            
+            default         :      
+                            servAbr = "";
+                            break;
+        }
         this.piezas = piezas;
         this.kilos = kilos;
     }
 
     public String getServicio(){
         return servicio;
+    }
+
+    public String getServicioAbreviado(){
+        return servAbr;
     }
     
     public int getPiezas(){
@@ -30,6 +51,20 @@ public class Elemento {
 
     public void setServicio(String servicio){
         this.servicio = servicio;
+        switch(servicio){
+            case "Pavonado" : 
+                            servAbr = "PAV";
+                            break;
+            case "Templado" : 
+                            servAbr = "TEMP";
+                            break;
+            case "Templado y Pavonado"      : 
+                            servAbr = "PA_TE";
+                            break;
+            default         :      
+                            servAbr = "";
+                            break;
+        }
     }
     
     public void setPiezas(Integer piezas){
