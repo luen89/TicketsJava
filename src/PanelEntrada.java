@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Calendar;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.xml.validation.Validator;
 
 /**
  *
@@ -15,7 +16,7 @@ import javax.swing.border.*;
 
 public class PanelEntrada extends JPanel implements ActionListener {
     private JLabel lbTotPiezas, lbTotKg, lbRD, lbGD, lbImagen;
-    private JButton btImprimir, btPago, btplus, btless;
+    private JButton btImprimir, btPago, btplus;
     private JPanel pDatos, pEncabezado, pTotales, pImprimir,
             pTemplado, pIncrementoT, pListTemplado;
     private JTextField txtTpiezas, txtTkg;
@@ -25,8 +26,10 @@ public class PanelEntrada extends JPanel implements ActionListener {
     private Date initDate;
     private JSpinner jspReceptionDate, jspGiveDate;
     private JCheckBox iva;
-
     // prueba
+    private int contador =0, ban=0;
+    private ArrayList<JButton> listaBotones = new ArrayList<JButton>();
+    
 
     public PanelEntrada() {
 
@@ -34,41 +37,59 @@ public class PanelEntrada extends JPanel implements ActionListener {
     }
 
     private void initComponents() {
-        /***** Configuracion de los Spinners de Fecha */
+        /*****  Configuracion de los Spinners de Fecha */
         initDate = cal.getTime();
-        cal.add(Calendar.YEAR, -100);
+        cal.add(Calendar.YEAR,  -100);
         Date earliestDate = cal.getTime();
         cal.add(Calendar.YEAR, 200);
         Date latestDate = cal.getTime();
-        SpinnerDateModel spdm = new SpinnerDateModel(initDate, earliestDate, latestDate, Calendar.DAY_OF_MONTH);
-        SpinnerDateModel spdm2 = new SpinnerDateModel(initDate, earliestDate, latestDate, Calendar.DAY_OF_MONTH);
+        SpinnerDateModel spdm = new SpinnerDateModel(initDate,  earliestDate,  latestDate,  Calendar.DAY_OF_MONTH);
+        SpinnerDateModel spdm2 = new SpinnerDateModel(initDate,  earliestDate,  latestDate,  Calendar.DAY_OF_MONTH);
         jspReceptionDate = new JSpinner(spdm);
         jspGiveDate = new JSpinner(spdm2);
 
         /* Construccion de la lista de Piezas de Pavoneo */
 
+        /* Construccion de la lista de Piezas de Pavoneo */
+
         // pformsP = new ArrayList<>();
-        // pformsP.add(new PiezaForm());
+        //cocnstrutor de contador
+        // pformsP.add(new PiezaForm(contador));
         // pformsT.get(0).preDisplay();
 
-        /* Construccion de la lista de Piezas de Templado */
-        pListTemplado = new JPanel();
-        pListTemplado.setLayout(new BoxLayout(pListTemplado, BoxLayout.Y_AXIS));
-        pformsT = new ArrayList<>();
-        pformsT.add(new PiezaForm());
-        pformsT.get(0).preDisplay();
-        pListTemplado.add(pformsT.get(0));
-        scrollT = new JScrollPane(pListTemplado);
 
-        // ************Etiquetas del Total de Piezas******************************
+        /*  Construccion de la lista de Piezas de Templado */
+        pListTemplado = new JPanel();
+        pListTemplado.setLayout(new BoxLayout(pListTemplado,  BoxLayout.Y_AXIS));
+        pformsT = new ArrayList<>();
+        scrollT = new JScrollPane(pListTemplado);
+        
+        PiezaForm pieza = new PiezaForm();
+        
+        pformsT.add(pieza);
+        pieza.preDisplay();
+        pListTemplado.add(pieza);
+        pieza.getBotonEliminar().addActionListener(new ActionListener() {
+            @Override
+
+            public void actionPerformed(ActionEvent e) {
+                pListTemplado.remove(pieza);
+                pformsT.remove(pieza);
+                refreshDisplay();
+            }
+        });
+
+
+        
+        //  ************Etiquetas del Total de Piezas******************************
         lbTotPiezas = new JLabel("Total Piezas:");
         lbTotKg = new JLabel("Total Kg:");
-        lbRD = new JLabel("Fecha de Recepcion");
-        lbGD = new JLabel("Fecha de Entrega");
+        lbRD  =  new JLabel("Fecha de Recepcion");
+        lbGD  =  new JLabel("Fecha de Entrega");
         lbRD.setForeground(Color.white);
         lbGD.setForeground(Color.white);
         txtTkg = new JTextField(" ", 8);
-        txtTpiezas = new JTextField("Suma de piezas", 8);
+        txtTpiezas  =  new JTextField("Suma de piezas",  8);
         txtTpiezas.setEditable(false);
 
         /* botones de Imprimir y Pagar */
@@ -77,35 +98,33 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         iva = new JCheckBox("¿Requiere factura?");
 
-        btPago = new JButton("Pagar");
+        btPago  =  new JButton("Pagar");
         btPago.addActionListener(this);
 
         /* Botones de mas y menos */
-        btplus = new JButton("  +  ");
+        btplus = new JButton("Agregar elemento");
         btplus.addActionListener(this);
-        btless = new JButton("  -  ");
-        btless.addActionListener(this);
 
         // ***************PANELES DE DATOS*************************
 
-        /* Panel de los botones mas o menos Templado */
+        // ***************PANELES DE DATOS*************************
+        /*  Panel de los botones mas o menos Templado */
         pIncrementoT = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pIncrementoT.add(btplus);
-        pIncrementoT.add(btless);
 
-        /* Panel de los totales de Piezas */
-        pTotales = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        /*  Panel de los totales de Piezas */
+        pTotales  =  new JPanel(new FlowLayout(FlowLayout.LEFT));
         pTotales.add(lbTotPiezas);
         pTotales.add(txtTpiezas);
         pTotales.add(lbTotKg);
         pTotales.add(txtTkg);
 
-        // ***************Panel De Encabezado*************************
+        //  ***************Panel De Encabezado*************************
         pEncabezado = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        lbImagen = new JLabel();
-        lbImagen.setPreferredSize(new Dimension(750, 100));
+        lbImagen  =  new JLabel();
+        lbImagen.setPreferredSize(new Dimension(750,  100));
         ImageIcon fot = new ImageIcon("src/Imagenes/Aguila_banner.png");
-        // lbImagen.setIcon(new ImageIcon("src/Imagenes/imagen.png"));
+        //  lbImagen.setIcon(new ImageIcon("src/Imagenes/imagen.png"));
         Icon icono = new ImageIcon(fot.getImage().getScaledInstance(750, 100, Image.SCALE_DEFAULT));
         lbImagen.setIcon(icono);
         pEncabezado.add(lbImagen);
@@ -116,15 +135,20 @@ public class PanelEntrada extends JPanel implements ActionListener {
         pEncabezado.setBackground(Color.black);
         repaint();
 
-        // *****************Panel del Templado**************************
-        pTemplado = new JPanel();
-        pTemplado.setLayout(new BoxLayout(pTemplado, BoxLayout.Y_AXIS));
+        //  *****************Panel del Templado**************************
+        pTemplado  =  new JPanel();
+        pTemplado.setLayout(new BoxLayout(pTemplado,  BoxLayout.Y_AXIS));
         pTemplado.add(pIncrementoT);
         pTemplado.add(scrollT);
 
         pDatos = new JPanel();
         pDatos.setLayout(new BoxLayout(pDatos, BoxLayout.Y_AXIS));
+
+        pDatos = new JPanel();
+        pDatos.setLayout(new BoxLayout(pDatos, BoxLayout.Y_AXIS));
         pDatos.add(pTotales);
+
+        pImprimir = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         pImprimir = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pImprimir.add(btImprimir);
@@ -136,43 +160,88 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         pEncabezado.setBorder(bordeEntrada);
 
-        Border bordePane3 = new TitledBorder(new EtchedBorder(), "Servicios");
+        Border bordePane3  = new TitledBorder(new EtchedBorder(), "Servicios");
         pTemplado.setBorder(bordePane3);
 
         Border bordePanel2 = new TitledBorder(new EtchedBorder(), "Total");
         pDatos.setBorder(bordePanel2);
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(pEncabezado);
         add(pTemplado);
         add(pDatos);
         add(pImprimir);
+
+        /*for(int i=0; i < pformsP.size();i++){
+            listaBotones.add(pformsP.get(i).getBtnX());
+            listaBotones.get(i).addActionListener(this);
+        }*/
+    }
+
+    public void refreshDisplay(){
+        this.updateUI();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Agregar nuevo elemento
-        if (e.getSource() == btplus) {
-            pformsT.add(new PiezaForm());
-            pformsT.get(pformsT.size() - 1).preDisplay();
-            pListTemplado.add(pformsT.get(pformsT.size() - 1));
+
+        //  Agregar nuevo elemento
+        int valor;
+
+        
+
+        if  (e.getSource()  ==  btplus)  {
+            PiezaForm pieza = new PiezaForm();
+            pformsT.add(pieza);
+            pieza.preDisplay();
+            pieza.getBotonEliminar().addActionListener(new ActionListener() {
+               @Override
+
+                public void actionPerformed(ActionEvent e) {
+                    pListTemplado.remove(pieza);
+                    pformsT.remove(pieza);
+                    refreshDisplay();
+                }
+          });
+            pListTemplado.add(pformsT.get(pformsT.size()  -  1));
+
             this.updateUI();
             System.out.println("Presionaste mas");
-        }
-        // Quitar elemento
-        if (e.getSource() == btless) {
-            pformsT.remove(pformsT.size() - 1);
-            pListTemplado.removeAll();
-            pformsT.forEach((form) -> {
-                pListTemplado.add(form);
-            });
-            this.updateUI();
-            System.out.println("Presionaste menos");
         }
 
         if (e.getSource() == btImprimir) {
             condiciones();
+            if(contador >=1){
+                contador--;
+            }
         }
+
+
+
+
+        /*
+        //Eliminar elemento especifico 
+        System.out.println("Lista es: "+ listaBotones.size());
+        //System.out.println("Get:"+e.getSource()+"\nBoton X: "+pformsP.get(0).getBtnX());
+        if (e.getSource() == listaBotones.get(0)) {
+            System.out.println("Borrando seleccionado");
+        }
+        for(int i= 0; i>contador; i++){
+            System.out.println("MENSAJE 123");
+            if (0 == pformsP.get(0).boton()) {
+                System.out.println("webfalsidbflafnño");
+            }
+        }
+        */
+        //if(pformsP.get(contador).boton() <=contador){
+            //pformsP.remove(pformsP.size() - 1)
+        //}
+    }
+
+    public void recibir(int id){
+        System.out.println("Imprimiendo desde panel entrada: "+id);
     }
 
     public void condiciones() {
@@ -234,4 +303,6 @@ public class PanelEntrada extends JPanel implements ActionListener {
     public String getTotalPeso() {
         return txtTkg.getText();
     }
+
+    
 }

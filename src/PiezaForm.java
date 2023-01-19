@@ -5,13 +5,20 @@
  * and open the template in the editor.
  */
 import java.awt.*;
+
+import javax.sound.sampled.SourceDataLine;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Arrays;
+//Action Event
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 
 /**
  *
@@ -28,7 +35,14 @@ public class PiezaForm extends JPanel implements ChangeListener {
      private JSpinner sNKilos;
      private JComboBox cbServicios, cbAcero;
      private Elemento elemento;
+     private JTextField txtPeso;
 
+     //Pruebas
+     private JButton btnX;
+     private int id;
+//     PanelEntrada panel= new PanelEntrada();
+
+     
      public PiezaForm() {// Constructor
           super(new FlowLayout(FlowLayout.LEFT));
           // Crea Objeto Elemento
@@ -82,6 +96,9 @@ public class PiezaForm extends JPanel implements ChangeListener {
           smNkilos = new SpinnerNumberModel(0.0, 0.0, 100.0, 0.1);
           sNKilos = new JSpinner(smNkilos);
           sNKilos.addChangeListener(this);
+
+          btnX = new JButton("X");
+
      }
 
      public void preDisplay() {
@@ -92,6 +109,8 @@ public class PiezaForm extends JPanel implements ChangeListener {
           this.add(cbAcero);
           this.add(lbpeso);
           this.add(sNKilos);
+
+          this.add(btnX);
      }
 
      public void sumaKilos(Double kilos) {
@@ -120,5 +139,11 @@ public class PiezaForm extends JPanel implements ChangeListener {
           return elemento;
      }
      
+     public void destroy(ArrayList<PiezaForm> lista){
+          lista.remove(this.id);
+     }
+     public JButton getBotonEliminar(){
+          return this.btnX;
+     }
 
 }
