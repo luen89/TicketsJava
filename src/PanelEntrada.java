@@ -23,6 +23,9 @@ public class PanelEntrada extends JPanel implements ActionListener{
     private Calendar cal = Calendar.getInstance();
     private Date initDate;
     private JSpinner jspReceptionDate , jspGiveDate;
+
+    TicketPreview2 tPreview2;
+
     //prueba
     
     public PanelEntrada(){   
@@ -160,6 +163,12 @@ public class PanelEntrada extends JPanel implements ActionListener{
             pListTemplado.add(form);
         });
             this.updateUI();
+        }
+        if(e.getSource()==btImprimir){
+            tPreview2 = new TicketPreview2();
+            System.out.println("Entré");
+            tPreview2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            tPreview2.setVisible(true);
         }
     }
     
