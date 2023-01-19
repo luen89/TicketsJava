@@ -24,6 +24,8 @@ public class PanelEntrada extends JPanel implements ActionListener {
     private Calendar cal = Calendar.getInstance();
     private Date initDate;
     private JSpinner jspReceptionDate, jspGiveDate;
+    private JCheckBox iva;
+
     // prueba
 
     public PanelEntrada() {
@@ -72,6 +74,9 @@ public class PanelEntrada extends JPanel implements ActionListener {
         /* botones de Imprimir y Pagar */
         btImprimir = new JButton("Imprimir");
         btImprimir.addActionListener(this);
+
+        iva = new JCheckBox("¿Requiere factura?");
+
         btPago = new JButton("Pagar");
         btPago.addActionListener(this);
 
@@ -123,6 +128,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         pImprimir = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pImprimir.add(btImprimir);
+        pImprimir.add(iva);
         // **********************************************************
         Font a = new Font("Calibri", 1, 14);
         Border bordeEntrada = new TitledBorder(new EtchedBorder(Color.white, Color.white), "Inicio", 1, 2, a,
@@ -130,7 +136,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         pEncabezado.setBorder(bordeEntrada);
 
-        Border bordePane3 = new TitledBorder(new EtchedBorder(), "Templado");
+        Border bordePane3 = new TitledBorder(new EtchedBorder(), "Servicios");
         pTemplado.setBorder(bordePane3);
 
         Border bordePanel2 = new TitledBorder(new EtchedBorder(), "Total");
@@ -210,6 +216,11 @@ public class PanelEntrada extends JPanel implements ActionListener {
         System.out.println("Costo templado: " + costoTemplado);
 
         costoTotal = costoPavonado + costoTemplado;
+
+        if(iva.isSelected()){
+            costoTotal += costoTotal * 0.16;
+        }
+
         System.out.println("Costo total: " + costoTotal);
     }
 
