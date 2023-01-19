@@ -215,11 +215,11 @@ public class PanelEntrada extends JPanel implements ActionListener {
         }
 
         if (e.getSource() == btImprimir) {
-            condiciones();
+            Ticket ticketsito = condiciones();
             if(contador >=1){
                 contador--;
             }
-            tPreview2 = new TicketPreview2();
+            tPreview2 = new TicketPreview2(ticketsito);
             System.out.println("Entré");
             tPreview2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             tPreview2.setVisible(true);
@@ -231,7 +231,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
         System.out.println("Imprimiendo desde panel entrada: "+id);
     }
 
-    public void condiciones() {
+    public Ticket condiciones() {
         double contadorPavonado = 0;
         double contadorTemplado = 0;
 
@@ -239,7 +239,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
         double costoTemplado = 0.0;
 
         double costoTotal = 0.0;
-
+        Ticket ticket = new Ticket(0,0,0,0,0,new ArrayList<Elemento>());
         for (int i = 0; i < pformsT.size(); i++) {
             System.out.println("Servicio: " + pformsT.get(i).getElemento().getServicio());
 
@@ -251,7 +251,9 @@ public class PanelEntrada extends JPanel implements ActionListener {
                 contadorPavonado += pformsT.get(i).getElemento().getKilos();
                 contadorTemplado += pformsT.get(i).getElemento().getKilos();
             }
+            ticket.pformsT.add(pformsT.get(i).getElemento());
         }
+
 
         System.out.println("Kilos pavonado: " + contadorPavonado);
         System.out.println("Kilos templado: " + contadorTemplado);
@@ -278,6 +280,13 @@ public class PanelEntrada extends JPanel implements ActionListener {
         }
 
         System.out.println("Costo total: " + costoTotal);
+        ticket.contadorPavonado = contadorPavonado;
+        ticket.contadorTemplado = contadorTemplado;
+        ticket.costoPavonado = costoPavonado;
+        ticket.costoTemplado = costoTemplado;
+        ticket.costoTotal = costoTotal;
+
+        return ticket;
     }
 
     public String getTotalPiezas() {

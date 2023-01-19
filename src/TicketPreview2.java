@@ -15,8 +15,11 @@ import javax.swing.border.*;
 public class TicketPreview2 extends JFrame implements ActionListener{
 
     JTextArea ticketTextArea;
+    Ticket ticket;
+    String listaArticulos = "";
 
-    public TicketPreview2(){
+    public TicketPreview2(Ticket ticket){
+        this.ticket = ticket;
         this.setLayout(new FlowLayout(FlowLayout.CENTER));
        
         setTitle("Ticket Preview");
@@ -25,25 +28,26 @@ public class TicketPreview2 extends JFrame implements ActionListener{
         setLocationRelativeTo(null);
         initComponents();
         ImageIcon icono = new ImageIcon("src/Imagenes/pavonado_logo.png"); 
-        this.setIconImage(icono.getImage()); 
+        this.setIconImage(icono.getImage());       
     }
 
     private void initComponents() {
         this.ticketTextArea = new JTextArea();
         ticketTextArea.setAlignmentX(JTextArea.CENTER_ALIGNMENT); 
         ticketTextArea.setEditable(false);
-        ticketTextArea.setText("    Pavonado {{sucursal}}\n"
-        + "    {{direccion}}\n"
+        
+        String ticketHeader = "    Pavonado {{sucursal}} \n"
+        + "    {{direccion}} \n"
         + "    =========================================\n"
-        + "    Ticket # {{ticket}}\n"
-        + "    {{fecha}} {{hora}}\n"
+        + "    Ticket # {{ticket}} \n"
+        + "    {{fecha}} {{hora}} \n"
         + "    Descripcion              Importe\n"
         + "    =========================================\n"
-        + "     {{items}}\n"
+        + "     {{items}} \n"
         + "    =========================================\n"
-        + "    COSTO: ${{total}}\n"
-        + "    RECIBIDO: ${{recibo}}    |    CAMBIO: ${{change}}\n"
-        + "    RESTANTE: ${{rest}}\n"
+        + "    COSTO: $ {{total}} \n"
+        + "    RECIBIDO: ${{recibo}}    |    CAMBIO: ${{change}} \n"
+        + "    RESTANTE: $ {{rest}} \n"
         + "    =========================================\n"
         + "    GRACIAS POR SU PREFERENCIA...\n"
         + "                ******::::::::*******"
@@ -52,7 +56,18 @@ public class TicketPreview2 extends JFrame implements ActionListener{
         + "\n           "
         + "\n           "
         + "\n           "
-        + "\n           ");
+        + "\n           ";
+
+        String ticketModificado = ticketHeader.replace("{{total}}", ticket.costoTotal+"");
+        ticket.pformsT.forEach(elemento -> {
+            listaArticulos = listaArticulos+"\t"+
+                elemento.getPiezas()+" "+
+                elemento.getServicio()+" "+
+                elemento.getAcero()+" "+
+                elemento.getKilos()+"\n";
+        });
+        ticketModificado = ticketModificado.replace("{{items}}", listaArticulos);
+        ticketTextArea.setText(ticketModificado);
 
         this.add(ticketTextArea);
     }
