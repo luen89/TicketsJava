@@ -61,7 +61,8 @@ public class PiezaForm extends JPanel implements ChangeListener {
                               cbAcero.setModel(new DefaultComboBoxModel<>(acero));
                               cbAcero.setEnabled(true);
                               break;
-                         case 2, 3:
+                         case 2:
+                         case 3:
                               cbAcero.setModel(new DefaultComboBoxModel<>(
                                         Arrays.stream(acero).filter(x -> x != "Colled Rolled").toArray()));
                               cbAcero.setEnabled(true);
