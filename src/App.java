@@ -13,10 +13,11 @@ import javax.swing.*;
  */
 public class App {
     public static void main(String args[]){
-        Ventana miVentana=new Ventana();                
+        GestorArchivos ga= new GestorArchivos();
+        ga.leerArchivo();
+
+        Ventana miVentana=new Ventana(ga);                
         miVentana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        miVentana.setVisible(true);
-    }
-    
-    
+        miVentana.setVisible(true);        
+    }        
 }

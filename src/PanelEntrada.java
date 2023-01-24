@@ -15,11 +15,11 @@ import javax.xml.validation.Validator;
  */
 
 public class PanelEntrada extends JPanel implements ActionListener {
-    private JLabel lbTotPiezas, lbTotKg, lbRD, lbGD, lbImagen;
+    private JLabel lbTotPiezas, lbTotKg, lbRD, lbGD, lbImagen, lbnOrden, lbCliente;
     private JButton btImprimir, btPago, btplus;
     private JPanel pDatos, pEncabezado, pTotales, pImprimir,
             pTemplado, pIncrementoT, pListTemplado;
-    private JTextField txtTpiezas, txtTkg;
+    private JTextField txtTpiezas, txtTkg, txtnOrden, txtCliente;
     private JScrollPane scrollT;
     private ArrayList<PiezaForm> pformsP, pformsT;
     private Calendar cal = Calendar.getInstance();
@@ -28,19 +28,29 @@ public class PanelEntrada extends JPanel implements ActionListener {
     private JSpinner jspReceptionDate, jspGiveDate;
     private JCheckBox iva;
     TicketPreview2 tPreview2;
+    private GestorArchivos gestor;
     // prueba
     private int contador =0, ban=0;
     private ArrayList<JButton> listaBotones = new ArrayList<JButton>();
 
     
 
-    public PanelEntrada() {
-
+    public PanelEntrada(GestorArchivos ga) {
+        this.gestor=ga;
         initComponents();
     }
 
     private void initComponents() {
         /*****  Configuracion de los Spinners de Fecha */
+        lbnOrden = new JLabel("Numero de Orden");
+        lbnOrden.setForeground(Color.white);
+        txtnOrden = new JTextField("", 8);
+        txtnOrden.setEditable(false);
+        try{
+            txtnOrden.setText(String.format("%04d", gestor.getNumOrden()));
+        }
+        catch(Exception e){System.out.println(e.getMessage());}
+        
         initDate = cal.getTime();
         cal.add(Calendar.YEAR,  -100);
         Date earliestDate = cal.getTime();
@@ -89,10 +99,13 @@ public class PanelEntrada extends JPanel implements ActionListener {
         lbTotKg = new JLabel("Total Kg:");
         lbRD  =  new JLabel("Fecha de Recepcion");
         lbGD  =  new JLabel("Fecha de Entrega");
+        lbCliente = new JLabel("Cliente:");
         lbRD.setForeground(Color.white);
         lbGD.setForeground(Color.white);
-        txtTkg = new JTextField(" ", 8);
-        txtTpiezas  =  new JTextField("Suma de piezas",  8);
+        lbCliente.setForeground(Color.white);
+        txtTkg = new JTextField(" ", 6);
+        txtTpiezas  =  new JTextField("Suma de piezas",  6);
+        txtCliente = new JTextField("", 6);
         txtTpiezas.setEditable(false);
 
         /* botones de Imprimir y Pagar */
@@ -135,6 +148,10 @@ public class PanelEntrada extends JPanel implements ActionListener {
         pEncabezado.add(jspReceptionDate);
         pEncabezado.add(lbGD);
         pEncabezado.add(jspGiveDate);
+        pEncabezado.add(lbnOrden);
+        pEncabezado.add(txtnOrden);
+        pEncabezado.add(lbCliente);
+        pEncabezado.add(txtCliente);
         pEncabezado.setBackground(Color.black);
         repaint();
 
@@ -215,6 +232,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
         }
 
         if (e.getSource() == btImprimir) {
+
             Ticket ticketsito = condiciones();
             if(contador >=1){
                 contador--;
@@ -223,6 +241,12 @@ public class PanelEntrada extends JPanel implements ActionListener {
             System.out.println("Entré");
             tPreview2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             tPreview2.setVisible(true);
+            
+            gestor.writeFile(new EntradaRegistro(txtnOrden.getText(),txtCliente.getText(),ticketsito.costoTotal,"PAGADO","NO ENTREGADO",jspGiveDate.getValue().toString()));
+            try{gestor.incremetNumOrden();
+            txtnOrden.setText(String.format("%04d", gestor.getNumOrden()));}
+            catch(Exception excp){}          
+            this.updateUI();
         }
 
     }
@@ -300,5 +324,8 @@ public class PanelEntrada extends JPanel implements ActionListener {
         return txtTkg.getText();
     }
 
+    public String getNombreCliente() {
+        return txtCliente.getText();
+    }
     
 }
