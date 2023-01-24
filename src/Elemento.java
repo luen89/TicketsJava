@@ -5,8 +5,9 @@ public class Elemento {
     private Integer piezas;
     private Double kilos;
     private String dureza;
+    private String descripcion;
 
-    public Elemento(String acero, String servicio, int piezas, Double kilos, String dureza){
+    public Elemento(String acero, String servicio, int piezas, Double kilos, String dureza, String descripcion){
         super();
         this.acero = acero;
         this.servicio = servicio;
@@ -30,6 +31,7 @@ public class Elemento {
         this.kilos = kilos;
 
         this.dureza = dureza;
+        this.descripcion = descripcion;
     }
 
     public String getServicio(){
@@ -54,6 +56,10 @@ public class Elemento {
 
     public String getDureza(){
         return dureza;
+    }
+
+    public String getDescripcion(){
+        return descripcion;
     }
 
     public void setServicio(String servicio){
@@ -88,6 +94,10 @@ public class Elemento {
     
     public void setDureza(String dureza){
         this.dureza = dureza;
+    }
+
+    public void setDescripcion(String descripcion){
+        this.descripcion = descripcion;
     }
     
 }

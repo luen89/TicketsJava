@@ -26,7 +26,7 @@ import java.awt.event.ActionListener;
  */
 
 public class PiezaForm extends JPanel implements ChangeListener {
-     private JLabel lbNPiezas, lbAcero, lbpeso, lbDureza;
+     private JLabel lbNPiezas, lbAcero, lbpeso, lbDureza, lbDescripcion;
      private String Servicio[] = { "Selecciona Servicio", "Pavonado", "Templado", "Templado y Pavonado" };
      private String acero[] = { "Selecciona tipo", "4140", "8620", "1045", "Colled Rolled", "Q1", "D2" };
      private SpinnerModel smNpiezas;
@@ -37,7 +37,7 @@ public class PiezaForm extends JPanel implements ChangeListener {
      private JSpinner sNDureza;
      private JComboBox cbServicios, cbAcero;
      private Elemento elemento;
-     private JTextField txtPeso, tfDureza;
+     private JTextField txtPeso, tfDureza, tfDesc;
 
      //Pruebas
      private JButton btnX;
@@ -48,7 +48,7 @@ public class PiezaForm extends JPanel implements ChangeListener {
      public PiezaForm() {// Constructor
           super(new FlowLayout(FlowLayout.LEFT));
           // Crea Objeto Elemento
-          elemento = new Elemento("", "", 0, 0.0,"");
+          elemento = new Elemento("", "", 0, 0.0,"","");
 
           // Inicializa la ComboBox de Servicios
           cbServicios = new JComboBox(Servicio);
@@ -90,6 +90,7 @@ public class PiezaForm extends JPanel implements ChangeListener {
           lbAcero = new JLabel("       Acero");
           lbpeso = new JLabel("        Peso en Kg");
           lbDureza = new JLabel(" Dureza");
+          lbDescripcion =  new JLabel(" Descripción");
 
           // Inicializa el Spinner de Piezas
           smNpiezas = new SpinnerNumberModel(0, 0, 100, 1);
@@ -108,6 +109,7 @@ public class PiezaForm extends JPanel implements ChangeListener {
 
           //Inicializar el textField
           tfDureza = new JTextField(7);
+          tfDesc = new JTextField(7);
 
           btnX = new JButton("X");
 
@@ -124,6 +126,9 @@ public class PiezaForm extends JPanel implements ChangeListener {
           
           this.add(lbDureza);
           this.add(tfDureza);
+
+          this.add(lbDescripcion);
+          this.add(tfDesc);
 
           this.add(btnX);
      }
@@ -146,6 +151,7 @@ public class PiezaForm extends JPanel implements ChangeListener {
           }
 
           elemento.setDureza(tfDureza.getText());
+          elemento.setDescripcion(tfDesc.getText());
 
           System.out.println(elemento.getAcero());
           System.out.println(elemento.getPiezas());
@@ -153,6 +159,7 @@ public class PiezaForm extends JPanel implements ChangeListener {
           System.out.println(elemento.getServicio());
 
           System.out.println(elemento.getDureza());
+          System.out.println(elemento.getDescripcion());
      }
 
      public Elemento getElemento(){
