@@ -2,6 +2,7 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Calendar;
@@ -242,7 +243,10 @@ public class PanelEntrada extends JPanel implements ActionListener {
             tPreview2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             tPreview2.setVisible(true);
             
-            gestor.writeFile(new EntradaRegistro(txtnOrden.getText(),txtCliente.getText(),ticketsito.costoTotal,"PAGADO","NO ENTREGADO",jspGiveDate.getValue().toString()));
+            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyy");
+            String fecha = formatoFecha.format(jspGiveDate.getValue());
+
+            gestor.writeFile(new EntradaRegistro(txtnOrden.getText(),txtCliente.getText(),ticketsito.costoTotal,"PAGADO","NO ENTREGADO",fecha));
             try{gestor.incremetNumOrden();
             txtnOrden.setText(String.format("%04d", gestor.getNumOrden()));}
             catch(Exception excp){}          
