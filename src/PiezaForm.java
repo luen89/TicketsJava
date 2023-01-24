@@ -6,7 +6,6 @@
  */
 import java.awt.*;
 
-import javax.sound.sampled.SourceDataLine;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -15,9 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-//Action Event
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 
 /**
@@ -35,9 +31,9 @@ public class PiezaForm extends JPanel implements ChangeListener {
      private JSpinner sNKilos;
      private SpinnerModel smNDureza;
      private JSpinner sNDureza;
-     private JComboBox cbServicios, cbAcero;
+     private JComboBox<String> cbServicios, cbAcero;
      private Elemento elemento;
-     private JTextField txtPeso, tfDureza, tfDesc;
+     private JTextField tfDureza, tfDesc;
 
      //Pruebas
      private JButton btnX;
@@ -51,7 +47,7 @@ public class PiezaForm extends JPanel implements ChangeListener {
           elemento = new Elemento("", "", 0, 0.0,"","");
 
           // Inicializa la ComboBox de Servicios
-          cbServicios = new JComboBox(Servicio);
+          cbServicios = new JComboBox<>(Servicio);
           cbServicios.addActionListener(new ActionListener() {
                @Override
                public void actionPerformed(ActionEvent e) {
@@ -65,8 +61,9 @@ public class PiezaForm extends JPanel implements ChangeListener {
                               break;
                          case 2:
                          case 3:
-                              cbAcero.setModel(new DefaultComboBoxModel<>(
-                                        Arrays.stream(acero).filter(x -> x != "Colled Rolled").toArray()));
+                              //String[] filtrado = Arrays.stream(acero).filter(x -> x != "Colled Rolled").toArray();
+                              //String[] arrayFiltrado = Arrays.stream(acero).filter();
+                              cbAcero.setModel(new DefaultComboBoxModel<>( Arrays.stream(acero).filter(x -> x != "Colled Rolled").toArray(String[]::new) ));
                               cbAcero.setEnabled(true);
                               break;
                          default:
@@ -76,7 +73,7 @@ public class PiezaForm extends JPanel implements ChangeListener {
           });
 
           // Inicializa la ComboBox de Aceros
-          cbAcero = new JComboBox(acero);
+          cbAcero = new JComboBox<>(acero);
           cbAcero.addActionListener(new ActionListener() {
                @Override
                public void actionPerformed(ActionEvent e) {

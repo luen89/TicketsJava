@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.Calendar;
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.xml.validation.Validator;
 
 /**
  *
@@ -22,7 +21,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
             pTemplado, pIncrementoT, pListTemplado;
     private JTextField txtTpiezas, txtTkg, txtnOrden, txtCliente;
     private JScrollPane scrollT;
-    private ArrayList<PiezaForm> pformsP, pformsT;
+    private ArrayList<PiezaForm> pformsT;
     private Calendar cal = Calendar.getInstance();
     private Date initDate;
 
@@ -31,8 +30,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
     TicketPreview2 tPreview2;
     private GestorArchivos gestor;
     // prueba
-    private int contador =0, ban=0;
-    private ArrayList<JButton> listaBotones = new ArrayList<JButton>();
+    private int contador = 0;
 
     
 
@@ -209,10 +207,6 @@ public class PanelEntrada extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         //  Agregar nuevo elemento
-        int valor;
-
-        
-
         if  (e.getSource()  ==  btplus)  {
             PiezaForm pieza = new PiezaForm();
             pformsT.add(pieza);

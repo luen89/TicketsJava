@@ -11,19 +11,14 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.*;
-import javax.swing.*;
 
 public class TicketPreview implements ActionListener {
     public void showPreview(JButton previewButton) {
@@ -38,27 +33,27 @@ public class TicketPreview implements ActionListener {
             //     data[i][1] = ticket.getItems().get(i).getPrice();
             // }
 
-            String contentTicket = "    Pavonado {{sucursal}}\n"
-            + "    {{direccion}}\n"
-            + "    =========================================\n"
-            + "    Ticket # {{ticket}}\n"
-            + "    {{fecha}} {{hora}}\n"
-            + "    Descripcion              Importe\n"
-            + "    =========================================\n"
-            + "     {{items}}\n"
-            + "    =========================================\n"
-            + "    COSTO: ${{total}}\n"
-            + "    RECIBIDO: ${{recibo}}    |    CAMBIO: ${{change}}\n"
-            + "    RESTANTE: ${{rest}}\n"
-            + "    =========================================\n"
-            + "    GRACIAS POR SU PREFERENCIA...\n"
-            + "                ******::::::::*******"
-            + "\n           "
-            + "\n           "
-            + "\n           "
-            + "\n           "
-            + "\n           "
-            + "\n           ";
+            // String contentTicket = "    Pavonado {{sucursal}}\n"
+            // + "    {{direccion}}\n"
+            // + "    =========================================\n"
+            // + "    Ticket # {{ticket}}\n"
+            // + "    {{fecha}} {{hora}}\n"
+            // + "    Descripcion              Importe\n"
+            // + "    =========================================\n"
+            // + "     {{items}}\n"
+            // + "    =========================================\n"
+            // + "    COSTO: ${{total}}\n"
+            // + "    RECIBIDO: ${{recibo}}    |    CAMBIO: ${{change}}\n"
+            // + "    RESTANTE: ${{rest}}\n"
+            // + "    =========================================\n"
+            // + "    GRACIAS POR SU PREFERENCIA...\n"
+            // + "                ******::::::::*******"
+            // + "\n           "
+            // + "\n           "
+            // + "\n           "
+            // + "\n           "
+            // + "\n           "
+            // + "\n           ";
             Object[][] data = new Object[2][2];
             JTable itemsTable = new JTable(data, columnNames);
 
@@ -70,7 +65,7 @@ public class TicketPreview implements ActionListener {
             lbImagen.setIcon(icono);
 
             // Crear el label del precio total
-            JLabel totalPriceLabel = new JLabel(contentTicket/*"Total: $100000" /*+ ticket.getTotalPrice()*/);
+            //JLabel totalPriceLabel = new JLabel(contentTicket/*"Total: $100000" /*+ ticket.getTotalPrice()*/);
             JLabel headerLabel = new JLabel("    Pavonado {{sucursal}}", JLabel.CENTER);
             JLabel direccLabel = new JLabel("    {{direccion}}", JLabel.CENTER);
             JLabel dividerLabel = new JLabel("    =========================================", JLabel.CENTER);
@@ -85,7 +80,7 @@ public class TicketPreview implements ActionListener {
             JLabel endLabel = new JLabel("                ******::::::::*******", JLabel.CENTER);
             // Crear main frame
             JFrame previewFrame = new JFrame("Ticket Preview");
-            JPanel mainPanel = new JPanel(new GridLayout(0,1));
+            //JPanel mainPanel = new JPanel(new GridLayout(0,1));
             
             previewFrame.setLayout(new FlowLayout());
             previewFrame.add(lbImagen);
