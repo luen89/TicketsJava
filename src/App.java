@@ -1,6 +1,8 @@
 
 import javax.swing.*;
 
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDarkerIJTheme;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -13,6 +15,7 @@ import javax.swing.*;
  */
 public class App {
     public static void main(String args[]){
+        FlatMaterialDarkerIJTheme.setup();
         GestorArchivos ga= new GestorArchivos();
         ga.leerArchivo();
 
