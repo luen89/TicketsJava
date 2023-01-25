@@ -3,12 +3,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Calendar;
+import java.util.Comparator;
+
 import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.table.DefaultTableModel;
-import javax.xml.validation.Validator;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableRowSorter;
+
+// import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+
+import java.util.List;
 
 /**
  *
@@ -17,231 +22,198 @@ import javax.xml.validation.Validator;
 
 public class PanelRegistros extends JPanel implements ActionListener {    
     private JTable tabla;
-
-    private JLabel lbTotPiezas, lbTotKg, lbRD, lbGD, lbImagen;
-    private JButton btImprimir, btPago, btplus;
-    private JPanel pDatos, pEncabezado, pTotales, pImprimir,
-            pTemplado, pIncrementoT, pListTemplado;
-    private JTextField txtTpiezas, txtTkg;
-    private JScrollPane scrollT;
-    private ArrayList<PiezaForm> pformsP, pformsT;
-    private Calendar cal = Calendar.getInstance();
-    private Date initDate;
-
-    private JSpinner jspReceptionDate, jspGiveDate;
-    private JCheckBox iva;
-    TicketPreview2 tPreview2;
-    // prueba
-    private int contador =0, ban=0;
-    private ArrayList<JButton> listaBotones = new ArrayList<JButton>();
-    private JScrollPane sp;
+    private JLabel lbFiltrar, lbFiltrarCBs;
+    private JScrollPane spTabla;
     private GestorArchivos gestor;
+    private JTextField txtFiltrar;
+    private JPanel pFiltros, pCbs, pTxts;
+    private JComboBox<String> cbClientes, cbStatusEntrega, cbStatusPago;
+    private String filtrarClientes[] = {};
+    private String filtrarStatusPago[] = {};
+    private String filtrarStatusEntrega[] = {};
+    private JButton btnActualizar;
+    private TableRowSorter<EntradaRegistroModel> sorter;
+    private EntradaRegistroModel modelo;
     
     public PanelRegistros(GestorArchivos ga) {
         gestor=ga;
         initComponents();
     }
 
-    private void initComponents() {
+    private void initComponents() {                
         // Creación de Tabla
         ArrayList<EntradaRegistro> registros = gestor.leerArchivo();
-        String data[][] = new String[registros.size()][6];
-        for(int i = 0; i< registros.size(); i++){
-            EntradaRegistro er = registros.get(i);
-            data[i] = new String[6];
-            data[i][0] = er.Folio;
-            data[i][1] = er.NombreCliente;
-            data[i][2] = "$" + er.Monto;
-            data[i][3] = er.StatusPago;
-            data[i][4] = er.StatusEntrega;
-            data[i][5] = er.Fecha;
+        modelo = new EntradaRegistroModel(registros);
+        sorter = new TableRowSorter<EntradaRegistroModel>(modelo);
+        
+        tabla = new JTable(modelo);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        tabla.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        tabla.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+        tabla.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        tabla.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        
+        tabla.setRowSorter(sorter);
+        sorter.setComparator(2, new Comparator<String>() {            
+            @Override
+            public int compare(String name1, String name2) {
+                double d1 = Double.parseDouble(name1.replaceAll(",", "").substring(1));
+                double d2 = Double.parseDouble(name2.replaceAll(",", "").substring(1));
+                return Double.compare(d1, d2);
+            }
+        });
+        sorter.setRowFilter(null);
+
+
+        // Creacion de los campos para filtrar
+        lbFiltrar = new JLabel("Filtrar:");
+        lbFiltrarCBs = new JLabel("Filtrar por:");
+        txtFiltrar = new JTextField("", 8);
+        txtFiltrar.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                validate(e);
+            }
+            public void insertUpdate(DocumentEvent e) {
+                validate(e);
+            }
+            public void removeUpdate(DocumentEvent e) {
+                validate(e);
+            }
+
+            private void validate(DocumentEvent e) {
+                filtrarTabla();
+            }
+
+        });
+
+        ArrayList<String> clientes = new ArrayList<>();
+        clientes.add("Cliente");
+        for (int i = 0; i < registros.size(); i++) {
+            if (!clientes.contains(registros.get(i).getNombreCliente())) {
+                clientes.add(registros.get(i).getNombreCliente());
+            }
         }
-        // String data[][]={ {"101","Amit","670000", "Status", "Status", "Fecha"},    
-        //                 {"102","Amit","670000", "Status", "Status", "Fecha"},    
-        //                 {"103","Amit","670000", "Status", "Status", "Fecha"}};    
-        String column[] = {"Folio", "Cliente", "Monto", "Status de Pago", "Status de Entrega", "Fecha"};
+        filtrarClientes = (String[]) clientes.toArray(new String[clientes.size()]);
+        cbClientes = new JComboBox<>(filtrarClientes);
         
-        this.tabla = new JTable (data, column);
+        ArrayList<String> statusPago = new ArrayList<>();
+        statusPago.add("Status de Pago");
+        for (int i = 0; i < registros.size(); i++) {
+            if (!statusPago.contains(registros.get(i).getStatusPago())) {
+                statusPago.add(registros.get(i).getStatusPago());
+            }
+        }
+        filtrarStatusPago = (String[]) statusPago.toArray(new String[statusPago.size()]);
+        cbStatusPago = new JComboBox<>(filtrarStatusPago);
 
-        /*****  Configuracion de los Spinners de Fecha */
-        // initDate = cal.getTime();
-        // cal.add(Calendar.YEAR,  -100);
-        // Date earliestDate = cal.getTime();
-        // cal.add(Calendar.YEAR, 200);
-        // Date latestDate = cal.getTime();
-        // SpinnerDateModel spdm = new SpinnerDateModel(initDate,  earliestDate,  latestDate,  Calendar.DAY_OF_MONTH);
-        // SpinnerDateModel spdm2 = new SpinnerDateModel(initDate,  earliestDate,  latestDate,  Calendar.DAY_OF_MONTH);
-        // jspReceptionDate = new JSpinner(spdm);
-        // jspGiveDate = new JSpinner(spdm2);
+        ArrayList<String> statusEntrega = new ArrayList<>();
+        statusEntrega.add("Status de Entrega");
+        for (int i = 0; i < registros.size(); i++) {
+            if (!statusEntrega.contains(registros.get(i).getStatusEntrega())) {
+                statusEntrega.add(registros.get(i).getStatusEntrega());
+            }
+        }
+        filtrarStatusEntrega = (String[]) statusEntrega.toArray(new String[statusEntrega.size()]); 
+        cbStatusEntrega = new JComboBox<>(filtrarStatusEntrega);
 
-        /* Construccion de la lista de Piezas de Pavoneo */
+        btnActualizar = new JButton("Actualizar");
+        btnActualizar.addActionListener(this);
 
-        /* Construccion de la lista de Piezas de Pavoneo */
+        // AutoCompleteDecorator.decorate(cbClientes);
+        cbClientes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Entra cambiar elemento de filtro");
+                filtrarTabla();
+            }
+        });
+        cbStatusEntrega.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Entra cambiar elemento de filtro");
+                filtrarTabla();
+            }
+        });
+        cbStatusPago.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Entra cambiar elemento de filtro");
+                filtrarTabla();
+            }
+        });
 
-        // pformsP = new ArrayList<>();
-        //cocnstrutor de contador
-        // pformsP.add(new PiezaForm(contador));
-        // pformsT.get(0).preDisplay();
+        pCbs = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        pCbs.add(lbFiltrarCBs);
+        pCbs.add(cbClientes);
+        pCbs.add(cbStatusPago);
+        pCbs.add(cbStatusEntrega);
 
-
-        /*  Construccion de la lista de Piezas de Templado */
-        // pListTemplado = new JPanel();
-        // pListTemplado.setLayout(new BoxLayout(pListTemplado,  BoxLayout.Y_AXIS));
-        // pformsT = new ArrayList<>();
-        // scrollT = new JScrollPane(pListTemplado);
+        pTxts = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        pTxts.add(btnActualizar);
+        pTxts.add(lbFiltrar);
+        pTxts.add(txtFiltrar);
         
-        // PiezaForm pieza = new PiezaForm();
+        pFiltros = new JPanel();
+        pFiltros.setLayout (new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.weightx = 1.0;
+
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 0; // El área de texto empieza en la columna cero.
+        constraints.gridy = 0; // El área de texto empieza en la fila cero
+        constraints.gridwidth = 1; // El área de texto ocupa dos columnas.
+        constraints.gridheight = 1; // El área de texto ocupa 2 filas.
+        pFiltros.add(pCbs, constraints);
+
+        constraints.gridx = 1; // El área de texto empieza en la columna cero.
+        constraints.gridy = 0; // El área de texto empieza en la fila cero
+        constraints.gridwidth = 1; // El área de texto ocupa dos columnas.
+        constraints.gridheight = 1; // El área de texto ocupa 2 filas.
+        pFiltros.add(pTxts, constraints);
         
-        // pformsT.add(pieza);
-        // pieza.preDisplay();
-        // pListTemplado.add(pieza);
-        // pieza.getBotonEliminar().addActionListener(new ActionListener() {
-        //     @Override
-
-        //     public void actionPerformed(ActionEvent e) {
-        //         pListTemplado.remove(pieza);
-        //         pformsT.remove(pieza);
-        //         refreshDisplay();
-        //     }
-        // });
-
-
-        
-        //  ************Etiquetas del Total de Piezas******************************
-        // lbTotPiezas = new JLabel("Total Piezas:");
-        // lbTotKg = new JLabel("Total Kg:");
-        // lbRD  =  new JLabel("Fecha de Recepcion");
-        // lbGD  =  new JLabel("Fecha de Entrega");
-        // lbRD.setForeground(Color.white);
-        // lbGD.setForeground(Color.white);
-        // txtTkg = new JTextField(" ", 8);
-        // txtTpiezas  =  new JTextField("Suma de piezas",  8);
-        // txtTpiezas.setEditable(false);
-
-        // /* botones de Imprimir y Pagar */
-        // btImprimir = new JButton("Imprimir");
-        // btImprimir.addActionListener(this);
-
-        // iva = new JCheckBox("¿Requiere factura?");
-
-        // btPago  =  new JButton("Pagar");
-        // btPago.addActionListener(this);
-
-        // /* Botones de mas y menos */
-        // btplus = new JButton("Agregar elemento");
-        // btplus.addActionListener(this);
-
-        // // ***************PANELES DE DATOS*************************
-
-        // // ***************PANELES DE DATOS*************************
-        // /*  Panel de los botones mas o menos Templado */
-        // pIncrementoT = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        // pIncrementoT.add(btplus);
-
-        // /*  Panel de los totales de Piezas */
-        // pTotales  =  new JPanel(new FlowLayout(FlowLayout.LEFT));
-        // pTotales.add(lbTotPiezas);
-        // pTotales.add(txtTpiezas);
-        // pTotales.add(lbTotKg);
-        // pTotales.add(txtTkg);
-
-        // //  ***************Panel De Encabezado*************************
-        // pEncabezado = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        // lbImagen  =  new JLabel();
-        // lbImagen.setPreferredSize(new Dimension(750,  100));
-        // ImageIcon fot = new ImageIcon("src/Imagenes/Aguila_banner.png");
-        // //  lbImagen.setIcon(new ImageIcon("src/Imagenes/imagen.png"));
-        // Icon icono = new ImageIcon(fot.getImage().getScaledInstance(750, 100, Image.SCALE_DEFAULT));
-        // lbImagen.setIcon(icono);
-        // pEncabezado.add(lbImagen);
-        // pEncabezado.add(lbRD);
-        // pEncabezado.add(jspReceptionDate);
-        // pEncabezado.add(lbGD);
-        // pEncabezado.add(jspGiveDate);
-        // pEncabezado.setBackground(Color.black);
-        // repaint();
-
-        // //  *****************Panel del Templado**************************
-        // pTemplado  =  new JPanel();
-        // pTemplado.setLayout(new BoxLayout(pTemplado,  BoxLayout.Y_AXIS));
-        // pTemplado.add(pIncrementoT);
-        // pTemplado.add(scrollT);
-
-        // pDatos = new JPanel();
-        // pDatos.setLayout(new BoxLayout(pDatos, BoxLayout.Y_AXIS));
-
-        // pDatos = new JPanel();
-        // pDatos.setLayout(new BoxLayout(pDatos, BoxLayout.Y_AXIS));
-        // pDatos.add(pTotales);
-
-        // pImprimir = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        // pImprimir = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        // pImprimir.add(btImprimir);
-        // pImprimir.add(iva);
-        // // **********************************************************
-        // Font a = new Font("Calibri", 1, 14);
-        // Border bordeEntrada = new TitledBorder(new EtchedBorder(Color.white, Color.white), "Inicio", 1, 2, a,
-        //         Color.white);
-
-        // pEncabezado.setBorder(bordeEntrada);
-
-        // Border bordePane3  = new TitledBorder(new EtchedBorder(), "Servicios");
-        // pTemplado.setBorder(bordePane3);
-
-        // Border bordePanel2 = new TitledBorder(new EtchedBorder(), "Total");
-        // pDatos.setBorder(bordePanel2);
-
-        // this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-        // this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        sp = new JScrollPane(this.tabla); 
-        add(sp);
-        // add(pTemplado);
-        //add(pDatos);
-        // add(pImprimir);
+        spTabla = new JScrollPane(tabla); 
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(pFiltros);
+        add(spTabla);
     }
 
     public void refreshDisplay(){
         this.updateUI();
     }
 
+    private void filtrarTabla(){
+        List<RowFilter<Object,Object>> filters = new ArrayList<RowFilter<Object,Object>>();
+
+        if (cbClientes.getSelectedIndex() != 0) {
+            filters.add(RowFilter.regexFilter(cbClientes.getSelectedItem().toString(), 1));
+        }
+
+        if(cbStatusPago.getSelectedIndex() != 0){
+            filters.add(RowFilter.regexFilter(cbStatusPago.getSelectedItem().toString(), 3));
+        }
+
+        if (cbStatusEntrega.getSelectedIndex() != 0) {            
+            filters.add(RowFilter.regexFilter(cbStatusEntrega.getSelectedItem().toString(), 4));
+        }
+
+        String text = txtFiltrar.getText();
+        if (text.length() != 0) {
+            filters.add(RowFilter.regexFilter(text));
+        }
+
+        sorter.setRowFilter(RowFilter.andFilter(filters));
+    }
+
+    public void actualizarTabla(){
+        modelo.setRegistros(gestor.leerArchivo());
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        //  Agregar nuevo elemento
-        // int valor;
-
-        // if  (e.getSource()  ==  btplus)  {
-        //     PiezaForm pieza = new PiezaForm();
-        //     pformsT.add(pieza);
-        //     pieza.preDisplay();
-        //     pieza.getBotonEliminar().addActionListener(new ActionListener() {
-        //        @Override
-
-        //         public void actionPerformed(ActionEvent e) {
-        //             pListTemplado.remove(pieza);
-        //             pformsT.remove(pieza);
-        //             refreshDisplay();
-        //         }
-        //   });
-        //     pListTemplado.add(pformsT.get(pformsT.size()  -  1));
-
-        //     this.updateUI();
-        //     System.out.println("Presionaste mas");
-        // }
-
-        // if (e.getSource() == btImprimir) {
-        //     Ticket ticketsito = condiciones();
-        //     if(contador >=1){
-        //         contador--;
-        //     }
-        //     tPreview2 = new TicketPreview2(ticketsito);
-        //     System.out.println("Entré");
-        //     tPreview2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        //     tPreview2.setVisible(true);            
-        // }
-
+        System.out.println("Action performed");
+        modelo.setRegistros(gestor.leerArchivo());
     }
    
 }

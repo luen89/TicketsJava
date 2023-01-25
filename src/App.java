@@ -17,7 +17,7 @@ public class App {
     public static void main(String args[]){
         FlatMaterialDarkerIJTheme.setup();
         GestorArchivos ga= new GestorArchivos();
-        ga.leerArchivo();
+        // ga.leerArchivo();
 
         Ventana miVentana=new Ventana(ga);                
         miVentana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

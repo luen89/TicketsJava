@@ -210,7 +210,7 @@ public class GestorArchivos {
                 //System.out.println(line);
                 st=line.split(",");
                 registros.add(new EntradaRegistro(st[0], st[1], Double.parseDouble(st[2]), st[3], st[4], st[5]));
-                System.out.println(st[0]+" " + st[1]+" " + Double.parseDouble(st[2])+" " + st[3]+" " + st[4] + " " + st[5]);
+                // System.out.println(st[0]+" " + st[1]+" " + Double.parseDouble(st[2])+" " + st[3]+" " + st[4] + " " + st[5]);
             }          
                  
             in.close();

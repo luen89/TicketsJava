@@ -1,36 +1,52 @@
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
+import javax.swing.table.AbstractTableModel;
 
-class EntradaRegistroModel implements TableModel
+class EntradaRegistroModel extends AbstractTableModel 
 {
-    private ArrayList<TableModelListener> suscriptores = new ArrayList<TableModelListener>();
-    
-    public Class getColumnClass (int columIndex) {
-        return "String.getClass".getClass();
-    }
-    public int getColumnCount() {
-        return 1;
-    }
-    public String getColumnName (int columnIndex) {
-        return "";
-    }
-    public int getRowCount() {
-        return 1;
-    }
-    public Object getValueAt (int rowIndex, int columnIndex) {
-        return new Object();
-    }
-    public boolean isCellEditable (int rowIndex, int columnIndex) {
-        return true;
-    }
-    public void setValueAt (Object aValue, int rowIndex, int columnIndex){  }
+    private ArrayList<EntradaRegistro> registros;
+    private String columnas[] = {"Folio", "Cliente", "Monto", "Status de Pago", "Status de Entrega", "Fecha"};
+    NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
-    public void addTableModelListener (TableModelListener l) {
-        suscriptores.add(l);
+    public EntradaRegistroModel(ArrayList<EntradaRegistro> registros) {
+        this.registros = registros;
     }
-    public void removeTableModelListener (TableModelListener l) {
-        suscriptores.remove(l);
+    
+    public int getRowCount() {
+        return registros.size();
+    }
+
+    public int getColumnCount() {
+        return 6;
+    }
+
+    public Object getValueAt (int rowIndex, int columnIndex) {
+        switch(columnIndex) {
+            case 0: return registros.get(rowIndex).Folio;
+            case 1: return registros.get(rowIndex).NombreCliente;
+            case 2: return (formatter.format(registros.get(rowIndex).Monto));
+            case 3: return registros.get(rowIndex).StatusPago;
+            case 4: return registros.get(rowIndex).StatusEntrega;
+            case 5: return registros.get(rowIndex).Fecha;
+        }
+        return columnIndex;
+    }
+
+    public Class getColumnClass (int columIndex) {
+        return "String".getClass();
+    }
+
+    public String getColumnName (int columnIndex) {
+        return columnas[columnIndex];
+    }
+
+    public boolean isCellEditable (int rowIndex, int columnIndex) {
+        return false;
+    }
+
+    public void setRegistros(ArrayList<EntradaRegistro> registros) {
+        this.registros = registros;
+        fireTableDataChanged();
     }
 }
