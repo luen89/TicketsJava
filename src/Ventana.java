@@ -16,7 +16,7 @@ public class Ventana extends JFrame{
     
     public Ventana(GestorArchivos ga){
         setTitle("Pavonado");
-        setSize(820,560);
+        setSize(1150,560);
         this.setResizable(true);
         setLocationRelativeTo(null);
         this.ga = ga;
