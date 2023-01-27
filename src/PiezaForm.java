@@ -47,7 +47,7 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener {
      public PiezaForm() {// Constructor
           super(new FlowLayout(FlowLayout.LEFT));
           // Crea Objeto Elemento
-          elemento = new Elemento("", "", 0, 0.0,"","");
+          elemento = new Elemento("", "", 0, 0.0,"","",0);
 
           // Inicializa la ComboBox de Servicios
           cbServicios = new JComboBox<>(Servicio);

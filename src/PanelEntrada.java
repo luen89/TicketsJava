@@ -232,7 +232,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
             if (contador >= 1) {
                 contador--;
             }
-            tPreview2 = new TicketPreview2(ticketsito);
+            tPreview2 = new TicketPreview2(ticketsito, gestor);
             System.out.println("Entré");
             tPreview2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             tPreview2.setVisible(true);
@@ -242,6 +242,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
             gestor.writeFile(new EntradaRegistro(txtnOrden.getText(), txtCliente.getText(), ticketsito.costoTotal,
                     "PAGADO", "NO ENTREGADO", fecha));
+            gestor.writeFileOrder(ticketsito);
             try {
                 gestor.incremetNumOrden();
                 txtnOrden.setText(String.format("%04d", gestor.getNumOrden()));
@@ -264,7 +265,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
         double costoTemplado = 0.0;
 
         double costoTotal = 0.0;
-        Ticket ticket = new Ticket(0, 0, 0, 0, 0, initDate, iva.isSelected(), new ArrayList<Elemento>());
+        Ticket ticket = new Ticket(Integer.parseInt(txtnOrden.getText()),txtCliente.getText(),0, 0, 0, 0, 0, initDate, iva.isSelected(),0.0, new ArrayList<Elemento>());
         for (int i = 0; i < pformsT.size(); i++) {
             System.out.println("Servicio: " + pformsT.get(i).getElemento().getServicio());
 

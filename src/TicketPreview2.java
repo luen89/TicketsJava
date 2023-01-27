@@ -11,15 +11,19 @@ import javax.swing.*;
  * @author Luis Enrique Pérez González
  */
 public class TicketPreview2 extends JFrame implements ActionListener{
-
+    OrdenFileFrame off;
     JTextArea ticketTextArea;
+    GestorArchivos gestor;
+    JTextField verOrden;
+    JButton boton;
     Ticket ticket;
     String listaArticulos = "";
     private static final DecimalFormat df = new DecimalFormat("0.00");
     double sumaP = 0.0;
     double sumaT = 0.0;
     
-    public TicketPreview2(Ticket ticket){
+    public TicketPreview2(Ticket ticket, GestorArchivos gestor){
+        this.gestor = gestor;
         this.ticket = ticket;
         this.setLayout(new FlowLayout(FlowLayout.CENTER));
        
@@ -33,6 +37,9 @@ public class TicketPreview2 extends JFrame implements ActionListener{
     }
 
     private void initComponents() {
+        verOrden= new JTextField(6);
+        boton = new JButton("Ver Orden");
+        boton.addActionListener(this);
         this.ticketTextArea = new JTextArea();
         ticketTextArea.setAlignmentX(JTextArea.LEFT_ALIGNMENT); 
         ticketTextArea.setEditable(false);
@@ -134,11 +141,19 @@ public class TicketPreview2 extends JFrame implements ActionListener{
         ticketTextArea.setText(ticketModificado);
 
         this.add(ticketTextArea);
+        this.add(verOrden);
+        this.add(boton);
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource()==boton){
+            /*Ticket ordenAver= gestor.readFileOrder(Integer.parseInt(verOrden.getText()));
+            off = new OrdenFileFrame(ordenAver);
+            off.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            off.setVisible(true); */
+        }
         // TODO Auto-generated method stub
         
     }
