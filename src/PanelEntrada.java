@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.Calendar;
 import javax.swing.*;
 import javax.swing.border.*;
+import java.lang.InterruptedException;
+import java.io.IOException;
 
 /**
  *
@@ -32,27 +34,25 @@ public class PanelEntrada extends JPanel implements ActionListener {
     // prueba
     private int contador = 0;
 
-    
-
     public PanelEntrada(GestorArchivos ga) {
-        this.gestor=ga;
+        this.gestor = ga;
         initComponents();
     }
 
     private void initComponents() {
-        /*****  Configuracion de los Spinners de Fecha */
+        /***** Configuracion de los Spinners de Fecha */
         lbnOrden = new JLabel("Numero de Orden");
         lbnOrden.setForeground(Color.white);
         txtnOrden = new JTextField("", 3);
         txtnOrden.setEditable(false);
-        txtnOrden.setBackground(getBackground());
-        try{
+        try {
             txtnOrden.setText(String.format("%04d", gestor.getNumOrden()));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        catch(Exception e){System.out.println(e.getMessage());}
-        
+
         initDate = cal.getTime();
-        cal.add(Calendar.YEAR,  -100);
+        cal.add(Calendar.YEAR, -100);
         Date earliestDate = cal.getTime();
         cal.add(Calendar.YEAR, 200);
         Date latestDate = cal.getTime();
@@ -70,19 +70,18 @@ public class PanelEntrada extends JPanel implements ActionListener {
         /* Construccion de la lista de Piezas de Pavoneo */
 
         // pformsP = new ArrayList<>();
-        //cocnstrutor de contador
+        // cocnstrutor de contador
         // pformsP.add(new PiezaForm(contador));
         // pformsT.get(0).preDisplay();
 
-
-        /*  Construccion de la lista de Piezas de Templado */
+        /* Construccion de la lista de Piezas de Templado */
         pListTemplado = new JPanel();
-        pListTemplado.setLayout(new BoxLayout(pListTemplado,  BoxLayout.Y_AXIS));
+        pListTemplado.setLayout(new BoxLayout(pListTemplado, BoxLayout.Y_AXIS));
         pformsT = new ArrayList<>();
         scrollT = new JScrollPane(pListTemplado);
-        
+
         PiezaForm pieza = new PiezaForm();
-        
+
         pformsT.add(pieza);
         pieza.preDisplay();
         pListTemplado.add(pieza);
@@ -96,13 +95,11 @@ public class PanelEntrada extends JPanel implements ActionListener {
             }
         });
 
-
-        
-        //  ************Etiquetas del Total de Piezas******************************
+        // ************Etiquetas del Total de Piezas******************************
         lbTotPiezas = new JLabel("Total Piezas:");
         lbTotKg = new JLabel("Total Kg:");
-        lbRD  =  new JLabel("Fecha de Recepcion");
-        lbGD  =  new JLabel("Fecha de Entrega");
+        lbRD = new JLabel("Fecha de Recepcion");
+        lbGD = new JLabel("Fecha de Entrega");
         lbCliente = new JLabel("Cliente:");
         lbRD.setForeground(Color.white);
         lbGD.setForeground(Color.white);
@@ -118,7 +115,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         iva = new JCheckBox("¿Requiere factura?");
 
-        btPago  =  new JButton("Pagar");
+        btPago = new JButton("Pagar");
         btPago.addActionListener(this);
 
         /* Botones de mas y menos */
@@ -128,24 +125,24 @@ public class PanelEntrada extends JPanel implements ActionListener {
         // ***************PANELES DE DATOS*************************
 
         // ***************PANELES DE DATOS*************************
-        /*  Panel de los botones mas o menos Templado */
+        /* Panel de los botones mas o menos Templado */
         pIncrementoT = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pIncrementoT.add(btplus);
 
-        /*  Panel de los totales de Piezas */
-        pTotales  =  new JPanel(new FlowLayout(FlowLayout.LEFT));
+        /* Panel de los totales de Piezas */
+        pTotales = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pTotales.add(lbTotPiezas);
         pTotales.add(txtTpiezas);
         pTotales.add(lbTotKg);
         pTotales.add(txtTkg);
 
-        //  ***************Panel De Encabezado*************************
+        // ***************Panel De Encabezado*************************
         pEncabezado = new JPanel(new GridLayout(0, 2));
         pEncabezadoDatos = new JPanel(new GridLayout(0,2));
-        lbImagen  =  new JLabel();
-        lbImagen.setPreferredSize(new Dimension(400,  150));
+        lbImagen = new JLabel();
+        lbImagen.setPreferredSize(new Dimension(400, 150));
         ImageIcon fot = new ImageIcon("src/Imagenes/Aguila_banner.png");
-        //  lbImagen.setIcon(new ImageIcon("src/Imagenes/imagen.png"));
+        // lbImagen.setIcon(new ImageIcon("src/Imagenes/imagen.png"));
         Icon icono = new ImageIcon(fot.getImage().getScaledInstance(400, 150, Image.SCALE_SMOOTH));
         lbImagen.setIcon(icono);
         pEncabezado.add(pEncabezadoDatos);
@@ -161,9 +158,9 @@ public class PanelEntrada extends JPanel implements ActionListener {
         //pEncabezado.setBackground(Color.black);
         repaint();
 
-        //  *****************Panel del Templado**************************
-        pTemplado  =  new JPanel();
-        pTemplado.setLayout(new BoxLayout(pTemplado,  BoxLayout.Y_AXIS));
+        // *****************Panel del Templado**************************
+        pTemplado = new JPanel();
+        pTemplado.setLayout(new BoxLayout(pTemplado, BoxLayout.Y_AXIS));
         pTemplado.add(pIncrementoT);
         pTemplado.add(scrollT);
 
@@ -186,7 +183,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         pEncabezado.setBorder(bordeEntrada);
 
-        Border bordePane3  = new TitledBorder(new EtchedBorder(), "Servicios");
+        Border bordePane3 = new TitledBorder(new EtchedBorder(), "Servicios");
         pTemplado.setBorder(bordePane3);
 
         Border bordePanel2 = new TitledBorder(new EtchedBorder(), "Total");
@@ -197,37 +194,39 @@ public class PanelEntrada extends JPanel implements ActionListener {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(pEncabezado);
         add(pTemplado);
-        //add(pDatos);
+        // add(pDatos);
         add(pImprimir);
 
-        /*for(int i=0; i < pformsP.size();i++){
-            listaBotones.add(pformsP.get(i).getBtnX());
-            listaBotones.get(i).addActionListener(this);
-        }*/
+        /*
+         * for(int i=0; i < pformsP.size();i++){
+         * listaBotones.add(pformsP.get(i).getBtnX());
+         * listaBotones.get(i).addActionListener(this);
+         * }
+         */
     }
 
-    public void refreshDisplay(){
+    public void refreshDisplay() {
         this.updateUI();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        //  Agregar nuevo elemento
-        if  (e.getSource()  ==  btplus)  {
+        // Agregar nuevo elemento
+        if (e.getSource() == btplus) {
             PiezaForm pieza = new PiezaForm();
             pformsT.add(pieza);
             pieza.preDisplay();
             pieza.getBotonEliminar().addActionListener(new ActionListener() {
-               @Override
+                @Override
 
                 public void actionPerformed(ActionEvent e) {
                     pListTemplado.remove(pieza);
                     pformsT.remove(pieza);
                     refreshDisplay();
                 }
-          });
-            pListTemplado.add(pformsT.get(pformsT.size()  -  1));
+            });
+            pListTemplado.add(pformsT.get(pformsT.size() - 1));
 
             this.updateUI();
             System.out.println("Presionaste mas");
@@ -236,28 +235,31 @@ public class PanelEntrada extends JPanel implements ActionListener {
         if (e.getSource() == btImprimir) {
 
             Ticket ticketsito = condiciones();
-            if(contador >=1){
+            if (contador >= 1) {
                 contador--;
             }
             tPreview2 = new TicketPreview2(ticketsito);
             System.out.println("Entré");
             tPreview2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             tPreview2.setVisible(true);
-            
+
             SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyy");
             String fecha = formatoFecha.format(jspGiveDate.getValue());
 
-            gestor.writeFile(new EntradaRegistro(txtnOrden.getText(),txtCliente.getText(),ticketsito.costoTotal,"PAGADO","NO ENTREGADO",fecha));
-            try{gestor.incremetNumOrden();
-            txtnOrden.setText(String.format("%04d", gestor.getNumOrden()));}
-            catch(Exception excp){}          
+            gestor.writeFile(new EntradaRegistro(txtnOrden.getText(), txtCliente.getText(), ticketsito.costoTotal,
+                    "PAGADO", "NO ENTREGADO", fecha));
+            try {
+                gestor.incremetNumOrden();
+                txtnOrden.setText(String.format("%04d", gestor.getNumOrden()));
+            } catch (Exception excp) {
+            }
             this.updateUI();
         }
 
     }
 
-    public void recibir(int id){
-        System.out.println("Imprimiendo desde panel entrada: "+id);
+    public void recibir(int id) {
+        System.out.println("Imprimiendo desde panel entrada: " + id);
     }
 
     public Ticket condiciones() {
@@ -268,7 +270,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
         double costoTemplado = 0.0;
 
         double costoTotal = 0.0;
-        Ticket ticket = new Ticket(0,0,0,0,0,initDate,iva.isSelected(),new ArrayList<Elemento>());
+        Ticket ticket = new Ticket(0, 0, 0, 0, 0, initDate, iva.isSelected(), new ArrayList<Elemento>());
         for (int i = 0; i < pformsT.size(); i++) {
             System.out.println("Servicio: " + pformsT.get(i).getElemento().getServicio());
 
@@ -283,19 +285,18 @@ public class PanelEntrada extends JPanel implements ActionListener {
             ticket.pformsT.add(pformsT.get(i).getElemento());
         }
 
-
         System.out.println("Kilos pavonado: " + contadorPavonado);
         System.out.println("Kilos templado: " + contadorTemplado);
 
         if (contadorPavonado > 0 && contadorPavonado > 8) {
             costoPavonado += contadorPavonado * 39;
-        } else if(contadorPavonado > 0 && contadorPavonado <= 8) {
+        } else if (contadorPavonado > 0 && contadorPavonado <= 8) {
             costoPavonado += 280;
         }
 
         if (contadorTemplado > 0 && contadorTemplado > 4) {
             costoTemplado += contadorTemplado * 95;
-        } else if(contadorTemplado > 0 && contadorTemplado <= 4) {
+        } else if (contadorTemplado > 0 && contadorTemplado <= 4) {
             costoTemplado += 310;
         }
 
@@ -304,7 +305,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         costoTotal = costoPavonado + costoTemplado;
 
-        if(iva.isSelected()){
+        if (iva.isSelected()) {
             costoTotal += costoTotal * 0.16;
         }
 
@@ -316,6 +317,67 @@ public class PanelEntrada extends JPanel implements ActionListener {
         ticket.costoTotal = costoTotal;
 
         return ticket;
+    }
+
+    public void llamarImpresora() {
+        try {
+            String[] impresoras = ConectorPlugin.obtenerImpresoras();
+            System.out.println("Lista de impresoras:");
+            for (String impresora : impresoras) {
+                System.out.printf("'%s'\n", impresora);
+            }
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Error obteniendo impresoras: " + e.getMessage());
+        }
+
+        String amongUsComoCadena = "000001111000\n000010000100\n000100011110\n000100100001\n011100100001\n010100100001\n010100100001\n010100011110\n010100000010\n011100000010\n000100111010\n000100101010\n000111101110\n000000000000\n000000000000\n000000000000\n111010101110\n100010101000\n111010101110\n001010100010\n111011101110\n000000000000\n000000000000\n000000000000";
+        // Aquí tu serial en caso de tener uno
+        final String serial = "";
+        ConectorPlugin conectorPlugin = new ConectorPlugin(ConectorPlugin.URL_PLUGIN_POR_DEFECTO, serial);
+        conectorPlugin.Iniciar()
+                .DeshabilitarElModoDeCaracteresChinos()
+                .EstablecerAlineacion(ConectorPlugin.ALINEACION_CENTRO)
+                .DescargarImagenDeInternetEImprimir("http://assets.stickpng.com/thumbs/587e32259686194a55adab73.png", 0,
+                        216)
+                .Feed(1)
+                .EscribirTexto("Parzibyte's blog\n")
+                .EscribirTexto("Blog de un programador\n")
+                .TextoSegunPaginaDeCodigos(2, "cp850", "Teléfono: 123456798\n")
+                .EscribirTexto("Fecha y hora: " + "29/9/2022")
+                .Feed(1)
+                .EstablecerAlineacion(ConectorPlugin.ALINEACION_IZQUIERDA)
+                .EscribirTexto("____________________\n")
+                .TextoSegunPaginaDeCodigos(2, "cp850", "Venta de plugin para impresoras versión 3\n")
+                .EstablecerAlineacion(ConectorPlugin.ALINEACION_DERECHA)
+                .EscribirTexto("$25\n")
+                .EscribirTexto("____________________\n")
+                .EscribirTexto("TOTAL: $25\n")
+                .EscribirTexto("____________________\n")
+                .EstablecerAlineacion(ConectorPlugin.ALINEACION_CENTRO)
+                .HabilitarCaracteresPersonalizados()
+                .DefinirCaracterPersonalizado("$", amongUsComoCadena)
+                .EscribirTexto("En lugar del simbolo de pesos debe aparecer un among us\n")
+                .EscribirTexto("TOTAL: $25\n")
+                .EstablecerEnfatizado(true)
+                .EstablecerTamanoFuente(1, 1)
+                .TextoSegunPaginaDeCodigos(2, "cp850", "¡Gracias por su compra!\n")
+                .Feed(1)
+                .ImprimirCodigoQr("https://parzibyte.me/blog", 160, ConectorPlugin.RECUPERACION_QR_MEJOR,
+                        ConectorPlugin.TAMANO_IMAGEN_NORMAL)
+                .Feed(1)
+                .ImprimirCodigoDeBarrasCode128("parzibyte.me", 80, 192, ConectorPlugin.TAMANO_IMAGEN_NORMAL)
+                .Feed(1)
+                .EstablecerTamanoFuente(1, 1)
+                .EscribirTexto("parzibyte.me\n")
+                .Feed(3)
+                .Corte(1)
+                .Pulso(48, 60, 120);
+        try {
+            conectorPlugin.imprimirEn("PT210");
+            System.out.println("Impreso correctamente");
+        } catch (Exception e) {
+            System.out.println("Error imprimiendo: " + e.getMessage());
+        }
     }
 
     public String getTotalPiezas() {
@@ -332,5 +394,5 @@ public class PanelEntrada extends JPanel implements ActionListener {
     public String getNombreCliente() {
         return txtCliente.getText();
     }
-    
+
 }

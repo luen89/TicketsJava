@@ -12,6 +12,9 @@ import javax.swing.event.ChangeListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -21,7 +24,7 @@ import java.util.Arrays;
  * @author luen89
  */
 
-public class PiezaForm extends JPanel implements ChangeListener {
+public class PiezaForm extends JPanel implements ChangeListener, FocusListener {
      private JLabel lbNPiezas, lbAcero, lbpeso, lbDureza, lbDescripcion;
      private String Servicio[] = { "Selecciona Servicio", "Pavonado", "Templado", "Templado y Pavonado" };
      private String acero[] = { "Selecciona tipo", "4140", "8620", "1045", "Colled Rolled", "Q1", "D2" };
@@ -105,8 +108,12 @@ public class PiezaForm extends JPanel implements ChangeListener {
           sNDureza.addChangeListener(this);
 
           //Inicializar el textField
+          //dureza
           tfDureza = new JTextField(7);
+          tfDureza.addFocusListener(this);
+          //descripcion
           tfDesc = new JTextField(7);
+          tfDesc.addFocusListener(this);
 
           btnX = new JButton("X");
 
@@ -147,16 +154,16 @@ public class PiezaForm extends JPanel implements ChangeListener {
                elemento.setKilos(Double.parseDouble(sNKilos.getValue().toString()));
           }
 
-          elemento.setDureza(tfDureza.getText());
-          elemento.setDescripcion(tfDesc.getText());
+          //elemento.setDureza(tfDureza.getText());
+          //elemento.setDescripcion(tfDesc.getText());
 
           System.out.println(elemento.getAcero());
           System.out.println(elemento.getPiezas());
           System.out.println(elemento.getKilos());
           System.out.println(elemento.getServicio());
 
-          System.out.println(elemento.getDureza());
-          System.out.println(elemento.getDescripcion());
+          //System.out.println(elemento.getDureza());
+          //System.out.println(elemento.getDescripcion());
      }
 
      public Elemento getElemento(){
@@ -168,6 +175,23 @@ public class PiezaForm extends JPanel implements ChangeListener {
      }
      public JButton getBotonEliminar(){
           return this.btnX;
+     }
+
+     @Override
+     public void focusGained(FocusEvent e) {
+          // TODO Auto-generated method stub
+          
+     }
+
+     @Override
+     public void focusLost(FocusEvent e) {
+          // TODO Auto-generated method stub
+
+          elemento.setDureza(tfDureza.getText());
+          System.out.println(elemento.getDureza());
+
+          elemento.setDescripcion(tfDesc.getText());
+          System.out.println(elemento.getDescripcion());
      }
 
 }

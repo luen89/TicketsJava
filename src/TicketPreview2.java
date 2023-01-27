@@ -44,27 +44,27 @@ public class TicketPreview2 extends JFrame implements ActionListener{
         + "           AGUILA TRATAMIENTOS TERMICOS Y SERVICIOS       \n"
         + "                         {{sucursal}}                     \n"
         + "    Calle 21 de Marzo #7-A, Col.San Jose el Conde, Puebla, Puebla \n"
-        + "    ======================================================\n"
+        + "    ===================================================================\n"
         + "    Ticket # {{ticket}} \n"
         + "    {{fecha}} \n\n"
         + "    Detalle de producto                                   \n"
-        + "    ======================================================\n"
-        + "    NPiezas\tServicio\tAcero\tPeso\tCosto\n"
+        + "    ===================================================================\n"
+        + "    NPiezas\tServicio\tAcero\tDureza\tPeso\tCosto \n"
         + "    {{items}}\n"
-        + "    ======================================================\n"
+        + "    ===================================================================\n"
         + "    Total PAV:\t\t $ {{totalP}} \n"
         + "    Cargo Min Pav:\t $ {{impP}} \n"
         + "    Total TEMP:\t\t $ {{totalT}} \n"
         + "    Cargo Min Temp:\t $ {{impT}} \n"
         + "    {{IVA}}  \n"        
         + "    COSTO TOTAL: $ {{total}} \n"
-        + "    ======================================================\n"
+        + "    ===================================================================\n"
         + "    \n"
         + "    \n"
         + "    \n"
         + "    \t________________________________\n"
         + "    \t\tFIRMA\n"
-        + "    ======================================================\n"
+        + "    ===================================================================\n"
         + "                   GRACIAS POR SU PREFERENCIA...          \n"
         + "                      ******::::::::*******"
         + "\n           "
@@ -87,6 +87,7 @@ public class TicketPreview2 extends JFrame implements ActionListener{
                             elemento.getPiezas()+"\t"+
                             elemento.getServicioAbreviado()+"\t"+
                             elemento.getAcero()+"\t"+
+                            elemento.getDureza()+"\t"+
                             df.format(elemento.getKilos())+"\t"+
                             "$"+df.format(costoP)+"\n";
                             break;
@@ -96,6 +97,7 @@ public class TicketPreview2 extends JFrame implements ActionListener{
                             elemento.getPiezas()+"\t"+
                             elemento.getServicioAbreviado()+"\t"+
                             elemento.getAcero()+"\t"+
+                            elemento.getDureza()+"\t"+
                             df.format(elemento.getKilos())+"\t"+
                             "$"+df.format(costoT)+"\n";
                             break;
@@ -106,6 +108,7 @@ public class TicketPreview2 extends JFrame implements ActionListener{
                             elemento.getPiezas()+"\t"+
                             elemento.getServicioAbreviado()+"\t"+
                             elemento.getAcero()+"\t"+
+                            elemento.getDureza()+"\t"+
                             df.format(elemento.getKilos())+"\t"+
                             "$"+df.format(costoP)+"\n"+
                             "\t\t\t\t$"+df.format(costoT)+"\n";
