@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StreamTokenizer;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -93,7 +95,7 @@ public class GestorArchivos {
             //Se escriben todas las instrucciones en el archivo
             myWriter.write("\n");
             myWriter.write(entRe.getFolio()+","+entRe.getNombreCliente()+","+entRe.getMonto()+","+entRe.getStatusPago()+","+ entRe.getStatusEntrega()+","+entRe.getFecha());
-            
+            System.out.println(entRe.getFecha());
             //Se cierra el writer
             myWriter.close();
             System.out.println("Escrito correctamente.");

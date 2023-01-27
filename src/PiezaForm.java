@@ -84,8 +84,8 @@ public class PiezaForm extends JPanel implements ChangeListener {
 
           // Inicializa las etiquetas
           lbNPiezas = new JLabel("Numero de Piezas");
-          lbAcero = new JLabel("       Acero");
-          lbpeso = new JLabel("        Peso en Kg");
+          lbAcero = new JLabel(" Acero");
+          lbpeso = new JLabel(" Peso en Kg");
           lbDureza = new JLabel(" Dureza");
           lbDescripcion =  new JLabel(" Descripción");
 
