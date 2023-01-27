@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.Flow;
 import java.util.Calendar;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -19,7 +20,7 @@ import java.io.IOException;
 public class PanelEntrada extends JPanel implements ActionListener {
     private JLabel lbTotPiezas, lbTotKg, lbRD, lbGD, lbImagen, lbnOrden, lbCliente;
     private JButton btImprimir, btPago, btplus;
-    private JPanel pDatos, pEncabezado, pTotales, pImprimir,
+    private JPanel pDatos, pEncabezado, pEncabezadoDatos, pTotales, pImprimir,
             pTemplado, pIncrementoT, pListTemplado;
     private JTextField txtTpiezas, txtTkg, txtnOrden, txtCliente;
     private JScrollPane scrollT;
@@ -43,7 +44,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
         /***** Configuracion de los Spinners de Fecha */
         lbnOrden = new JLabel("Numero de Orden");
         lbnOrden.setForeground(Color.white);
-        txtnOrden = new JTextField("", 8);
+        txtnOrden = new JTextField("", 3);
         txtnOrden.setEditable(false);
         try {
             txtnOrden.setText(String.format("%04d", gestor.getNumOrden()));
@@ -56,10 +57,14 @@ public class PanelEntrada extends JPanel implements ActionListener {
         Date earliestDate = cal.getTime();
         cal.add(Calendar.YEAR, 200);
         Date latestDate = cal.getTime();
-        SpinnerDateModel spdm = new SpinnerDateModel(initDate, earliestDate, latestDate, Calendar.DAY_OF_MONTH);
-        SpinnerDateModel spdm2 = new SpinnerDateModel(initDate, earliestDate, latestDate, Calendar.DAY_OF_MONTH);
-        jspReceptionDate = new JSpinner(spdm);
-        jspGiveDate = new JSpinner(spdm2);
+        SpinnerDateModel spdm = new SpinnerDateModel(initDate,  earliestDate,  latestDate,  Calendar.DAY_OF_MONTH);
+        JSpinner jspReceptionDate = new JSpinner(spdm);
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(jspReceptionDate, "dd/MM/yyyy");
+        jspReceptionDate.setEditor(editor);
+        SpinnerDateModel spdm2 = new SpinnerDateModel(initDate,  earliestDate,  latestDate,  Calendar.DAY_OF_MONTH);
+        JSpinner jspGiveDate = new JSpinner(spdm2);
+        JSpinner.DateEditor editor2 = new JSpinner.DateEditor(jspGiveDate, "dd/MM/yyyy");
+        jspGiveDate.setEditor(editor2);
 
         /* Construccion de la lista de Piezas de Pavoneo */
 
@@ -101,8 +106,8 @@ public class PanelEntrada extends JPanel implements ActionListener {
         lbGD.setForeground(Color.white);
         lbCliente.setForeground(Color.white);
         txtTkg = new JTextField(" ", 6);
-        txtTpiezas = new JTextField("Suma de piezas", 6);
-        txtCliente = new JTextField("", 6);
+        txtTpiezas  =  new JTextField("Suma de piezas",  6);
+        txtCliente = new JTextField("", 15);
         txtTpiezas.setEditable(false);
 
         /* botones de Imprimir y Pagar */
@@ -133,23 +138,26 @@ public class PanelEntrada extends JPanel implements ActionListener {
         pTotales.add(txtTkg);
 
         // ***************Panel De Encabezado*************************
-        pEncabezado = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        pEncabezado = new JPanel(new GridLayout(0, 2));
+        pEncabezadoDatos = new JPanel(new GridLayout(0,2));
         lbImagen = new JLabel();
-        lbImagen.setPreferredSize(new Dimension(750, 100));
+        lbImagen.setPreferredSize(new Dimension(500, 150));
         ImageIcon fot = new ImageIcon("src/Imagenes/Aguila_banner.png");
         // lbImagen.setIcon(new ImageIcon("src/Imagenes/imagen.png"));
-        Icon icono = new ImageIcon(fot.getImage().getScaledInstance(750, 100, Image.SCALE_DEFAULT));
+        Icon icono = new ImageIcon(fot.getImage().getScaledInstance(550, 150, Image.SCALE_SMOOTH));
         lbImagen.setIcon(icono);
+        lbImagen.setAlignmentX(BOTTOM_ALIGNMENT);
+        pEncabezado.add(pEncabezadoDatos);
         pEncabezado.add(lbImagen);
-        pEncabezado.add(lbRD);
-        pEncabezado.add(jspReceptionDate);
-        pEncabezado.add(lbGD);
-        pEncabezado.add(jspGiveDate);
-        pEncabezado.add(lbnOrden);
-        pEncabezado.add(txtnOrden);
-        pEncabezado.add(lbCliente);
-        pEncabezado.add(txtCliente);
-        pEncabezado.setBackground(Color.black);
+        pEncabezadoDatos.add(lbRD);
+        pEncabezadoDatos.add(jspReceptionDate);
+        pEncabezadoDatos.add(lbGD);
+        pEncabezadoDatos.add(jspGiveDate);
+        pEncabezadoDatos.add(lbnOrden);
+        pEncabezadoDatos.add(txtnOrden);
+        pEncabezadoDatos.add(lbCliente);
+        pEncabezadoDatos.add(txtCliente);
+        //pEncabezado.setBackground(Color.black);
         repaint();
 
         // *****************Panel del Templado**************************
@@ -183,7 +191,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
         Border bordePanel2 = new TitledBorder(new EtchedBorder(), "Total");
         pDatos.setBorder(bordePanel2);
 
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        //this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(pEncabezado);

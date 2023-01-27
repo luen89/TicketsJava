@@ -26,8 +26,8 @@ import java.util.Arrays;
 
 public class PiezaForm extends JPanel implements ChangeListener, FocusListener {
      private JLabel lbNPiezas, lbAcero, lbpeso, lbDureza, lbDescripcion;
-     private String Servicio[] = { "Selecciona Servicio", "Pavonado", "Templado", "Templado y Pavonado" };
-     private String acero[] = { "Selecciona tipo", "4140", "8620", "1045", "Colled Rolled", "Q1", "D2" };
+     private String Servicio[] = { "Seleccionar", "Pavonado", "Templado", "Templado y Pavonado" };
+     private String acero[] = { "Seleccionar", "4140", "8620", "1045", "Colled Rolled", "Q1", "D2" };
      private SpinnerModel smNpiezas;
      private JSpinner sNpiezas;
      private SpinnerModel smNkilos;
@@ -87,8 +87,8 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener {
 
           // Inicializa las etiquetas
           lbNPiezas = new JLabel("Numero de Piezas");
-          lbAcero = new JLabel("       Acero");
-          lbpeso = new JLabel("        Peso en Kg");
+          lbAcero = new JLabel(" Acero");
+          lbpeso = new JLabel(" Peso en Kg");
           lbDureza = new JLabel(" Dureza");
           lbDescripcion =  new JLabel(" Descripción");
 
@@ -112,7 +112,7 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener {
           tfDureza = new JTextField(7);
           tfDureza.addFocusListener(this);
           //descripcion
-          tfDesc = new JTextField(7);
+          tfDesc = new JTextField(17);
           tfDesc.addFocusListener(this);
 
           btnX = new JButton("X");

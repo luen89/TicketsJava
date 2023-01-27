@@ -1,5 +1,6 @@
 
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -47,12 +48,41 @@ public class PanelRegistros extends JPanel implements ActionListener {
         sorter = new TableRowSorter<EntradaRegistroModel>(modelo);
         
         tabla = new JTable(modelo);
+        // tabla.setDefaultRenderer(Object.class, new RenderButton());
+
+        tabla.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent me) {
+                JTable target = (JTable) me.getSource();
+                int row = target.getSelectedRow(); // select a row
+                int column = target.getSelectedColumn(); // select a column
+                if(column != 6)
+                    return;
+                
+                VentanaDetalles vDetalles = new VentanaDetalles();
+                System.out.println("Entré");
+                vDetalles.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                vDetalles.setVisible(true);
+                    // JOptionPane.showMessageDialog(null, tabla.getValueAt(row, 0)); // get the value of a row and column.                
+                
+                // if (me.getClickCount() == 2) { // to detect doble click events
+                //     JTable target = (JTable) me.getSource();
+                //     int row = target.getSelectedRow(); // select a row
+                //     int column = target.getSelectedColumn(); // select a column
+                //     JOptionPane.showMessageDialog(null, tabla.getValueAt(row, 0)); // get the value of a row and column.
+                // }
+            }
+        });
+
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         tabla.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
         tabla.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
         tabla.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
         tabla.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        tabla.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
+
+        // tabla.getColumnModel().getColumn(6).setCellRenderer(new ButtonRenderer());
+        // tabla.getColumnModel().getColumn(6).setCellEditor(new ButtonEditor(new JTextField(), modelo));
         
         tabla.setRowSorter(sorter);
         sorter.setComparator(2, new Comparator<String>() {            

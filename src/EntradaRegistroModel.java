@@ -6,7 +6,8 @@ import javax.swing.table.AbstractTableModel;
 class EntradaRegistroModel extends AbstractTableModel 
 {
     private ArrayList<EntradaRegistro> registros;
-    private String columnas[] = {"Folio", "Cliente", "Monto", "Status de Pago", "Status de Entrega", "Fecha"};
+    private String columnas[] = {"Folio", "Cliente", "Monto", "Status de Pago", "Status de Entrega", "Fecha", ""};
+    private boolean editable[] = {false, false, false, false, false, false, true};
     NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
     public EntradaRegistroModel(ArrayList<EntradaRegistro> registros) {
@@ -18,7 +19,7 @@ class EntradaRegistroModel extends AbstractTableModel
     }
 
     public int getColumnCount() {
-        return 6;
+        return 7;
     }
 
     public Object getValueAt (int rowIndex, int columnIndex) {
@@ -29,6 +30,7 @@ class EntradaRegistroModel extends AbstractTableModel
             case 3: return registros.get(rowIndex).StatusPago;
             case 4: return registros.get(rowIndex).StatusEntrega;
             case 5: return registros.get(rowIndex).Fecha;
+            case 6: return "DETALLES";
         }
         return columnIndex;
     }
@@ -42,7 +44,7 @@ class EntradaRegistroModel extends AbstractTableModel
     }
 
     public boolean isCellEditable (int rowIndex, int columnIndex) {
-        return false;
+        return editable[columnIndex];
     }
 
     public void setRegistros(ArrayList<EntradaRegistro> registros) {

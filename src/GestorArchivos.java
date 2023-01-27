@@ -1,15 +1,18 @@
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.text.Normalizer.Form;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
@@ -95,7 +98,7 @@ public class GestorArchivos {
             //Se escriben todas las instrucciones en el archivo
             myWriter.write("\n");
             myWriter.write(entRe.getFolio()+","+entRe.getNombreCliente()+","+entRe.getMonto()+","+entRe.getStatusPago()+","+ entRe.getStatusEntrega()+","+entRe.getFecha());
-            
+    
             //Se cierra el writer
             myWriter.close();
             System.out.println("Escrito correctamente.");
@@ -149,7 +152,6 @@ public class GestorArchivos {
                     myWriter.write(elemento.getPiezas()+","+elemento.getKilos()+","+elemento.getServicio()+","+elemento.getDescripcion()+","+elemento.getAcero()+","+elemento.getPiezasEntregadas());
                     myWriter.write("\n");
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             });
@@ -328,8 +330,9 @@ public class GestorArchivos {
         String[] st;
         ArrayList<EntradaRegistro> registros = new ArrayList<EntradaRegistro>();
         //BufferedReader in = new BufferedReader(new FileReader(f));    
-        try{            
-            DataInputStream in = new DataInputStream(new FileInputStream(f));   
+        try{
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f)));            
+            // DataInputStream in = new DataInputStream(new FileInputStream(f));   
 
             String line;
             while ((line = in.readLine()) != null){
