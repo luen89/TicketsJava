@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import javax.swing.*;
 
@@ -49,7 +51,7 @@ public class TicketPreview2 extends JFrame implements ActionListener{
         +"\n           "
         +"\n           "
         + "           AGUILA TRATAMIENTOS TERMICOS Y SERVICIOS       \n"
-        + "                         {{sucursal}}                     \n"
+        + "                                             \n"
         + "    Calle 21 de Marzo #7-A, Col.San Jose el Conde, Puebla, Puebla \n"
         + "    ===================================================================\n"
         + "    Ticket # {{ticket}} \n"
@@ -69,8 +71,8 @@ public class TicketPreview2 extends JFrame implements ActionListener{
         + "    \n"
         + "    \n"
         + "    \n"
-        + "    \t________________________________\n"
-        + "    \t\tFIRMA\n"
+        + "    \t\t________________________________\n"
+        + "    \t\t\tFIRMA\n"
         + "    ===================================================================\n"
         + "                   GRACIAS POR SU PREFERENCIA...          \n"
         + "                      ******::::::::*******"
@@ -128,7 +130,11 @@ public class TicketPreview2 extends JFrame implements ActionListener{
                 }
                 
         });
-        ticketModificado = ticketModificado.replace("{{fecha}}", ticket.today.toString());   
+
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("EEEE dd 'de' MMMM 'del' yyyy', a las' hh:mm:ss", new Locale("es"));
+            
+        ticketModificado = ticketModificado.replace("{{fecha}}", formatoFecha.format(ticket.today).toString());
+        ticketModificado = ticketModificado.replace("{{ticket}}", String.format("%04d", ticket.nOrden)+"");   
         ticketModificado = ticketModificado.replace("{{items}}", listaArticulos);
         ticketModificado = ticketModificado.replace("{{totalP}}", df.format(sumaP)+"");
         ticketModificado = ticketModificado.replace("{{impP}}", df.format(ticket.costoPavonado-sumaP)+"");
