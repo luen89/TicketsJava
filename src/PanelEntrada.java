@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.Flow;
 import java.util.Calendar;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -58,11 +57,11 @@ public class PanelEntrada extends JPanel implements ActionListener {
         cal.add(Calendar.YEAR, 200);
         Date latestDate = cal.getTime();
         SpinnerDateModel spdm = new SpinnerDateModel(initDate,  earliestDate,  latestDate,  Calendar.DAY_OF_MONTH);
-        JSpinner jspReceptionDate = new JSpinner(spdm);
+        jspReceptionDate = new JSpinner(spdm);
         JSpinner.DateEditor editor = new JSpinner.DateEditor(jspReceptionDate, "dd/MM/yyyy");
         jspReceptionDate.setEditor(editor);
         SpinnerDateModel spdm2 = new SpinnerDateModel(initDate,  earliestDate,  latestDate,  Calendar.DAY_OF_MONTH);
-        JSpinner jspGiveDate = new JSpinner(spdm2);
+        jspGiveDate = new JSpinner(spdm2);
         JSpinner.DateEditor editor2 = new JSpinner.DateEditor(jspGiveDate, "dd/MM/yyyy");
         jspGiveDate.setEditor(editor2);
 
