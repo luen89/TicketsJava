@@ -24,7 +24,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
     private JTextField txtnOrden, txtCliente;
     private JScrollPane scrollOrdenesPanel;
     private ArrayList<PiezaForm> itemsPiezasArray;
-    private Calendar cal = Calendar.getInstance();
+
     private Date initDate;
 
     private JSpinner jspReceptionDate, jspGiveDate;
@@ -40,6 +40,8 @@ public class PanelEntrada extends JPanel implements ActionListener {
     }
 
     private void initComponents() {
+
+
         /*CREACION DE FUENTE */
         Font a = new Font("Calibri", 1, 14);
 
@@ -67,15 +69,16 @@ public class PanelEntrada extends JPanel implements ActionListener {
         lbCliente.setForeground(Color.white);
         txtCliente = new JTextField("", 15);
 
-        /**Configuracion del Campo de Texto de numero de Orden */
+        /**Configuracion de Etiqueta y Campo de Texto de numero de Orden */
+        lbnOrden = new JLabel("Numero de Orden");
+        lbnOrden.setForeground(Color.white);
         txtnOrden = new JTextField("", 3);
         txtnOrden.setEditable(false); // Inhabilitar edicion de caja
         try {txtnOrden.setText(String.format("%04d", fileGestor.getNumOrden()));} //Obtener numero de archivo
         catch (Exception e) {System.out.println(e.getMessage());}
 
         /***** Configuracion de los Spinners de Fecha */
-        lbnOrden = new JLabel("Numero de Orden");
-        lbnOrden.setForeground(Color.white);
+        Calendar cal = Calendar.getInstance();
         initDate = cal.getTime();
         cal.add(Calendar.YEAR, -100);
         Date earliestDate = cal.getTime();
