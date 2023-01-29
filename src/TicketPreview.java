@@ -120,7 +120,7 @@ public class TicketPreview extends JFrame implements ActionListener{
                             elemento.getDureza()+"\t"+
                             df.format(elemento.getKilos())+"\t"+
                             "$"+df.format(costoP)+"\n"+
-                            "\t\t\t\t$"+df.format(costoT)+"\n";
+                            "\t\t\t\t\t$"+df.format(costoT)+"\n";
                             break;
                 default :   listaArticulos = listaArticulos+"\n    "+
                             elemento.getPiezas()+"\t"+
