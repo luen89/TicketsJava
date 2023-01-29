@@ -116,6 +116,8 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener {
           tfDesc.addFocusListener(this);
 
           btnX = new JButton("X");
+          btnX.setBackground(new Color(255,0,0));
+          btnX.setForeground(new Color(255,255,255));
 
      }
 

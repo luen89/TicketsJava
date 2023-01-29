@@ -12,7 +12,7 @@ import javax.swing.*;
  *
  * @author Luis Enrique Pérez González
  */
-public class TicketPreview2 extends JFrame implements ActionListener{
+public class TicketPreview extends JFrame implements ActionListener{
     OrdenFileFrame off;
     JTextArea ticketTextArea;
     GestorArchivos gestor;
@@ -24,7 +24,7 @@ public class TicketPreview2 extends JFrame implements ActionListener{
     double sumaP = 0.0;
     double sumaT = 0.0;
     
-    public TicketPreview2(Ticket ticket, GestorArchivos gestor){
+    public TicketPreview(Ticket ticket, GestorArchivos gestor){
         this.gestor = gestor;
         this.ticket = ticket;
         this.setLayout(new FlowLayout(FlowLayout.CENTER));

@@ -17,40 +17,65 @@ import java.io.IOException;
  */
 
 public class PanelEntrada extends JPanel implements ActionListener {
-    private JLabel lbTotPiezas, lbTotKg, lbRD, lbGD, lbImagen, lbnOrden, lbCliente;
-    private JButton btImprimir, btPago, btplus;
-    private JPanel pDatos, pEncabezado, pEncabezadoDatos, pTotales, pImprimir,
-            pTemplado, pIncrementoT, pListTemplado;
-    private JTextField txtTpiezas, txtTkg, txtnOrden, txtCliente;
-    private JScrollPane scrollT;
-    private ArrayList<PiezaForm> pformsT;
+    private JLabel lbRD, lbGD, lbImagen, lbnOrden, lbCliente;
+    private JButton btImprimir, btAgregar;
+    private JPanel panelEncabezado, subpanelEncabezadoDatos, pImprimir,
+            panelDetalleOrden, pIncrementoOrdenes, subpanelListaOrdenes;
+    private JTextField txtnOrden, txtCliente;
+    private JScrollPane scrollOrdenesPanel;
+    private ArrayList<PiezaForm> itemsPiezasArray;
     private Calendar cal = Calendar.getInstance();
     private Date initDate;
 
     private JSpinner jspReceptionDate, jspGiveDate;
     private JCheckBox iva;
-    TicketPreview2 tPreview2;
-    private GestorArchivos gestor;
+    TicketPreview tPreview;
+    private GestorArchivos fileGestor;
     // prueba
     private int contador = 0;
 
-    public PanelEntrada(GestorArchivos ga) {
-        this.gestor = ga;
+    public PanelEntrada(GestorArchivos fileGestor) {
+        this.fileGestor = fileGestor;
         initComponents();
     }
 
     private void initComponents() {
+        /*CREACION DE FUENTE */
+        Font a = new Font("Calibri", 1, 14);
+
+
+
+        /*PANEL DE ENCABEZADO */
+        // *************** Inicializacion de Panel De Encabezado y subpanel Datos*************************
+        panelEncabezado = new JPanel(new GridLayout(0, 2));
+        subpanelEncabezadoDatos = new JPanel(new GridLayout(0,2));
+
+        //****************Etiqueta de Imagen */
+        lbImagen = new JLabel();
+        lbImagen.setPreferredSize(new Dimension(600, 200));
+        ImageIcon fot = new ImageIcon("src/Imagenes/Aguila_banner.png");
+        Icon icono = new ImageIcon(fot.getImage().getScaledInstance(600, 200, Image.SCALE_SMOOTH));
+        lbImagen.setIcon(icono);
+        lbImagen.setHorizontalAlignment(JLabel.CENTER);;
+        
+        // ************Etiquetas de la Fecha y el Cliente ******************************
+        lbRD = new JLabel("Fecha de Recepcion");
+        lbGD = new JLabel("Fecha de Entrega");
+        lbCliente = new JLabel("Cliente:");
+        lbRD.setForeground(Color.white);
+        lbGD.setForeground(Color.white);
+        lbCliente.setForeground(Color.white);
+        txtCliente = new JTextField("", 15);
+
+        /**Configuracion del Campo de Texto de numero de Orden */
+        txtnOrden = new JTextField("", 3);
+        txtnOrden.setEditable(false); // Inhabilitar edicion de caja
+        try {txtnOrden.setText(String.format("%04d", fileGestor.getNumOrden()));} //Obtener numero de archivo
+        catch (Exception e) {System.out.println(e.getMessage());}
+
         /***** Configuracion de los Spinners de Fecha */
         lbnOrden = new JLabel("Numero de Orden");
         lbnOrden.setForeground(Color.white);
-        txtnOrden = new JTextField("", 3);
-        txtnOrden.setEditable(false);
-        try {
-            txtnOrden.setText(String.format("%04d", gestor.getNumOrden()));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
         initDate = cal.getTime();
         cal.add(Calendar.YEAR, -100);
         Date earliestDate = cal.getTime();
@@ -65,145 +90,94 @@ public class PanelEntrada extends JPanel implements ActionListener {
         JSpinner.DateEditor editor2 = new JSpinner.DateEditor(jspGiveDate, "dd/MM/yyyy");
         jspGiveDate.setEditor(editor2);
 
-        /* Construccion de la lista de Piezas de Pavoneo */
+        /****************Adicion de Elementos a Panel Encabezado */
+        panelEncabezado.add(subpanelEncabezadoDatos);
+        panelEncabezado.add(lbImagen);
+        subpanelEncabezadoDatos.add(lbRD);
+        subpanelEncabezadoDatos.add(jspReceptionDate);
+        subpanelEncabezadoDatos.add(lbGD);
+        subpanelEncabezadoDatos.add(jspGiveDate);
+        subpanelEncabezadoDatos.add(lbnOrden);
+        subpanelEncabezadoDatos.add(txtnOrden);
+        subpanelEncabezadoDatos.add(lbCliente);
+        subpanelEncabezadoDatos.add(txtCliente);
 
-        /* Construccion de la lista de Piezas de Pavoneo */
-
-        // pformsP = new ArrayList<>();
-        // cocnstrutor de contador
-        // pformsP.add(new PiezaForm(contador));
-        // pformsT.get(0).preDisplay();
-
-        /* Construccion de la lista de Piezas de Templado */
-        pListTemplado = new JPanel();
-        pListTemplado.setLayout(new BoxLayout(pListTemplado, BoxLayout.Y_AXIS));
-        pformsT = new ArrayList<>();
-        scrollT = new JScrollPane(pListTemplado);
-
-        PiezaForm pieza = new PiezaForm();
-
-        pformsT.add(pieza);
-        pieza.preDisplay();
-        pListTemplado.add(pieza);
-        pieza.getBotonEliminar().addActionListener(new ActionListener() {
-            @Override
-
-            public void actionPerformed(ActionEvent e) {
-                pListTemplado.remove(pieza);
-                pformsT.remove(pieza);
-                refreshDisplay();
-            }
-        });
-
-        // ************Etiquetas del Total de Piezas******************************
-        lbTotPiezas = new JLabel("Total Piezas:");
-        lbTotKg = new JLabel("Total Kg:");
-        lbRD = new JLabel("Fecha de Recepcion");
-        lbGD = new JLabel("Fecha de Entrega");
-        lbCliente = new JLabel("Cliente:");
-        lbRD.setForeground(Color.white);
-        lbGD.setForeground(Color.white);
-        lbCliente.setForeground(Color.white);
-        txtTkg = new JTextField(" ", 6);
-        txtTpiezas  =  new JTextField("Suma de piezas",  6);
-        txtCliente = new JTextField("", 15);
-        txtTpiezas.setEditable(false);
-
-        /* botones de Imprimir y Pagar */
-        btImprimir = new JButton("Imprimir");
-        btImprimir.addActionListener(this);
-
-        iva = new JCheckBox("¿Requiere factura?");
-
-        btPago = new JButton("Pagar");
-        btPago.addActionListener(this);
-
-        /* Botones de mas y menos */
-        btplus = new JButton("Agregar elemento");
-        btplus.addActionListener(this);
-
-        // ***************PANELES DE DATOS*************************
-
-        // ***************PANELES DE DATOS*************************
-        /* Panel de los botones mas o menos Templado */
-        pIncrementoT = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        pIncrementoT.add(btplus);
-
-        /* Panel de los totales de Piezas */
-        pTotales = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        pTotales.add(lbTotPiezas);
-        pTotales.add(txtTpiezas);
-        pTotales.add(lbTotKg);
-        pTotales.add(txtTkg);
-
-        // ***************Panel De Encabezado*************************
-        pEncabezado = new JPanel(new GridLayout(0, 2));
-        pEncabezadoDatos = new JPanel(new GridLayout(0,2));
-        lbImagen = new JLabel();
-        lbImagen.setPreferredSize(new Dimension(500, 150));
-        ImageIcon fot = new ImageIcon("src/Imagenes/Aguila_banner.png");
-        // lbImagen.setIcon(new ImageIcon("src/Imagenes/imagen.png"));
-        Icon icono = new ImageIcon(fot.getImage().getScaledInstance(550, 150, Image.SCALE_SMOOTH));
-        lbImagen.setIcon(icono);
-        lbImagen.setAlignmentX(BOTTOM_ALIGNMENT);
-        pEncabezado.add(pEncabezadoDatos);
-        pEncabezado.add(lbImagen);
-        pEncabezadoDatos.add(lbRD);
-        pEncabezadoDatos.add(jspReceptionDate);
-        pEncabezadoDatos.add(lbGD);
-        pEncabezadoDatos.add(jspGiveDate);
-        pEncabezadoDatos.add(lbnOrden);
-        pEncabezadoDatos.add(txtnOrden);
-        pEncabezadoDatos.add(lbCliente);
-        pEncabezadoDatos.add(txtCliente);
-        //pEncabezado.setBackground(Color.black);
-        repaint();
-
-        // *****************Panel del Templado**************************
-        pTemplado = new JPanel();
-        pTemplado.setLayout(new BoxLayout(pTemplado, BoxLayout.Y_AXIS));
-        pTemplado.add(pIncrementoT);
-        pTemplado.add(scrollT);
-
-        pDatos = new JPanel();
-        pDatos.setLayout(new BoxLayout(pDatos, BoxLayout.Y_AXIS));
-
-        pDatos = new JPanel();
-        pDatos.setLayout(new BoxLayout(pDatos, BoxLayout.Y_AXIS));
-        pDatos.add(pTotales);
-
-        pImprimir = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        pImprimir = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        pImprimir.add(btImprimir);
-        pImprimir.add(iva);
-        // **********************************************************
-        Font a = new Font("Calibri", 1, 14);
+        /*Creacion del Borde del Panel*/
         Border bordeEntrada = new TitledBorder(new EtchedBorder(Color.white, Color.white), "Inicio", 1, 2, a,
                 Color.white);
+        panelEncabezado.setBorder(bordeEntrada);
+        repaint();
 
-        pEncabezado.setBorder(bordeEntrada);
 
-        Border bordePane3 = new TitledBorder(new EtchedBorder(), "Servicios");
-        pTemplado.setBorder(bordePane3);
 
-        Border bordePanel2 = new TitledBorder(new EtchedBorder(), "Total");
-        pDatos.setBorder(bordePanel2);
+        /*PANEL DETALLE DE ORDEN */
+        /*Inicializacion de panel de detalle de orden */
+        panelDetalleOrden = new JPanel();
+        panelDetalleOrden.setLayout(new BoxLayout(panelDetalleOrden, BoxLayout.X_AXIS));
+        panelDetalleOrden.setAlignmentX(CENTER_ALIGNMENT);
 
-        //this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        /* Inicializacion del subpanel de La lista de Ordenes*/
+        subpanelListaOrdenes = new JPanel();
+        subpanelListaOrdenes.setLayout(new BoxLayout(subpanelListaOrdenes, BoxLayout.Y_AXIS));
+            /*Inicializacion de Scroll de Ordenes */
+        scrollOrdenesPanel = new JScrollPane(subpanelListaOrdenes);
+        scrollOrdenesPanel.getVerticalScrollBar().setUnitIncrement(16);
+            /*Inicializacion del primer formulario de Orden */
+        itemsPiezasArray = new ArrayList<PiezaForm>();
+        PiezaForm pieza = new PiezaForm();
+        itemsPiezasArray.add(pieza);
+        pieza.preDisplay();
+        pieza.getBotonEliminar().addActionListener(new ActionListener() {@Override
+            public void actionPerformed(ActionEvent e) {
+                subpanelListaOrdenes.remove(pieza);
+                itemsPiezasArray.remove(pieza);
+                refreshDisplay();
+            }});
+        
+        /*Inicializacion del subpanel de Incremento de Ordenes */
+        pIncrementoOrdenes = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            /* Inicializacion Boton de Agregar */
+        btAgregar = new JButton("Agregar elemento");
+        btAgregar.addActionListener(this);
 
+        /*Conformacion de subpaneles con sus repectivos elementos y panel final */
+        subpanelListaOrdenes.add(pieza);
+        pIncrementoOrdenes.add(btAgregar);
+        panelDetalleOrden.add(pIncrementoOrdenes);
+        panelDetalleOrden.add(scrollOrdenesPanel);
+
+        /*Creacion de Borde del panel */
+        Border bordePanel3 = new TitledBorder(new EtchedBorder(), "Detalle de Orden");
+        panelDetalleOrden.setBorder(bordePanel3);
+
+
+
+        /*PANEL DE IMPRIMIR */
+        /*Inicializacion de panel imprimir */
+        pImprimir = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        /* botones de Imprimir*/
+        btImprimir = new JButton("Imprimir");
+        btImprimir.addActionListener(this);
+        
+        /*Checkbox del IVA */
+        iva = new JCheckBox("¿Requiere factura?");
+
+        /*Adicion de Elementos al panel */
+        pImprimir.add(btImprimir);
+        pImprimir.add(iva);
+        
+        /*Creacion del Borde del panel */
+        Border bordePanel2 = new TitledBorder(new EtchedBorder(), "Detalles Adicionales");
+        pImprimir.setBorder(bordePanel2);
+        
+        
+        
+        /*Configuracion y adicion de elementos al Frame */
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(pEncabezado);
-        add(pTemplado);
-        // add(pDatos);
+        add(panelEncabezado);
+        add(panelDetalleOrden);
         add(pImprimir);
-
-        /*
-         * for(int i=0; i < pformsP.size();i++){
-         * listaBotones.add(pformsP.get(i).getBtnX());
-         * listaBotones.get(i).addActionListener(this);
-         * }
-         */
     }
 
     public void refreshDisplay() {
@@ -212,49 +186,57 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        // Agregar nuevo elemento
-        if (e.getSource() == btplus) {
+        /* Evento a Boton Agregar nuevo elemento */ 
+        if (e.getSource() == btAgregar) {
+            //Crea e inicializa un nuevo formulario
             PiezaForm pieza = new PiezaForm();
-            pformsT.add(pieza);
+            itemsPiezasArray.add(pieza);
             pieza.preDisplay();
-            pieza.getBotonEliminar().addActionListener(new ActionListener() {
-                @Override
-
+            //Se crea el evento para el boton eliminar
+            pieza.getBotonEliminar().addActionListener(new ActionListener() {@Override
                 public void actionPerformed(ActionEvent e) {
-                    pListTemplado.remove(pieza);
-                    pformsT.remove(pieza);
+                    subpanelListaOrdenes.remove(pieza);
+                    itemsPiezasArray.remove(pieza);
                     refreshDisplay();
-                }
-            });
-            pListTemplado.add(pformsT.get(pformsT.size() - 1));
-
+                }});
+            // Se agrega a la lista de Ordenes
+            subpanelListaOrdenes.add(itemsPiezasArray.get(itemsPiezasArray.size() - 1));
+            //Se actualiza la vista
             this.updateUI();
-            System.out.println("Presionaste mas");
+            //System.out.println("Presionaste mas");
         }
 
         if (e.getSource() == btImprimir) {
-
+            //Obtiene el Ticket Logico
             Ticket ticketsito = condiciones();
             if (contador >= 1) {
                 contador--;
             }
-            tPreview2 = new TicketPreview2(ticketsito, gestor);
-            System.out.println("Entré");
-            tPreview2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            tPreview2.setVisible(true);
+            //Crea la previsualizacion del ticket
+            tPreview = new TicketPreview(ticketsito, fileGestor);
+            //System.out.println("Entré");
+            tPreview.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            tPreview.setVisible(true);
 
+            //Registra la Orden en el Registro General
             SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyy");
             String fecha = formatoFecha.format(jspGiveDate.getValue());
-
-            gestor.writeFile(new EntradaRegistro(txtnOrden.getText(), txtCliente.getText(), ticketsito.costoTotal,
+            fileGestor.writeFile(new EntradaRegistro(txtnOrden.getText(), txtCliente.getText(), ticketsito.costoTotal,
                     "PAGADO", "NO ENTREGADO", fecha));
-            gestor.writeFileOrder(ticketsito);
+
+            //Crea el registro Particular de la Orden
+            fileGestor.writeFileOrder(ticketsito);
+
+            //Incrementa el numero de Orden
             try {
-                gestor.incremetNumOrden();
-                txtnOrden.setText(String.format("%04d", gestor.getNumOrden()));
+                fileGestor.incremetNumOrden();
+                txtnOrden.setText(String.format("%04d", fileGestor.getNumOrden()));
             } catch (Exception excp) {
             }
+
+            //Reinicia la gui para la nueva Orden
+            this.removeAll();
+            initComponents();
             this.updateUI();
         }
 
@@ -265,6 +247,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
     }
 
     public Ticket condiciones() {
+        //Funcion de Jeatog yo ahi no le muevo XD @ZingyArtist
         double contadorPavonado = 0;
         double contadorTemplado = 0;
 
@@ -273,18 +256,18 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         double costoTotal = 0.0;
         Ticket ticket = new Ticket(Integer.parseInt(txtnOrden.getText()),txtCliente.getText(),0, 0, 0, 0, 0, initDate, iva.isSelected(),0.0, new ArrayList<Elemento>());
-        for (int i = 0; i < pformsT.size(); i++) {
-            System.out.println("Servicio: " + pformsT.get(i).getElemento().getServicio());
+        for (int i = 0; i < itemsPiezasArray.size(); i++) {
+            System.out.println("Servicio: " + itemsPiezasArray.get(i).getElemento().getServicio());
 
-            if (pformsT.get(i).getElemento().getServicio().equals("Pavonado")) {
-                contadorPavonado += pformsT.get(i).getElemento().getKilos();
-            } else if (pformsT.get(i).getElemento().getServicio().equals("Templado")) {
-                contadorTemplado += pformsT.get(i).getElemento().getKilos();
-            } else if (pformsT.get(i).getElemento().getServicio().equals("Templado y Pavonado")) {
-                contadorPavonado += pformsT.get(i).getElemento().getKilos();
-                contadorTemplado += pformsT.get(i).getElemento().getKilos();
+            if (itemsPiezasArray.get(i).getElemento().getServicio().equals("Pavonado")) {
+                contadorPavonado += itemsPiezasArray.get(i).getElemento().getKilos();
+            } else if (itemsPiezasArray.get(i).getElemento().getServicio().equals("Templado")) {
+                contadorTemplado += itemsPiezasArray.get(i).getElemento().getKilos();
+            } else if (itemsPiezasArray.get(i).getElemento().getServicio().equals("Templado y Pavonado")) {
+                contadorPavonado += itemsPiezasArray.get(i).getElemento().getKilos();
+                contadorTemplado += itemsPiezasArray.get(i).getElemento().getKilos();
             }
-            ticket.pformsT.add(pformsT.get(i).getElemento());
+            ticket.pformsT.add(itemsPiezasArray.get(i).getElemento());
         }
 
         System.out.println("Kilos pavonado: " + contadorPavonado);
@@ -322,6 +305,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
     }
 
     public void llamarImpresora() {
+        //Funcion expermiental falta analizar @ZingyArtist
         try {
             String[] impresoras = ConectorPlugin.obtenerImpresoras();
             System.out.println("Lista de impresoras:");
@@ -380,17 +364,6 @@ public class PanelEntrada extends JPanel implements ActionListener {
         } catch (Exception e) {
             System.out.println("Error imprimiendo: " + e.getMessage());
         }
-    }
-
-    public String getTotalPiezas() {
-        return txtTpiezas.getText();
-    }
-
-    public void setControlador() {
-    }
-
-    public String getTotalPeso() {
-        return txtTkg.getText();
     }
 
     public String getNombreCliente() {
