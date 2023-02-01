@@ -11,10 +11,15 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StreamTokenizer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.Normalizer.Form;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -36,6 +41,8 @@ import java.util.Scanner;
 public class GestorArchivos {
     ArrayList <String> instruccion=new ArrayList <>();
     int index=0;
+
+    private String FILE_PATH = "src/Registros/pruebas.csv";
     
     public GestorArchivos(){
         
@@ -106,6 +113,27 @@ public class GestorArchivos {
             System.out.println("Error no se escribio el archivo.");
         }
     }
+
+    public void actualizarRegistroEnArchivo(EntradaRegistro entRe){
+        try {
+            List<String> fileContent = new ArrayList<>(Files.readAllLines(Paths.get(FILE_PATH), StandardCharsets.UTF_8));
+
+            for (int i = 0; i < fileContent.size(); i++) {
+                String folio = fileContent.get(i).split(",")[0];
+                if (folio.equals(entRe.getFolio())) {
+                    fileContent.set(i, entRe.getFolio()+","+entRe.getNombreCliente()+","+entRe.getMonto()+","+entRe.getStatusPago()+","+ entRe.getStatusEntrega()+","+entRe.getFecha());
+                    break;
+                }
+            }
+
+            String lastLine = fileContent.remove(fileContent.size() - 1);
+            Files.write(Paths.get(FILE_PATH), fileContent, StandardCharsets.UTF_8);
+            Files.write(Paths.get(FILE_PATH), lastLine.getBytes("UTF-8"), StandardOpenOption.APPEND);
+            System.out.println("Escrito correctamente.");
+        } catch (IOException e) {
+            System.out.println("Error no se escribio el archivo.");
+        }
+    }
     
     public void writeFileOrder(Ticket ticket){
         try {
@@ -147,7 +175,7 @@ public class GestorArchivos {
                     myWriter.write("\n");
                     myWriter.write("DETALLE DE ORDEN");
                     myWriter.write("\n");
-            ticket.pformsT.forEach(elemento -> {
+            ticket.servicios.forEach(elemento -> {
                 try {
                     myWriter.write(elemento.getPiezas()+","+elemento.getKilos()+","+elemento.getServicio()+","+elemento.getDescripcion()+","+elemento.getAcero()+","+elemento.getPiezasEntregadas());
                     myWriter.write("\n");

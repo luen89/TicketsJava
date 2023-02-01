@@ -53,16 +53,20 @@ public class PanelRegistros extends JPanel implements ActionListener {
         tabla.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent me) {
                 JTable target = (JTable) me.getSource();
-                int row = target.getSelectedRow(); // select a row
+
+                // System.out.println("Selected Row in view: " + target.getSelectedRow());                
+                // System.out.println("Selected Row in rs: " + tabla.convertRowIndexToModel(target.getSelectedRow()));
+                // int row = target.getSelectedRow(); // select a row
+                int row = tabla.convertRowIndexToModel(target.getSelectedRow()); // select a row
                 int column = target.getSelectedColumn(); // select a column
                 if(column != 6)
                     return;
                 
-                VentanaDetalles vDetalles = new VentanaDetalles();
+                Ticket ticket = gestor.readFileOrder(Integer.parseInt(modelo.getValueAt(row, 0).toString()));
+                VentanaDetalles vDetalles = new VentanaDetalles(ticket, gestor);
                 System.out.println("Entré");
                 vDetalles.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 vDetalles.setVisible(true);
-                    // JOptionPane.showMessageDialog(null, tabla.getValueAt(row, 0)); // get the value of a row and column.                
                 
                 // if (me.getClickCount() == 2) { // to detect doble click events
                 //     JTable target = (JTable) me.getSource();

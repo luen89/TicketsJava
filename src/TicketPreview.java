@@ -86,7 +86,7 @@ public class TicketPreview extends JFrame implements ActionListener{
         String ticketModificado = ticketHeader.replace("{{total}}", ticket.costoTotal+"");
         
 
-        ticket.pformsT.forEach(elemento -> {
+        ticket.servicios.forEach(elemento -> {
             double costoP=(elemento.getKilos()*39);
             double costoT=(elemento.getKilos()*95);
             switch(elemento.getServicioAbreviado()){

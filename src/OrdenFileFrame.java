@@ -34,17 +34,17 @@ public class OrdenFileFrame extends JFrame implements ActionListener{
 
     private void initComponents() {
         String [] columnNames ={"#Piezas", "#Kilos","Servicio","Descripcion","Acero","Piezas Entregadas"};
-        Object[][] data = new Object[ticket.pformsT.size()][6];
+        Object[][] data = new Object[ticket.servicios.size()][6];
         int i=0;
-        System.out.println("Tamaño Arreglo: "+ticket.pformsT.size());
-        for(i=0;i<ticket.pformsT.size();i++){
+        System.out.println("Tamaño Arreglo: "+ticket.servicios.size());
+        for(i=0;i<ticket.servicios.size();i++){
             System.out.println("Indice: "+i);
-            data[i][0]=ticket.pformsT.get(i).getPiezas();
-            data[i][1]=ticket.pformsT.get(i).getKilos();
-            data[i][2]=ticket.pformsT.get(i).getServicio();
-            data[i][3]=ticket.pformsT.get(i).getDescripcion();
-            data[i][4]=ticket.pformsT.get(i).getAcero();
-            data[i][5]=ticket.pformsT.get(i).getPiezasEntregadas();
+            data[i][0]=ticket.servicios.get(i).getPiezas();
+            data[i][1]=ticket.servicios.get(i).getKilos();
+            data[i][2]=ticket.servicios.get(i).getServicio();
+            data[i][3]=ticket.servicios.get(i).getDescripcion();
+            data[i][4]=ticket.servicios.get(i).getAcero();
+            data[i][5]=ticket.servicios.get(i).getPiezasEntregadas();
         }
 
 

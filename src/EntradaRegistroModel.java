@@ -7,7 +7,7 @@ class EntradaRegistroModel extends AbstractTableModel
 {
     private ArrayList<EntradaRegistro> registros;
     private String columnas[] = {"Folio", "Cliente", "Monto", "Status de Pago", "Status de Entrega", "Fecha", ""};
-    private boolean editable[] = {false, false, false, false, false, false, true};
+    private boolean editable[] = {false, false, false, false, false, false, false};
     NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
     public EntradaRegistroModel(ArrayList<EntradaRegistro> registros) {

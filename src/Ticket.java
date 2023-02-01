@@ -12,7 +12,7 @@ public class Ticket {
     public Date today;
     public boolean iva;
     public double montoPagado;
-    public ArrayList<Elemento> pformsT;
+    public ArrayList<Elemento> servicios;
 
     public Ticket(int nOrden,String nameCliente, double contadorPavonado,
     double contadorTemplado,
@@ -33,6 +33,6 @@ public class Ticket {
         this.today = today;
         this.iva=iva;
         this.montoPagado=montoPagado;
-        this.pformsT = pformsT;
+        this.servicios = pformsT;
     }
 }

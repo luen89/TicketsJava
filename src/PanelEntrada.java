@@ -225,7 +225,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
             SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyy");
             String fecha = formatoFecha.format(jspGiveDate.getValue());
             fileGestor.writeFile(new EntradaRegistro(txtnOrden.getText(), txtCliente.getText(), ticketsito.costoTotal,
-                    "PAGADO", "NO ENTREGADO", fecha));
+                    "PAGADO", "POR ENTREGAR", fecha));
 
             //Crea el registro Particular de la Orden
             fileGestor.writeFileOrder(ticketsito);
@@ -270,7 +270,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
                 contadorPavonado += itemsPiezasArray.get(i).getElemento().getKilos();
                 contadorTemplado += itemsPiezasArray.get(i).getElemento().getKilos();
             }
-            ticket.pformsT.add(itemsPiezasArray.get(i).getElemento());
+            ticket.servicios.add(itemsPiezasArray.get(i).getElemento());
         }
 
         System.out.println("Kilos pavonado: " + contadorPavonado);
