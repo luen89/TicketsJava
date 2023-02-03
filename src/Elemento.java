@@ -2,6 +2,7 @@ public class Elemento {
     private String acero;
     private String servicio;
     private String servAbr;
+    private String acerAbr;
     private Integer piezas;
     private Double kilos;
     private String dureza;
@@ -12,6 +13,8 @@ public class Elemento {
     public Elemento(String acero, String servicio, int piezas, Double kilos, String dureza, String descripcion, int piezasEntregadas){
         super();
         this.acero = acero;
+        if (acero=="Colled Rolled"){acerAbr="C.R.";}
+        else{acerAbr=acero;}
         this.servicio = servicio;
         switch(servicio){
             case "Pavonado" : 
@@ -43,6 +46,10 @@ public class Elemento {
 
     public String getServicioAbreviado(){
         return servAbr;
+    }
+
+    public String getAceroAbreviado(){
+        return acerAbr;
     }
     
     public int getPiezas(){
@@ -101,6 +108,8 @@ public class Elemento {
     
     public void setAcero(String acero){
         this.acero = acero;
+        if (acero=="Colled Rolled"){acerAbr="C.R.";}
+        else{acerAbr=acero;}
     }
     
     public void setDureza(String dureza){

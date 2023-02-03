@@ -31,6 +31,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
     private JCheckBox iva;
     TicketPreview tPreview;
     private GestorArchivos fileGestor;
+    private String ticketImpresion;
     // prueba
     private int contador = 0;
 
@@ -217,6 +218,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
             }
             //Crea la previsualizacion del ticket
             tPreview = new TicketPreview(ticketsito, fileGestor);
+            ticketImpresion=tPreview.getTicketString();
             //System.out.println("Entré");
             tPreview.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             tPreview.setVisible(true);
@@ -236,6 +238,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
                 txtnOrden.setText(String.format("%04d", fileGestor.getNumOrden()));
             } catch (Exception excp) {
             }
+            llamarImpresora2();
 
             //Reinicia la gui para la nueva Orden
             this.removeAll();
@@ -305,6 +308,35 @@ public class PanelEntrada extends JPanel implements ActionListener {
         ticket.costoTotal = costoTotal;
 
         return ticket;
+    }
+
+    public void llamarImpresora2() {
+        //Funcion expermiental falta analizar @ZingyArtist
+        try {
+            String[] impresoras = ConectorPlugin.obtenerImpresoras();
+            System.out.println("Lista de impresoras:");
+            for (String impresora : impresoras) {
+                System.out.printf("'%s'\n", impresora);
+            }
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Error obteniendo impresoras: " + e.getMessage());
+        }
+        // Aquí tu serial en caso de tener uno
+        final String serial = "";
+        ConectorPlugin conectorPlugin = new ConectorPlugin(ConectorPlugin.URL_PLUGIN_POR_DEFECTO, serial);
+        conectorPlugin.Iniciar()
+                .DeshabilitarElModoDeCaracteresChinos()
+                .EstablecerAlineacion(ConectorPlugin.ALINEACION_IZQUIERDA)
+                .Feed(1)
+                .EscribirTexto(ticketImpresion)
+                .Corte(1)
+                .Pulso(48, 60, 120);
+        try {
+            conectorPlugin.imprimirEn("Termico2");
+            System.out.println("Impreso correctamente");
+        } catch (Exception e) {
+            System.out.println("Error imprimiendo: " + e.getMessage());
+        }
     }
 
     public void llamarImpresora() {
