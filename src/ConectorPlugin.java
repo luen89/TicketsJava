@@ -353,10 +353,10 @@ public class ConectorPlugin {
         ImpresionConNombrePlugin impresionConNombre = new ImpresionConNombrePlugin(this.operaciones, impresora, this.serial);
         String postEndpoint = this.urlPlugin + "/imprimir";
         String inputJson = JSON.std.asString(impresionConNombre);
-        var request = HttpRequest.newBuilder().uri(URI.create(postEndpoint)).header("Content-Type", "application/json")
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(postEndpoint)).header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(inputJson)).build();
-        var client = HttpClient.newHttpClient();
-        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpClient client = HttpClient.newHttpClient();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() != 200) {
             throw new Exception("código de respuesta distinto a 200. Verifique que el plugin se está ejecutando");
         }
