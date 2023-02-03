@@ -1,4 +1,4 @@
 bin/
 /.vscode
 *.class
-TicketsJava.jar
+*.jar
