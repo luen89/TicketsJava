@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.Locale;
 
 import javax.swing.*;
@@ -159,6 +158,7 @@ public class TicketPreview extends JFrame implements ActionListener{
             off.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             off.setVisible(true); */
         }
+       
         // TODO Auto-generated method stub
         
     }

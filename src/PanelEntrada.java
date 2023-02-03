@@ -326,6 +326,8 @@ public class PanelEntrada extends JPanel implements ActionListener {
         ConectorPlugin conectorPlugin = new ConectorPlugin(ConectorPlugin.URL_PLUGIN_POR_DEFECTO, serial);
         conectorPlugin.Iniciar()
                 .DeshabilitarElModoDeCaracteresChinos()
+                .EstablecerAlineacion(ConectorPlugin.ALINEACION_CENTRO)
+                .CargarImagenLocalEImprimir("C:/Users/Aguila_logo.png",0,216)
                 .EstablecerAlineacion(ConectorPlugin.ALINEACION_IZQUIERDA)
                 .Feed(1)
                 .EscribirTexto(ticketImpresion)
@@ -340,7 +342,6 @@ public class PanelEntrada extends JPanel implements ActionListener {
     }
 
     public void llamarImpresora() {
-        //Funcion expermiental falta analizar @ZingyArtist
         try {
             String[] impresoras = ConectorPlugin.obtenerImpresoras();
             System.out.println("Lista de impresoras:");

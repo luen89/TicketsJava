@@ -21,7 +21,7 @@ public class Ventana extends JFrame{
         setLocationRelativeTo(null);
         this.ga = ga;
         initComponents();
-        ImageIcon icono = new ImageIcon("src/Imagenes/pavonado_logo.png"); 
+        ImageIcon icono = new ImageIcon("src/Imagenes/Aguila_logo.png"); 
         this.setIconImage(icono.getImage()); 
         
     }
