@@ -21,17 +21,16 @@ public class PanelEntrada extends JPanel implements ActionListener {
     private JButton btImprimir, btAgregar;
     private JPanel panelEncabezado, subpanelEncabezadoDatos, pImprimir,
             panelDetalleOrden, pIncrementoOrdenes, subpanelListaOrdenes;
-    private JTextField txtnOrden, txtCliente;
+    public JTextField txtnOrden, txtCliente;
     private JScrollPane scrollOrdenesPanel;
     private ArrayList<PiezaForm> itemsPiezasArray;
 
     private Date initDate;
 
-    private JSpinner jspReceptionDate, jspGiveDate;
+    public JSpinner jspReceptionDate, jspGiveDate;
     private JCheckBox iva;
     TicketPreview tPreview;
     private GestorArchivos fileGestor;
-    private String ticketImpresion;
     // prueba
     private int contador = 0;
 
@@ -40,7 +39,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
         initComponents();
     }
 
-    private void initComponents() {
+    public void initComponents() {
 
 
         /*CREACION DE FUENTE */
@@ -216,34 +215,19 @@ public class PanelEntrada extends JPanel implements ActionListener {
             if (contador >= 1) {
                 contador--;
             }
+            try{
+            ticketsito.validarTicket();
             //Crea la previsualizacion del ticket
-            tPreview = new TicketPreview(ticketsito, fileGestor);
-            ticketImpresion=tPreview.getTicketString();
+            tPreview = new TicketPreview(ticketsito, fileGestor,this);
             //System.out.println("Entré");
             tPreview.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             tPreview.setVisible(true);
-
-            //Registra la Orden en el Registro General
-            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyy");
-            String fecha = formatoFecha.format(jspGiveDate.getValue());
-            fileGestor.writeFile(new EntradaRegistro(txtnOrden.getText(), txtCliente.getText(), ticketsito.costoTotal,
-                    "PAGADO", "POR ENTREGAR", fecha));
-
-            //Crea el registro Particular de la Orden
-            fileGestor.writeFileOrder(ticketsito);
-
-            //Incrementa el numero de Orden
-            try {
-                fileGestor.incremetNumOrden();
-                txtnOrden.setText(String.format("%04d", fileGestor.getNumOrden()));
-            } catch (Exception excp) {
             }
-            llamarImpresora2();
+            catch(ExcepcionVacio ex){
+                JOptionPane.showMessageDialog(null, "Campos Incorrectos");
+            }
 
-            //Reinicia la gui para la nueva Orden
-            this.removeAll();
-            initComponents();
-            this.updateUI();
+            
         }
 
     }
@@ -310,38 +294,9 @@ public class PanelEntrada extends JPanel implements ActionListener {
         return ticket;
     }
 
-    public void llamarImpresora2() {
-        //Funcion expermiental falta analizar @ZingyArtist
-        try {
-            String[] impresoras = ConectorPlugin.obtenerImpresoras();
-            System.out.println("Lista de impresoras:");
-            for (String impresora : impresoras) {
-                System.out.printf("'%s'\n", impresora);
-            }
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Error obteniendo impresoras: " + e.getMessage());
-        }
-        // Aquí tu serial en caso de tener uno
-        final String serial = "";
-        ConectorPlugin conectorPlugin = new ConectorPlugin(ConectorPlugin.URL_PLUGIN_POR_DEFECTO, serial);
-        conectorPlugin.Iniciar()
-                .DeshabilitarElModoDeCaracteresChinos()
-                .EstablecerAlineacion(ConectorPlugin.ALINEACION_CENTRO)
-                .CargarImagenLocalEImprimir("C:/Users/Aguila_logo.png",0,216)
-                .EstablecerAlineacion(ConectorPlugin.ALINEACION_IZQUIERDA)
-                .Feed(1)
-                .EscribirTexto(ticketImpresion)
-                .Corte(1)
-                .Pulso(48, 60, 120);
-        try {
-            conectorPlugin.imprimirEn("Termico2");
-            System.out.println("Impreso correctamente");
-        } catch (Exception e) {
-            System.out.println("Error imprimiendo: " + e.getMessage());
-        }
-    }
 
-    public void llamarImpresora() {
+
+    /*public void llamarImpresora() {
         try {
             String[] impresoras = ConectorPlugin.obtenerImpresoras();
             System.out.println("Lista de impresoras:");
@@ -400,7 +355,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
         } catch (Exception e) {
             System.out.println("Error imprimiendo: " + e.getMessage());
         }
-    }
+    } */
 
     public String getNombreCliente() {
         return txtCliente.getText();

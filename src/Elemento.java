@@ -119,5 +119,12 @@ public class Elemento {
     public void setDescripcion(String descripcion){
         this.descripcion = descripcion;
     }
+
+    public boolean Validar(){
+        if(acero == "" || servicio == "" || piezas==0 || kilos==0.0 || servicio=="Seleccionar" || acero=="Seleccionar")
+        return false;
+        else
+        return true;
+    }
     
 }

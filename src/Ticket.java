@@ -35,4 +35,12 @@ public class Ticket {
         this.montoPagado=montoPagado;
         this.servicios = pformsT;
     }
+
+    public void validarTicket () throws ExcepcionVacio {
+        for(int i=0; i<servicios.size(); i++){
+            if(servicios.get(i).Validar() == false)
+            throw new ExcepcionVacio("Campos Incorrectos");
+            break;
+        }
+    }
 }
