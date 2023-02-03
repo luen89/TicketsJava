@@ -39,7 +39,7 @@ public class VentanaDetalles extends JFrame implements ActionListener{
         this.setResizable(true);
         setLocationRelativeTo(null);
         initComponents();
-        ImageIcon icono = new ImageIcon("src/Imagenes/pavonado_logo.png"); 
+        ImageIcon icono = new ImageIcon("src/Imagenes/Aguila_logo.png"); 
         this.setIconImage(icono.getImage());       
     }
 

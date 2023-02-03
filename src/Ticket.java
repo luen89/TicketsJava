@@ -38,9 +38,9 @@ public class Ticket {
 
     public void validarTicket () throws ExcepcionVacio {
         for(int i=0; i<servicios.size(); i++){
-            if(servicios.get(i).Validar() == false)
+            if(!servicios.get(i).Validar()){
             throw new ExcepcionVacio("Campos Incorrectos");
-            break;
+            }
         }
     }
 }

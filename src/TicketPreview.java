@@ -237,6 +237,13 @@ public class TicketPreview extends JFrame implements ActionListener {
         ConectorPlugin conectorPlugin = new ConectorPlugin(ConectorPlugin.URL_PLUGIN_POR_DEFECTO, serial);
         conectorPlugin.Iniciar()
                 .DeshabilitarElModoDeCaracteresChinos()
+                .Corte(1)
+                .EstablecerAlineacion(ConectorPlugin.ALINEACION_CENTRO)
+                .CargarImagenLocalEImprimir("C:/Users/Aguila_logo.png",0,216)
+                .EstablecerAlineacion(ConectorPlugin.ALINEACION_IZQUIERDA)
+                .Feed(1)
+                .EscribirTexto(ticketTextArea.getText())
+                .Corte(1)
                 .EstablecerAlineacion(ConectorPlugin.ALINEACION_CENTRO)
                 .CargarImagenLocalEImprimir("C:/Users/Aguila_logo.png",0,216)
                 .EstablecerAlineacion(ConectorPlugin.ALINEACION_IZQUIERDA)
