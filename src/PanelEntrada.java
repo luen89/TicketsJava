@@ -17,17 +17,18 @@ import java.io.IOException;
  */
 
 public class PanelEntrada extends JPanel implements ActionListener {
-    private JLabel lbRD, lbGD, lbImagen, lbnOrden, lbCliente;
+    private JLabel lbRD, lbGD, lbImagen, lbnOrden, lbCliente, lbPrecioCustom;
     private JButton btImprimir, btAgregar;
     private JPanel panelEncabezado, subpanelEncabezadoDatos, pImprimir,
-            panelDetalleOrden, pIncrementoOrdenes, subpanelListaOrdenes;
+            panelDetalleOrden, pIncrementoOrdenes, subpanelListaOrdenes, pPrecioCustom;
     public JTextField txtnOrden, txtCliente;
     private JScrollPane scrollOrdenesPanel;
     private ArrayList<PiezaForm> itemsPiezasArray;
 
     private Date initDate;
 
-    public JSpinner jspReceptionDate, jspGiveDate;
+    public JSpinner jspReceptionDate, jspGiveDate, jspPrecioCustom;
+    public SpinnerModel smPrecioCustom;
     private JCheckBox iva;
     TicketPreview tPreview;
     private GestorArchivos fileGestor;
@@ -157,6 +158,10 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         /*PANEL DE IMPRIMIR */
         /*Inicializacion de panel imprimir */
+        lbPrecioCustom = new JLabel("Si el costo de esta orden es personalizado, agréguelo aquí. Si no, déjelo en 0:");
+        smPrecioCustom = new SpinnerNumberModel(0.0, 0.0, null, 0.1);
+        jspPrecioCustom = new JSpinner(smPrecioCustom);
+        pPrecioCustom = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pImprimir = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         /* botones de Imprimir*/
@@ -167,19 +172,23 @@ public class PanelEntrada extends JPanel implements ActionListener {
         iva = new JCheckBox("¿Requiere factura?");
 
         /*Adicion de Elementos al panel */
+        pPrecioCustom.add(lbPrecioCustom);
+        pPrecioCustom.add(jspPrecioCustom);
         pImprimir.add(btImprimir);
         pImprimir.add(iva);
         
+        
         /*Creacion del Borde del panel */
         Border bordePanel2 = new TitledBorder(new EtchedBorder(), "Detalles Adicionales");
-        pImprimir.setBorder(bordePanel2);
-        
-        
+        Border bordePanel4 = new TitledBorder(new EtchedBorder(), "Finalizar Orden");
+        pPrecioCustom.setBorder(bordePanel2);
+        pImprimir.setBorder(bordePanel4);
         
         /*Configuracion y adicion de elementos al Frame */
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(panelEncabezado);
         add(panelDetalleOrden);
+        add(pPrecioCustom);
         add(pImprimir);
     }
 
@@ -279,6 +288,12 @@ public class PanelEntrada extends JPanel implements ActionListener {
         System.out.println("Costo templado: " + costoTemplado);
 
         costoTotal = costoPavonado + costoTemplado;
+
+        if(  Double.parseDouble(jspPrecioCustom.getValue().toString()) > 0.0 ){
+            costoTotal = Double.parseDouble(jspPrecioCustom.getValue().toString());
+        }
+
+        ticket.subtotal = costoTotal;
 
         if (iva.isSelected()) {
             costoTotal += costoTotal * 0.16;

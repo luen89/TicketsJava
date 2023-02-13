@@ -82,12 +82,9 @@ public class TicketPreview extends JFrame implements ActionListener {
                 + "NP\tServ\tAcero\tDur\tPeso\tCosto \n"
                 + "{{items}}\n"
                 + "============================================\n"
-                + "Total PAV:\t $ {{totalP}} \n"
-                + "Cargo Min Pav:\t $ {{impP}} \n"
-                + "Total TEMP:\t $ {{totalT}} \n"
-                + "Cargo Min Temp:\t $ {{impT}} \n"
+                + "SUBTOTAL:\t\t $ {{subtotal}}\n"
                 + "{{IVA}}  \n"
-                + "COSTO TOTAL: $ {{total}} \n"
+                + "COSTO TOTAL:\t $ {{total}} \n"
                 + "============================================\n"
                 + "  \n"
                 + "  \n"
@@ -160,6 +157,7 @@ public class TicketPreview extends JFrame implements ActionListener {
         ticketModificado = ticketModificado.replace("{{impP}}", df.format(ticket.costoPavonado - sumaP) + "");
         ticketModificado = ticketModificado.replace("{{totalT}}", df.format(sumaT) + "");
         ticketModificado = ticketModificado.replace("{{impT}}", df.format(ticket.costoTemplado - sumaT) + "");
+        ticketModificado = ticketModificado.replace("{{subtotal}}", (ticket.subtotal) + "");
         ticketModificado = ticketModificado.replace("{{total}}", (ticket.costoTotal) + "");
         if (ticket.iva) {
             ticketModificado = ticketModificado.replace("{{IVA}}",
