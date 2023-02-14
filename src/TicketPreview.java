@@ -252,7 +252,7 @@ public class TicketPreview extends JFrame implements ActionListener {
                 .Corte(1)
                 .Pulso(48, 60, 120);
         try {
-            conectorPlugin.imprimirEn("Termico2");
+            conectorPlugin.imprimirEn("Termico");
             System.out.println("Impreso correctamente");
         } catch (Exception e) {
             System.out.println("Error imprimiendo: " + e.getMessage());
