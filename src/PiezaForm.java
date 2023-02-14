@@ -25,7 +25,7 @@ import java.util.Arrays;
  */
 
 public class PiezaForm extends JPanel implements ChangeListener, FocusListener {
-     private JLabel lbNPiezas, lbAcero, lbpeso, lbDureza, lbDescripcion;
+     private JLabel lbNPiezas, lbAcero, lbpeso, lbDureza, lbDescripcion, lbPrecioCustom;
      private String Servicio[] = { "Seleccionar", "Pavonado", "Templado", "Templado y Pavonado" };
      private String acero[] = { "Seleccionar", "4140", "8620", "1045", "Colled Rolled", "Q1", "D2" };
      private SpinnerModel smNpiezas;
@@ -34,6 +34,8 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener {
      private JSpinner sNKilos;
      private SpinnerModel smNDureza;
      private JSpinner sNDureza;
+     private JSpinner sPrecioCustom;
+     private SpinnerModel smPrecioCustom;
      private JComboBox<String> cbServicios, cbAcero;
      private Elemento elemento;
      private JTextField tfDureza, tfDesc;
@@ -91,6 +93,7 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener {
           lbpeso = new JLabel(" Peso en Kg");
           lbDureza = new JLabel(" Dureza");
           lbDescripcion =  new JLabel(" Descripción");
+          lbPrecioCustom =  new JLabel(" Precio Personalizado");
 
           // Inicializa el Spinner de Piezas
           smNpiezas = new SpinnerNumberModel(0, 0, 100, 1);
@@ -106,6 +109,11 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener {
           smNDureza = new SpinnerNumberModel(0.0,0.0,100.0,0.1);
           sNDureza = new JSpinner(smNDureza);
           sNDureza.addChangeListener(this);
+
+          //Incializa el Spinner de Costo Personalizado
+          smPrecioCustom = new SpinnerNumberModel(0.0,0.0,null,0.1);
+          sPrecioCustom = new JSpinner(smPrecioCustom);
+          sPrecioCustom.addChangeListener(this);
 
           //Inicializar el textField
           //dureza
@@ -136,6 +144,9 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener {
           this.add(lbDescripcion);
           this.add(tfDesc);
 
+          this.add(lbPrecioCustom);
+          this.add(sPrecioCustom);
+
           this.add(btnX);
      }
 
@@ -154,6 +165,10 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener {
           }
           if (e.getSource() == sNKilos) {
                elemento.setKilos(Double.parseDouble(sNKilos.getValue().toString()));
+          }
+
+          if(e.getSource() == sPrecioCustom){
+               elemento.setPrecioCustom(Double.parseDouble(sPrecioCustom.getValue().toString()));
           }
 
           //elemento.setDureza(tfDureza.getText());

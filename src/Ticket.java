@@ -8,6 +8,7 @@ public class Ticket {
     public double contadorTemplado;
     public double costoPavonado;
     public double costoTemplado;
+    public double subtotal;
     public double costoTotal;
     public Date today;
     public boolean iva;

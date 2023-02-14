@@ -7,6 +7,7 @@ public class Elemento {
     private Double kilos;
     private String dureza;
     private String descripcion;
+    private Double precioCustom;
     private int piezasEntregadas;
   
 
@@ -72,6 +73,10 @@ public class Elemento {
         return descripcion;
     }
 
+    public Double getPrecioCustom(){
+        return precioCustom;
+    }
+
     public int getPiezasEntregadas(){
         return piezasEntregadas;
     }
@@ -118,6 +123,10 @@ public class Elemento {
 
     public void setDescripcion(String descripcion){
         this.descripcion = descripcion;
+    }
+
+    public void setPrecioCustom(Double precioCustom){
+        this.precioCustom = precioCustom;
     }
 
     public boolean Validar(){
