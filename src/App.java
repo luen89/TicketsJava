@@ -1,7 +1,7 @@
 
 import javax.swing.*;
 
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDarkerIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatArcOrangeIJTheme;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -15,7 +15,7 @@ import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDarker
  */
 public class App {
     public static void main(String args[]){
-        FlatMaterialDarkerIJTheme.setup();
+        FlatArcOrangeIJTheme.setup();
         GestorArchivos ga= new GestorArchivos();
         // ga.leerArchivo();
 
