@@ -53,9 +53,9 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         // ****************Etiqueta de Imagen */
         lbImagen = new JLabel();
-        lbImagen.setPreferredSize(new Dimension(600, 200));
+        lbImagen.setPreferredSize(new Dimension(400, 250));
         ImageIcon fot = new ImageIcon("src/Imagenes/Aguila_banner.png");
-        Icon icono = new ImageIcon(fot.getImage().getScaledInstance(600, 200, Image.SCALE_SMOOTH));
+        Icon icono = new ImageIcon(fot.getImage().getScaledInstance(400, 250, Image.SCALE_SMOOTH));
         lbImagen.setIcon(icono);
         lbImagen.setHorizontalAlignment(JLabel.CENTER);
         ;
@@ -64,14 +64,14 @@ public class PanelEntrada extends JPanel implements ActionListener {
         lbRD = new JLabel("Fecha de Recepcion");
         lbGD = new JLabel("Fecha de Entrega");
         lbCliente = new JLabel("Cliente:");
-        lbRD.setForeground(Color.white);
-        lbGD.setForeground(Color.white);
-        lbCliente.setForeground(Color.white);
+        lbRD.setForeground(Color.black);
+        lbGD.setForeground(Color.black);
+        lbCliente.setForeground(Color.black);
         txtCliente = new JTextField("", 15);
 
         /** Configuracion de Etiqueta y Campo de Texto de numero de Orden */
         lbnOrden = new JLabel("Numero de Orden");
-        lbnOrden.setForeground(Color.white);
+        lbnOrden.setForeground(Color.black);
         txtnOrden = new JTextField("", 3);
         txtnOrden.setEditable(false); // Inhabilitar edicion de caja
         try {
@@ -110,8 +110,8 @@ public class PanelEntrada extends JPanel implements ActionListener {
         subpanelEncabezadoDatos.add(txtCliente);
 
         /* Creacion del Borde del Panel */
-        Border bordeEntrada = new TitledBorder(new EtchedBorder(Color.white, Color.white), "Inicio", 1, 2, a,
-                Color.white);
+        Border bordeEntrada = new TitledBorder(new EtchedBorder(Color.orange, Color.orange), "Inicio", 1, 2, a,
+                Color.black);
         panelEncabezado.setBorder(bordeEntrada);
         repaint();
 
