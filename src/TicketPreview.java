@@ -111,7 +111,7 @@ public class TicketPreview extends JFrame implements ActionListener {
                             elemento.getAceroAbreviado() + "\t" +
                             elemento.getDureza() + "\t" +
                             df.format(elemento.getKilos()) + "\t" +
-                            "$" + df.format(costoP) + "\n";
+                            "$" + (elemento.getPrecioCustom() > 0.0 ? df.format(elemento.getPrecioCustom()) : df.format(costoP)) + "\n";
                     break;
                 case "TEMP":
                     sumaT += costoT;
@@ -121,7 +121,7 @@ public class TicketPreview extends JFrame implements ActionListener {
                             elemento.getAceroAbreviado() + "\t" +
                             elemento.getDureza() + "\t" +
                             df.format(elemento.getKilos()) + "\t" +
-                            "$" + df.format(costoT) + "\n";
+                            "$" + (elemento.getPrecioCustom() > 0.0 ? df.format(elemento.getPrecioCustom()) : df.format(costoT)) + "\n";
                     break;
                 case "PA_TE":
                     sumaP += costoP;
@@ -132,8 +132,8 @@ public class TicketPreview extends JFrame implements ActionListener {
                             elemento.getAceroAbreviado() + "\t" +
                             elemento.getDureza() + "\t" +
                             df.format(elemento.getKilos()) + "\t" +
-                            "$" + df.format(costoP) + "\n" +
-                            "\t\t\t\t\t$" + df.format(costoT) + "\n";
+                            "$" + (elemento.getPrecioCustom() > 0.0 ? df.format(elemento.getPrecioCustom()) : df.format(costoP) + "\n" +
+                            "\t\t\t\t\t$" + df.format(costoT) + "\n");
                     break;
                 default:
                     listaArticulos = listaArticulos + "\n" +
