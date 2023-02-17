@@ -24,7 +24,8 @@ public class PanelEntrada extends JPanel implements ActionListener {
     public JTextField txtnOrden, txtCliente;
     private JScrollPane scrollOrdenesPanel;
     private ArrayList<PiezaForm> itemsPiezasArray;
-
+    private String[] serviciosNames;
+    private String[] acerosNames;
     private Date initDate;
 
     public JSpinner jspReceptionDate, jspGiveDate, jspPrecioCustom;
@@ -34,6 +35,9 @@ public class PanelEntrada extends JPanel implements ActionListener {
     private GestorArchivos fileGestor;
     // prueba
     private int contador = 0;
+    private MatrizValidacion matrix;
+    ArrayList<Servicio> arrayServicios = new ArrayList<Servicio>();
+    ArrayList<Acero> arrayAceros = new ArrayList<Acero>();
 
     public PanelEntrada(GestorArchivos fileGestor) {
         this.fileGestor = fileGestor;
@@ -41,6 +45,35 @@ public class PanelEntrada extends JPanel implements ActionListener {
     }
 
     public void initComponents() {
+
+
+        
+        arrayServicios.add(new Servicio(0,"Pavonado limpio",220.0,280.0,45.0,3,8));
+        arrayServicios.add(new Servicio(1,"Pavonado Sucio",220.0,280.0,39.0,3,8));
+        arrayServicios.add(new Servicio(2,"Temple Normal",290.0,290.0,95.0,0,4));
+        arrayServicios.add(new Servicio(3,"Temple Doble",310.0,310.0,95.0,0,4));
+        arrayAceros.add(new Acero(0,"Acero0"));
+        arrayAceros.add(new Acero(1,"Acero1"));
+        arrayAceros.add(new Acero(2,"Acero2"));
+        arrayAceros.add(new Acero(3,"Acero3"));
+
+        matrix= new MatrizValidacion(arrayServicios.size(), arrayAceros.size());
+
+        serviciosNames= new String[arrayServicios.size()];
+        acerosNames= new String[arrayAceros.size()];
+
+        for(int i=0;i<arrayServicios.size();i++){
+            serviciosNames[i]=arrayServicios.get(i).name;
+        }
+        for(int i=0;i<arrayAceros.size();i++){
+            acerosNames[i]=arrayAceros.get(i).name;
+        }
+
+
+
+
+
+
 
         /* CREACION DE FUENTE */
         Font a = new Font("Calibri", 1, 14);
@@ -129,12 +162,15 @@ public class PanelEntrada extends JPanel implements ActionListener {
         scrollOrdenesPanel.getVerticalScrollBar().setUnitIncrement(16);
         /* Inicializacion del primer formulario de Orden */
         itemsPiezasArray = new ArrayList<PiezaForm>();
-        PiezaForm pieza = new PiezaForm();
+        PiezaForm pieza = new PiezaForm(serviciosNames,acerosNames,arrayServicios,arrayAceros,matrix,itemsPiezasArray);
         itemsPiezasArray.add(pieza);
         pieza.preDisplay();
         pieza.getBotonEliminar().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("Voy a eliminar la pieza");
+                pieza.removerTodoDeMatriz();
+                System.out.println("Borre los datos de la Matriz");
                 subpanelListaOrdenes.remove(pieza);
                 itemsPiezasArray.remove(pieza);
                 refreshDisplay();
@@ -194,13 +230,17 @@ public class PanelEntrada extends JPanel implements ActionListener {
         /* Evento a Boton Agregar nuevo elemento */
         if (e.getSource() == btAgregar) {
             // Crea e inicializa un nuevo formulario
-            PiezaForm pieza = new PiezaForm();
+            PiezaForm pieza = new PiezaForm(serviciosNames,acerosNames,arrayServicios,arrayAceros,matrix,itemsPiezasArray);
             itemsPiezasArray.add(pieza);
             pieza.preDisplay();
             // Se crea el evento para el boton eliminar
             pieza.getBotonEliminar().addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    System.out.println("Voy a eliminar la pieza");
+                    pieza.removerTodoDeMatriz();
+                    System.out.println("Borre los datos de la Matriz");
+                    pieza.calcularCostosLista();
                     subpanelListaOrdenes.remove(pieza);
                     itemsPiezasArray.remove(pieza);
                     refreshDisplay();

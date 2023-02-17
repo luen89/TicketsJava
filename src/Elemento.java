@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Elemento {
     private String acero;
     private String servicio;
@@ -8,6 +10,8 @@ public class Elemento {
     private String dureza;
     private String descripcion;
     private Double precioCustom;
+    private Acero aceroObject;
+    public ArrayList<Servicio> servArray = new ArrayList<Servicio>(); 
     private int piezasEntregadas;
   
 
@@ -39,6 +43,15 @@ public class Elemento {
         this.dureza = dureza;
         this.descripcion = descripcion;
         this.piezasEntregadas=piezasEntregadas;
+    }
+
+    public void setAceroObject(Acero ac){
+        aceroObject=ac;
+
+    }
+
+    public Acero getAceroObject(){
+        return aceroObject;
     }
 
     public String getServicio(){

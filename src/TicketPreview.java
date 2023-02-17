@@ -238,7 +238,7 @@ public class TicketPreview extends JFrame implements ActionListener {
                 .Corte(1)
                 .EstablecerAlineacion(ConectorPlugin.ALINEACION_CENTRO)
                 .CargarImagenLocalEImprimir("C:/Users/Aguila_logo.png",0,216)
-                .EstablecerAlineacion(ConectorPlugin.ALINEACION_IZQUIERDA)
+                .EstablecerAlineacion(ConectorPlugin.ALINEACION_IZQUIERDA) 
                 .Feed(1)
                 .EscribirTexto(ticketTextArea.getText())
                 .Corte(1)
