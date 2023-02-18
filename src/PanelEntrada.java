@@ -44,8 +44,8 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
 
         
-        arrayServicios.add(new Servicio(0,"Pavonado limpio",220.0,280.0,45.0,3,8));
-        arrayServicios.add(new Servicio(1,"Pavonado Sucio",220.0,280.0,39.0,3,8));
+        arrayServicios.add(new Servicio(0,"Pavonado limpio",220.0,280.0,39.0,3,8));
+        arrayServicios.add(new Servicio(1,"Pavonado Sucio",220.0,280.0,45.0,3,8));
         arrayServicios.add(new Servicio(2,"Temple Normal",290.0,290.0,95.0,0,4));
         arrayServicios.add(new Servicio(3,"Temple Doble",310.0,310.0,95.0,0,4));
         arrayAceros.add(new Acero(0,"Acero0"));
