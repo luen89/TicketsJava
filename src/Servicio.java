@@ -23,10 +23,11 @@ public class Servicio{
 
     public double obtenerCosto(double kgBandera, double kg){
         double costo;
+        if(kg==0){return 0;}
         if(kgBandera<=limiteMinimo){costo=costoMin;}
         else{
-        if(kgBandera>limiteMinimo && kgBandera<=limiteMedio){costo=costoMed;}
-        else{costo=kg*costoKg;}
+            if(kgBandera>limiteMinimo && kgBandera<=limiteMedio){costo=costoMed;}
+            else{costo=kg*costoKg;}
         }
         return costo;    
     }

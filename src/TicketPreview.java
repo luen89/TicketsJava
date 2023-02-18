@@ -26,8 +26,7 @@ public class TicketPreview extends JFrame implements ActionListener {
     Ticket ticket;
     String listaArticulos = "";
     private static final DecimalFormat df = new DecimalFormat("0.00");
-    double sumaP = 0.0;
-    double sumaT = 0.0;
+
 
     public TicketPreview(Ticket ticket, GestorArchivos gestor , PanelEntrada panelA) {
         this.panelA=panelA;
@@ -76,7 +75,8 @@ public class TicketPreview extends JFrame implements ActionListener {
                 + "                Puebla, Puebla \n"
                 + "============================================\n"
                 + "Ticket # {{ticket}} \n"
-                + "{{fecha}} \n\n"
+                + "{{fecha}} \n"
+                + "Cliente: {{nombre}} \n\n"
                 + "Detalle de producto\n"
                 + "============================================\n"
                 + "NP\tServ\tAcero\tDur\tPeso\tCosto \n"
@@ -90,59 +90,36 @@ public class TicketPreview extends JFrame implements ActionListener {
                 + "  \n"
                 + "  \n"
                 + "       ________________________________\n"
-                + "                    FIRMA\n"
+                + "             Firma de quien entrega\n\n\n"
+                + "       ________________________________\n"
+                + "             Firma de quien recibe\n"
                 + "============================================\n"
                 + "        GRACIAS POR SU PREFERENCIA...       \n"
                 + "           ******::::::::*******"
                 + "\n"
                 + "\n";
 
-        String ticketModificado = ticketHeader.replace("{{total}}", ticket.costoTotal + "");
-
+        String ticketModificado = ticketHeader;
+        
         ticket.servicios.forEach(elemento -> {
-            double costoP = (elemento.getKilos() * 39);
-            double costoT = (elemento.getKilos() * 95);
-            switch (elemento.getServicioAbreviado()) {
-                case "PAV":
-                    sumaP += costoP;
-                    listaArticulos = listaArticulos + "\n" +
-                            elemento.getPiezas() + "\t" +
-                            elemento.getServicioAbreviado() + "\t" +
-                            elemento.getAceroAbreviado() + "\t" +
-                            elemento.getDureza() + "\t" +
-                            df.format(elemento.getKilos()) + "\t" +
-                            "$" + (elemento.getPrecioCustom() > 0.0 ? df.format(elemento.getPrecioCustom()) : df.format(costoP)) + "\n";
-                    break;
-                case "TEMP":
-                    sumaT += costoT;
-                    listaArticulos = listaArticulos + "\n" +
-                            elemento.getPiezas() + "\t" +
-                            elemento.getServicioAbreviado() + "\t" +
-                            elemento.getAceroAbreviado() + "\t" +
-                            elemento.getDureza() + "\t" +
-                            df.format(elemento.getKilos()) + "\t" +
-                            "$" + (elemento.getPrecioCustom() > 0.0 ? df.format(elemento.getPrecioCustom()) : df.format(costoT)) + "\n";
-                    break;
-                case "PA_TE":
-                    sumaP += costoP;
-                    sumaT += costoT;
-                    listaArticulos = listaArticulos + "\n" +
-                            elemento.getPiezas() + "\t" +
-                            elemento.getServicioAbreviado() + "\t" +
-                            elemento.getAceroAbreviado() + "\t" +
-                            elemento.getDureza() + "\t" +
-                            df.format(elemento.getKilos()) + "\t" +
-                            "$" + (elemento.getPrecioCustom() > 0.0 ? df.format(elemento.getPrecioCustom()) : df.format(costoP) + "\n" +
-                            "\t\t\t\t\t$" + df.format(costoT) + "\n");
-                    break;
-                default:
-                    listaArticulos = listaArticulos + "\n" +
-                            elemento.getPiezas() + "\t" +
-                            elemento.getServicioAbreviado() + "\t" +
-                            elemento.getAcero() + "\t" +
-                            df.format(elemento.getKilos()) + "\n";
-            }
-
+            listaArticulos=listaArticulos
+                            +elemento.getPiezas()+"\t"
+                            +elemento.servArray.get(0).nameAbr+"\t"
+                            +elemento.getAcero()+"\t"
+                            +elemento.getDureza()+"\t"
+                            +elemento.getKilos()+"\t"
+                            +elemento.getPrecioCustom(0)+"\n";
+                            ticket.subtotal=ticket.subtotal+elemento.getPrecioCustom(0);
+                            for(int i=1;i<elemento.precioCustom.size();i++){
+                                listaArticulos=listaArticulos+"\t"
+                                    +elemento.servArray.get(i).nameAbr+"\t"
+                                    +"\t"
+                                    +"\t"
+                                    +"\t"
+                                    +elemento.getPrecioCustom(i)+"\n";
+                                    ticket.subtotal=ticket.subtotal+elemento.getPrecioCustom(i);
+                            }
+                            
         });
 
         SimpleDateFormat formatoFecha = new SimpleDateFormat("EEEE dd 'de' MMMM 'del' yyyy', a las' hh:mm:ss",
@@ -150,22 +127,20 @@ public class TicketPreview extends JFrame implements ActionListener {
 
         String fechaFinal = primeraMayuscula(formatoFecha.format(ticket.today).toString());
 
+        ticketModificado = ticketModificado.replace("{{nombre}}", ticket.nameCliente);
         ticketModificado = ticketModificado.replace("{{fecha}}", fechaFinal);
         ticketModificado = ticketModificado.replace("{{ticket}}", String.format("%04d", ticket.nOrden) + "");
         ticketModificado = ticketModificado.replace("{{items}}", listaArticulos);
-        ticketModificado = ticketModificado.replace("{{totalP}}", df.format(sumaP) + "");
-        ticketModificado = ticketModificado.replace("{{impP}}", df.format(ticket.costoPavonado - sumaP) + "");
-        ticketModificado = ticketModificado.replace("{{totalT}}", df.format(sumaT) + "");
-        ticketModificado = ticketModificado.replace("{{impT}}", df.format(ticket.costoTemplado - sumaT) + "");
-        ticketModificado = ticketModificado.replace("{{subtotal}}", (ticket.subtotal) + "");
-        ticketModificado = ticketModificado.replace("{{total}}", (ticket.costoTotal) + "");
+        ticketModificado = ticketModificado.replace("{{subtotal}}", (ticket.subtotal) + "");      
         if (ticket.iva) {
             ticketModificado = ticketModificado.replace("{{IVA}}",
-                    "IVA:\t\t $ " + df.format(((ticket.costoTotal - (ticket.costoTotal * 0.16)) * 0.16)));
+                    "IVA:\t\t $ " + df.format(((ticket.subtotal  * 0.16))));
+            ticket.costoTotal=ticket.subtotal+(ticket.subtotal* 0.16);
         } else {
             ticketModificado = ticketModificado.replace("{{IVA}}", "\n");
+            ticket.costoTotal=ticket.subtotal;
         }
-
+        ticketModificado = ticketModificado.replace("{{total}}", (ticket.costoTotal) + "");
         ticketTextArea.setText(ticketModificado);
 
         this.add(scrollTicket);

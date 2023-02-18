@@ -253,7 +253,7 @@ public class GestorArchivos {
         catch (IOException e) { 
             System.out.println(e.toString());
         }
-        ticketsito = new Ticket(nOrden,nameCliente,0.0,0.0,0.0,0.0,costoTotalTicket,opDate,ivab,mPagado, elementosOrden);    
+        ticketsito = new Ticket(nOrden,nameCliente,costoTotalTicket,opDate,ivab,mPagado, elementosOrden);    
 
         return ticketsito;
     }

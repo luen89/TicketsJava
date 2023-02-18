@@ -251,10 +251,12 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         if (e.getSource() == btImprimir) {
             // Obtiene el Ticket Logico
-            Ticket ticketsito = condiciones();
-            if (contador >= 1) {
+            Ticket ticketsito = new Ticket(Integer.parseInt(txtnOrden.getText()), txtCliente.getText().toUpperCase(),0, initDate,
+            iva.isSelected(), 0.0, new ArrayList<Elemento>());
+            for (int i = 0; i < itemsPiezasArray.size(); i++) {ticketsito.servicios.add(itemsPiezasArray.get(i).getElemento());}
+            /*if (contador >= 1) {
                 contador--;
-            }
+            }*/
             try {
                 ticketsito.validarTicket();
                 // Crea la previsualizacion del ticket
@@ -274,7 +276,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
         System.out.println("Imprimiendo desde panel entrada: " + id);
     }
 
-    public Ticket condiciones() {
+    /*public Ticket condiciones() {
         // Funcion de Jeatog yo ahi no le muevo XD @ZingyArtist
         double contadorPavonado = 0;
         double contadorTemplado = 0;
@@ -354,7 +356,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         return ticket;
     }
-
+*/
     /*
      * public void llamarImpresora() {
      * try {

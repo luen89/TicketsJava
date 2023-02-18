@@ -5,7 +5,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-public class SubPiezaForm extends JPanel implements ChangeListener, FocusListener{
+public class SubPiezaForm extends JPanel implements ChangeListener{
     private JLabel  lbPrecioCustom;
     private String namesServicio[];
     private Elemento elemento; 
@@ -19,7 +19,6 @@ public class SubPiezaForm extends JPanel implements ChangeListener, FocusListene
         this.namesServicio=namesServicio;
         this.elemento = elemento;
         cbServicios = new JComboBox<String>(namesServicio);
-        cbServicios.addFocusListener(this);
         lbPrecioCustom =  new JLabel(" Costo");
         smPrecioCustom = new SpinnerNumberModel(0.0,0.0,null,0.1);
         sPrecioCustom = new JSpinner(smPrecioCustom);
@@ -42,18 +41,6 @@ public class SubPiezaForm extends JPanel implements ChangeListener, FocusListene
    public JComboBox getCBservicios(){
         return cbServicios;
    }
-
-    @Override
-    public void focusGained(FocusEvent e) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void focusLost(FocusEvent e) {
-        // TODO Auto-generated method stub
-        
-    }
 
     @Override
     public void stateChanged(ChangeEvent e) {

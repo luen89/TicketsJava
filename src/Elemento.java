@@ -9,7 +9,7 @@ public class Elemento {
     private Double kilos;
     private String dureza;
     private String descripcion;
-    private Double precioCustom;
+    public ArrayList <Double> precioCustom = new ArrayList<Double>();
     private Acero aceroObject;
     public ArrayList<Servicio> servArray = new ArrayList<Servicio>(); 
     private int piezasEntregadas;
@@ -18,6 +18,7 @@ public class Elemento {
     public Elemento(String acero, String servicio, int piezas, Double kilos, String dureza, String descripcion, int piezasEntregadas){
         super();
         this.acero = acero;
+        precioCustom.add(0.0);
         if (acero=="Colled Rolled"){acerAbr="C.R.";}
         else{acerAbr=acero;}
         this.servicio = servicio;
@@ -86,8 +87,16 @@ public class Elemento {
         return descripcion;
     }
 
-    public Double getPrecioCustom(){
-        return precioCustom;
+    public void addPrecioCustom(){
+        precioCustom.add(0.0);
+    }
+
+    public void removePrecioCustom(int i){
+        precioCustom.remove(i);
+    }
+
+    public Double getPrecioCustom(int i){
+        return precioCustom.get(i);
     }
 
     public int getPiezasEntregadas(){
@@ -138,8 +147,8 @@ public class Elemento {
         this.descripcion = descripcion;
     }
 
-    public void setPrecioCustom(Double precioCustom){
-        this.precioCustom = precioCustom;
+    public void setPrecioCustom(Double precioC, int i){
+        precioCustom.set(i,precioC);
     }
 
     public boolean Validar(){
