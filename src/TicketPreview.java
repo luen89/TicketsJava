@@ -18,14 +18,15 @@ public class TicketPreview extends JFrame implements ActionListener {
     public PanelEntrada panelA;
     JLabel sustitoImagen;
     JTextArea ticketTextArea;
-    private JPanel subpanelTicket,subpanelImagenBoton,spBoton;
+    private JPanel subpanelTicket,subpanelImagenBoton,spBoton, spBtnFoto;
     private JScrollPane scrollTicket;
     GestorArchivos fileGestor;
     JTextField verOrden;
-    JButton boton;
+    JButton boton, btnFoto;
     Ticket ticket;
     String listaArticulos = "";
     private static final DecimalFormat df = new DecimalFormat("0.00");
+    VentanaFoto vFoto;
 
 
     public TicketPreview(Ticket ticket, GestorArchivos gestor , PanelEntrada panelA) {
@@ -50,9 +51,13 @@ public class TicketPreview extends JFrame implements ActionListener {
         scrollTicket = new JScrollPane(subpanelTicket);
         scrollTicket.getVerticalScrollBar().setUnitIncrement(16);
         
-        subpanelImagenBoton = new JPanel( new GridLayout(2,0));
+        subpanelImagenBoton = new JPanel( new GridLayout(3,0));
         sustitoImagen = new JLabel("Aqui va la Imagen");
 
+        spBtnFoto = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        btnFoto = new JButton("Tomar Foto");
+        btnFoto.addActionListener(this);
+        
         spBoton = new JPanel(new FlowLayout(FlowLayout.CENTER));
         boton = new JButton("Imprimir y Registrar");
         boton.addActionListener(this);
@@ -62,9 +67,11 @@ public class TicketPreview extends JFrame implements ActionListener {
         ticketTextArea.setAlignmentX(JTextArea.LEFT_ALIGNMENT);
         ticketTextArea.setEditable(false);
 
+        spBtnFoto.add(btnFoto);
         spBoton.add(boton);
         subpanelTicket.add(ticketTextArea);
         subpanelImagenBoton.add(sustitoImagen);
+        subpanelImagenBoton.add(spBtnFoto);
         subpanelImagenBoton.add(spBoton);
 
         String ticketHeader = "\n"
@@ -189,6 +196,9 @@ public class TicketPreview extends JFrame implements ActionListener {
             }     
         }
 
+        if (e.getSource() == btnFoto){
+            llamarFoto();
+        }
        
         // TODO Auto-generated method stub
 
@@ -230,6 +240,35 @@ public class TicketPreview extends JFrame implements ActionListener {
         } catch (Exception e) {
             System.out.println("Error imprimiendo: " + e.getMessage());
         }
+    }
+
+    public void llamarFoto(){
+        System.out.println("Voy a abrir la camara papi");
+        //"Main" del archivo VentanaFoto
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(VentanaFoto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(VentanaFoto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(VentanaFoto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(VentanaFoto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new VentanaFoto().setVisible(true);
+            }
+        });
     }
 
 }
