@@ -3,41 +3,22 @@ import java.util.ArrayList;
 public class Elemento {
     private String acero;
     private String servicio;
-    private String servAbr;
-    private String acerAbr;
     private Integer piezas;
     private Double kilos;
     private String dureza;
     private String descripcion;
-    public ArrayList <Double> precioCustom = new ArrayList<Double>();
+    public Double precioCustom;
     private Acero aceroObject;
-    public ArrayList<Servicio> servArray = new ArrayList<Servicio>(); 
+    public Servicio servicioObjeto;
+    public ArrayList<SubElemento> subelementoArray = new ArrayList<SubElemento>();  
     private int piezasEntregadas;
   
 
     public Elemento(String acero, String servicio, int piezas, Double kilos, String dureza, String descripcion, int piezasEntregadas){
         super();
+        this.servicio=servicio;
         this.acero = acero;
-        precioCustom.add(0.0);
-        if (acero=="Colled Rolled"){acerAbr="C.R.";}
-        else{acerAbr=acero;}
-        this.servicio = servicio;
-        switch(servicio){
-            case "Pavonado" : 
-                            servAbr = "PAV";
-                            break;
-            case "Templado y Pavonado" :
-                            System.out.println("Si marca el abreviado");
-                            servAbr = "PA_TE";
-                            break;
-            case "Templado" : 
-                            servAbr = "TEMP";
-                            break;
-            
-            default         :      
-                            servAbr = "";
-                            break;
-        }
+        precioCustom=0.0;
         this.piezas = piezas;
         this.kilos = kilos;
 
@@ -57,14 +38,6 @@ public class Elemento {
 
     public String getServicio(){
         return servicio;
-    }
-
-    public String getServicioAbreviado(){
-        return servAbr;
-    }
-
-    public String getAceroAbreviado(){
-        return acerAbr;
     }
     
     public int getPiezas(){
@@ -87,16 +60,20 @@ public class Elemento {
         return descripcion;
     }
 
-    public void addPrecioCustom(){
-        precioCustom.add(0.0);
+    public void addSubElemento(Servicio servicio, double costo){
+        subelementoArray.add(new SubElemento(this, servicio,costo));
     }
 
-    public void removePrecioCustom(int i){
-        precioCustom.remove(i);
+    public void removeSubElemento(SubElemento s){
+        subelementoArray.remove(s);
     }
 
-    public Double getPrecioCustom(int i){
-        return precioCustom.get(i);
+    public SubElemento getSubElemento(int i){return subelementoArray.get(i);}
+
+    public int getSubElementoSize(){return subelementoArray.size();}
+
+    public Double getPrecioCustom(){
+        return precioCustom;
     }
 
     public int getPiezasEntregadas(){
@@ -109,20 +86,6 @@ public class Elemento {
 
     public void setServicio(String servicio){
         this.servicio = servicio;
-        switch(servicio){
-            case "Pavonado" : 
-                            servAbr = "PAV";
-                            break;
-            case "Templado" : 
-                            servAbr = "TEMP";
-                            break;
-            case "Templado y Pavonado"      : 
-                            servAbr = "PA_TE";
-                            break;
-            default         :      
-                            servAbr = "";
-                            break;
-        }
     }
     
     public void setPiezas(Integer piezas){
@@ -135,8 +98,6 @@ public class Elemento {
     
     public void setAcero(String acero){
         this.acero = acero;
-        if (acero=="Colled Rolled"){acerAbr="C.R.";}
-        else{acerAbr=acero;}
     }
     
     public void setDureza(String dureza){
@@ -147,8 +108,8 @@ public class Elemento {
         this.descripcion = descripcion;
     }
 
-    public void setPrecioCustom(Double precioC, int i){
-        precioCustom.set(i,precioC);
+    public void setPrecioCustom(Double precioC){
+        precioCustom=precioC;
     }
 
     public boolean Validar(){

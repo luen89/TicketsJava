@@ -13,63 +13,32 @@ import javax.swing.border.*;
  */
 
 public class PanelEntrada extends JPanel implements ActionListener {
-    private JLabel lbRD, lbGD, lbImagen, lbnOrden, lbCliente, lbPrecioCustom;
+    private JLabel lbRD, lbGD, lbImagen, lbnOrden, lbCliente, lbPrecioTotalCustom;
     private JButton btImprimir, btAgregar;
     private JPanel panelEncabezado, subpanelEncabezadoDatos, pImprimir,
-            panelDetalleOrden, pIncrementoOrdenes, subpanelListaOrdenes, pPrecioCustom;
+            panelDetalleOrden, pIncrementoOrdenes;
+    public JPanel subpanelListaOrdenes, pPrecioTotalCustom;
     public JTextField txtnOrden, txtCliente;
     private JScrollPane scrollOrdenesPanel;
-    private ArrayList<PiezaForm> itemsPiezasArray;
-    private String[] serviciosNames;
-    private String[] acerosNames;
+    public ArrayList<PiezaForm> itemsPiezasArray;
+   
     private Date initDate;
 
     public JSpinner jspReceptionDate, jspGiveDate, jspPrecioCustom;
     public SpinnerModel smPrecioCustom;
-    private JCheckBox iva;
+    private JCheckBox iva, autoCalculo;
     TicketPreview tPreview;
     private GestorArchivos fileGestor;
-    // prueba
-    private int contador = 0;
-    private MatrizValidacion matrix;
-    ArrayList<Servicio> arrayServicios = new ArrayList<Servicio>();
-    ArrayList<Acero> arrayAceros = new ArrayList<Acero>();
+    public ControladorPE control;
+    
 
-    public PanelEntrada(GestorArchivos fileGestor) {
+    public PanelEntrada(GestorArchivos fileGestor, ControladorPE control) {
         this.fileGestor = fileGestor;
+        this.control=control;
         initComponents();
     }
 
     public void initComponents() {
-
-
-        
-        arrayServicios.add(new Servicio(0,"Pavonado limpio",220.0,280.0,39.0,3,8));
-        arrayServicios.add(new Servicio(1,"Pavonado Sucio",220.0,280.0,45.0,3,8));
-        arrayServicios.add(new Servicio(2,"Temple Normal",290.0,290.0,95.0,0,4));
-        arrayServicios.add(new Servicio(3,"Temple Doble",310.0,310.0,95.0,0,4));
-        arrayAceros.add(new Acero(0,"Acero0"));
-        arrayAceros.add(new Acero(1,"Acero1"));
-        arrayAceros.add(new Acero(2,"Acero2"));
-        arrayAceros.add(new Acero(3,"Acero3"));
-
-        matrix= new MatrizValidacion(arrayServicios.size(), arrayAceros.size());
-
-        serviciosNames= new String[arrayServicios.size()];
-        acerosNames= new String[arrayAceros.size()];
-
-        for(int i=0;i<arrayServicios.size();i++){
-            serviciosNames[i]=arrayServicios.get(i).name;
-        }
-        for(int i=0;i<arrayAceros.size();i++){
-            acerosNames[i]=arrayAceros.get(i).name;
-        }
-
-
-
-
-
-
 
         /* CREACION DE FUENTE */
         Font a = new Font("Calibri", 1, 14);
@@ -158,30 +127,24 @@ public class PanelEntrada extends JPanel implements ActionListener {
         scrollOrdenesPanel.getVerticalScrollBar().setUnitIncrement(16);
         /* Inicializacion del primer formulario de Orden */
         itemsPiezasArray = new ArrayList<PiezaForm>();
-        PiezaForm pieza = new PiezaForm(serviciosNames,acerosNames,arrayServicios,arrayAceros,matrix,itemsPiezasArray);
+        PiezaForm pieza = new PiezaForm(this);
         itemsPiezasArray.add(pieza);
         pieza.preDisplay();
-        pieza.getBotonEliminar().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Voy a eliminar la pieza");
-                pieza.removerTodoDeMatriz();
-                System.out.println("Borre los datos de la Matriz");
-                subpanelListaOrdenes.remove(pieza);
-                itemsPiezasArray.remove(pieza);
-                refreshDisplay();
-            }
-        });
 
         /* Inicializacion del subpanel de Incremento de Ordenes */
-        pIncrementoOrdenes = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        pIncrementoOrdenes = new JPanel(new GridLayout(0,1));
         /* Inicializacion Boton de Agregar */
+        autoCalculo = new JCheckBox("AutoCalcular");
+        autoCalculo.setSelected(true);
+        autoCalculo.addActionListener(this);
         btAgregar = new JButton("Agregar elemento");
         btAgregar.addActionListener(this);
 
         /* Conformacion de subpaneles con sus repectivos elementos y panel final */
         subpanelListaOrdenes.add(pieza);
+        
         pIncrementoOrdenes.add(btAgregar);
+        pIncrementoOrdenes.add(autoCalculo);
         panelDetalleOrden.add(pIncrementoOrdenes);
         panelDetalleOrden.add(scrollOrdenesPanel);
 
@@ -191,7 +154,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         /* PANEL DE IMPRIMIR */
         /* Inicializacion de panel imprimir */
-        lbPrecioCustom = new JLabel("Si el costo de esta orden es personalizado, agréguelo aquí. Si no, déjelo en 0:");
+        lbPrecioTotalCustom = new JLabel("Si el costo de esta orden es personalizado, agréguelo aquí. Si no, déjelo en 0:");
         smPrecioCustom = new SpinnerNumberModel(0.0, 0.0, null, 0.1);
         pImprimir = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
@@ -226,22 +189,9 @@ public class PanelEntrada extends JPanel implements ActionListener {
         /* Evento a Boton Agregar nuevo elemento */
         if (e.getSource() == btAgregar) {
             // Crea e inicializa un nuevo formulario
-            PiezaForm pieza = new PiezaForm(serviciosNames,acerosNames,arrayServicios,arrayAceros,matrix,itemsPiezasArray);
+            PiezaForm pieza = new PiezaForm(this);
             itemsPiezasArray.add(pieza);
             pieza.preDisplay();
-            // Se crea el evento para el boton eliminar
-            pieza.getBotonEliminar().addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.out.println("Voy a eliminar la pieza");
-                    pieza.removerTodoDeMatriz();
-                    System.out.println("Borre los datos de la Matriz");
-                    pieza.calcularCostosLista();
-                    subpanelListaOrdenes.remove(pieza);
-                    itemsPiezasArray.remove(pieza);
-                    refreshDisplay();
-                }
-            });
             // Se agrega a la lista de Ordenes
             subpanelListaOrdenes.add(itemsPiezasArray.get(itemsPiezasArray.size() - 1));
             // Se actualiza la vista
@@ -268,6 +218,22 @@ public class PanelEntrada extends JPanel implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Campos Incorrectos");
             }
 
+        }
+
+        if (e.getSource() == autoCalculo) {
+            if(autoCalculo.isSelected()){
+                control.setAutoCalculo(true);
+                for(PiezaForm p : itemsPiezasArray){
+                    p.setEnablePrecioCustoms(false);
+                    p.calcularCostos();
+                }
+            }
+            else{
+                control.setAutoCalculo(false);
+                for(PiezaForm p : itemsPiezasArray){
+                    p.setEnablePrecioCustoms(true);
+                }
+            }
         }
 
     }
@@ -356,78 +322,9 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         return ticket;
     }
-*/
-    /*
-     * public void llamarImpresora() {
-     * try {
-     * String[] impresoras = ConectorPlugin.obtenerImpresoras();
-     * System.out.println("Lista de impresoras:");
-     * for (String impresora : impresoras) {
-     * System.out.printf("'%s'\n", impresora);
-     * }
-     * } catch (IOException | InterruptedException e) {
-     * System.out.println("Error obteniendo impresoras: " + e.getMessage());
-     * }
-     * 
-     * String amongUsComoCadena =
-     * "000001111000\n000010000100\n000100011110\n000100100001\n011100100001\n010100100001\n010100100001\n010100011110\n010100000010\n011100000010\n000100111010\n000100101010\n000111101110\n000000000000\n000000000000\n000000000000\n111010101110\n100010101000\n111010101110\n001010100010\n111011101110\n000000000000\n000000000000\n000000000000";
-     * // Aquí tu serial en caso de tener uno
-     * final String serial = "";
-     * ConectorPlugin conectorPlugin = new
-     * ConectorPlugin(ConectorPlugin.URL_PLUGIN_POR_DEFECTO, serial);
-     * conectorPlugin.Iniciar()
-     * .DeshabilitarElModoDeCaracteresChinos()
-     * .EstablecerAlineacion(ConectorPlugin.ALINEACION_CENTRO)
-     * .DescargarImagenDeInternetEImprimir(
-     * "http://assets.stickpng.com/thumbs/587e32259686194a55adab73.png", 0,
-     * 216)
-     * .Feed(1)
-     * .EscribirTexto("Parzibyte's blog\n")
-     * .EscribirTexto("Blog de un programador\n")
-     * .TextoSegunPaginaDeCodigos(2, "cp850", "Teléfono: 123456798\n")
-     * .EscribirTexto("Fecha y hora: " + "29/9/2022")
-     * .Feed(1)
-     * .EstablecerAlineacion(ConectorPlugin.ALINEACION_IZQUIERDA)
-     * .EscribirTexto("____________________\n")
-     * .TextoSegunPaginaDeCodigos(2, "cp850",
-     * "Venta de plugin para impresoras versión 3\n")
-     * .EstablecerAlineacion(ConectorPlugin.ALINEACION_DERECHA)
-     * .EscribirTexto("$25\n")
-     * .EscribirTexto("____________________\n")
-     * .EscribirTexto("TOTAL: $25\n")
-     * .EscribirTexto("____________________\n")
-     * .EstablecerAlineacion(ConectorPlugin.ALINEACION_CENTRO)
-     * .HabilitarCaracteresPersonalizados()
-     * .DefinirCaracterPersonalizado("$", amongUsComoCadena)
-     * .EscribirTexto("En lugar del simbolo de pesos debe aparecer un among us\n")
-     * .EscribirTexto("TOTAL: $25\n")
-     * .EstablecerEnfatizado(true)
-     * .EstablecerTamanoFuente(1, 1)
-     * .TextoSegunPaginaDeCodigos(2, "cp850", "¡Gracias por su compra!\n")
-     * .Feed(1)
-     * .ImprimirCodigoQr("https://parzibyte.me/blog", 160,
-     * ConectorPlugin.RECUPERACION_QR_MEJOR,
-     * ConectorPlugin.TAMANO_IMAGEN_NORMAL)
-     * .Feed(1)
-     * .ImprimirCodigoDeBarrasCode128("parzibyte.me", 80, 192,
-     * ConectorPlugin.TAMANO_IMAGEN_NORMAL)
-     * .Feed(1)
-     * .EstablecerTamanoFuente(1, 1)
-     * .EscribirTexto("parzibyte.me\n")
-     * .Feed(3)
-     * .Corte(1)
-     * .Pulso(48, 60, 120);
-     * try {
-     * conectorPlugin.imprimirEn("PT210");
-     * System.out.println("Impreso correctamente");
-     * } catch (Exception e) {
-     * System.out.println("Error imprimiendo: " + e.getMessage());
-     * }
-     * }
-     */
 
     public String getNombreCliente() {
         return txtCliente.getText();
     }
-
+*/
 }

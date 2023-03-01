@@ -18,7 +18,7 @@ public class Servicio{
         this.costoKg=CostoKg;
         this.limiteMinimo=limiteMinimo;
         this.limiteMedio=limiteMedio;
-        nameAbr=name.substring(0, 2).toUpperCase();
+        nameAbr=name.substring(0, 3).toUpperCase();
     }
 
     public double obtenerCosto(double kgBandera, double kg){

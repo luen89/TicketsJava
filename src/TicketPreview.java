@@ -111,20 +111,20 @@ public class TicketPreview extends JFrame implements ActionListener {
         ticket.servicios.forEach(elemento -> {
             listaArticulos=listaArticulos
                             +elemento.getPiezas()+"\t"
-                            +elemento.servArray.get(0).nameAbr+"\t"
+                            +elemento.servicioObjeto.nameAbr+"\t"
                             +elemento.getAcero()+"\t"
                             +elemento.getDureza()+"\t"
                             +elemento.getKilos()+"\t"
-                            +elemento.getPrecioCustom(0)+"\n";
-                            ticket.subtotal=ticket.subtotal+elemento.getPrecioCustom(0);
-                            for(int i=1;i<elemento.precioCustom.size();i++){
+                            +elemento.getPrecioCustom()+"\n";
+                            ticket.subtotal=ticket.subtotal+elemento.getPrecioCustom();
+                            for(int i=1;i<elemento.getSubElementoSize();i++){
                                 listaArticulos=listaArticulos+"\t"
-                                    +elemento.servArray.get(i).nameAbr+"\t"
+                                    +elemento.getSubElemento(i).getServicio().nameAbr+"\t"
                                     +"\t"
                                     +"\t"
                                     +"\t"
-                                    +elemento.getPrecioCustom(i)+"\n";
-                                    ticket.subtotal=ticket.subtotal+elemento.getPrecioCustom(i);
+                                    +elemento.getSubElemento(i).getCosto()+"\n";
+                                    ticket.subtotal=ticket.subtotal+elemento.getSubElemento(i).getCosto();
                             }
                             
         });
