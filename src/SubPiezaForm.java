@@ -45,6 +45,10 @@ public class SubPiezaForm extends JPanel implements ChangeListener,ActionListene
         this.add(btnX); 
     }
 
+    public void obtenerCosto(){
+        sPrecioCustom.setValue(subelemento.calcularCosto());
+    }
+
 
     @Override
     public void stateChanged(ChangeEvent e) {
@@ -55,7 +59,7 @@ public class SubPiezaForm extends JPanel implements ChangeListener,ActionListene
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == btnX ){
-            padre.padre.control.matrix.matriz[subelemento.getServicio().id][padre.elemento.getAceroObject().id]-=padre.elemento.getKilos();
+            subelemento.removerDeMatriz();
             subelemento.padre.removeSubElemento(subelemento);
             padre.subpiezasArray.remove(this);
             padre.panelSubServicios.remove(this);
@@ -64,10 +68,11 @@ public class SubPiezaForm extends JPanel implements ChangeListener,ActionListene
         }
         
         if(e.getSource()==cbServicios){
-            padre.padre.control.matrix.matriz[subelemento.getServicio().id][padre.elemento.getAceroObject().id]-=padre.elemento.getKilos();
+            subelemento.removerDeMatriz();
             subelemento.setServicio(padre.padre.control.arrayServicios.get(cbServicios.getSelectedIndex()));
-            padre.padre.control.matrix.matriz[subelemento.getServicio().id][padre.elemento.getAceroObject().id]+=padre.elemento.getKilos();
-            sPrecioCustom.setValue(subelemento.getServicio().obtenerCosto(padre.padre.control.matrix.matriz[subelemento.getServicio().id][padre.elemento.getAceroObject().id], padre.elemento.getKilos()));
+            subelemento.agregarAMatriz();
+            //subelemento.calcularCosto();
+            //sPrecioCustom.setValue(subelemento.getCosto());
             padre.padre.control.matrix.printMatriz();
             if(padre.padre.control.getAutoCalculo()){padre.calcularCostosLista();}
         }

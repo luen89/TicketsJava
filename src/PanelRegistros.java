@@ -62,7 +62,7 @@ public class PanelRegistros extends JPanel implements ActionListener {
                 if(column != 6)
                     return;
                 
-                Ticket ticket = gestor.readFileOrder(Integer.parseInt(modelo.getValueAt(row, 0).toString()));
+                TicketEntrega ticket = gestor.readFileOrder(Integer.parseInt(modelo.getValueAt(row, 0).toString()));
                 VentanaDetalles vDetalles = new VentanaDetalles(ticket, gestor);
                 System.out.println("Entré");
                 vDetalles.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

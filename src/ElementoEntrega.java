@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
-public class Elemento {
-    public ControladorPE padre;
+public class ElementoEntrega {
+
     private String acero;
     private String servicio;
     private Integer piezas;
@@ -11,13 +11,12 @@ public class Elemento {
     public Double precioCustom;
     private Acero aceroObject;
     public Servicio servicioObjeto;
-    public ArrayList<SubElemento> subelementoArray = new ArrayList<SubElemento>();  
+    public ArrayList<SubElementoEntrega> subelementoArray = new ArrayList<SubElementoEntrega>();  
     private int piezasEntregadas;
   
 
-    public Elemento(ControladorPE padre,String acero, String servicio, int piezas, Double kilos, String dureza, String descripcion, int piezasEntregadas){
+    public ElementoEntrega (String acero, String servicio, int piezas, Double kilos, String dureza, String descripcion, int piezasEntregadas){
         super();
-        this.padre=padre;
         this.servicio=servicio;
         this.acero = acero;
         precioCustom=0.0;
@@ -29,30 +28,6 @@ public class Elemento {
         this.piezasEntregadas=piezasEntregadas;
     }
 
-    public void removerDeMatriz(){
-        padre.matrix.restarAcelda(servicioObjeto.id, aceroObject.id, kilos);
-   }
-
-    protected void agregarAMatriz(){
-        padre.matrix.sumarAcelda(servicioObjeto.id, aceroObject.id, kilos);
-    }
-
-    public void removerTodoDeMatriz(){
-             System.out.println("Entre a borrar todo de la matriz de validacion");
-            removerDeMatriz();
-            for (SubElemento sub : subelementoArray){sub.removerDeMatriz();}
-    }
-
-    public void agregarTodoAMatriz(){
-        System.out.println("Entre a borrar todo de la matriz de validacion");
-       agregarAMatriz();
-       for (SubElemento sub : subelementoArray){sub.agregarAMatriz();}
-}
-
-    public double calcularCosto(){
-        precioCustom=servicioObjeto.obtenerCosto(padre.matrix.getCelda(servicioObjeto.id, aceroObject.id), kilos);
-        return precioCustom;
-    }
 
     public void setAceroObject(Acero ac){
         aceroObject=ac;
@@ -88,14 +63,14 @@ public class Elemento {
     }
 
     public void addSubElemento(Servicio servicio, double costo){
-        subelementoArray.add(new SubElemento(this, servicio,costo));
+        subelementoArray.add(new SubElementoEntrega(this, servicio,costo));
     }
 
     public void removeSubElemento(SubElemento s){
         subelementoArray.remove(s);
     }
 
-    public SubElemento getSubElemento(int i){return subelementoArray.get(i);}
+    public SubElementoEntrega getSubElemento(int i){return subelementoArray.get(i);}
 
     public int getSubElementoSize(){return subelementoArray.size();}
 

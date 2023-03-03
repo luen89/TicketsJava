@@ -63,7 +63,7 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener, 
 
 
           // Crea Objeto Elemento
-          elemento = new Elemento(padre.control.getAceroFromGeneralArray(0).name, padre.control.getServicioFromGeneralArray(0).name, 0, 0.0,"","",0);
+          elemento = new Elemento(padre.control,padre.control.getAceroFromGeneralArray(0).name, padre.control.getServicioFromGeneralArray(0).name, 0, 0.0,"","",0);
           elemento.servicioObjeto=padre.control.arrayServicios.get(0);
           elemento.setAceroObject(padre.control.getAceroFromGeneralArray(0));
           // Inicializa la ComboBox de Servicios
@@ -170,35 +170,15 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener, 
      }
 
 
-     public void removerDeMatriz(int indiceServicio, int indiceAcero){
-          padre.control.matrix.matriz[indiceServicio][indiceAcero]-=elemento.getKilos();
-     }
 
-     public void removerTodoDeMatriz(){
-          System.out.println("Entre a borrar todo de la matriz de validacion");
-          removerDeMatriz(elemento.servicioObjeto.id, elemento.getAceroObject().id);
-          for (SubPiezaForm sub : subpiezasArray){removerDeMatriz(elemento.subelementoArray.get(subpiezasArray.indexOf(sub)).getServicio().id, elemento.getAceroObject().id);}
-     }
-
-     protected void agregarAMatriz(int indiceServicio, int indiceAcero){
-          padre.control.matrix.matriz[indiceServicio][indiceAcero]+=elemento.getKilos();
-     }
-
-     public void calcularCostos(){
-               double costo=elemento.servicioObjeto.obtenerCosto( padre.control.matrix.matriz[elemento.servicioObjeto.id][elemento.getAceroObject().id],elemento.getKilos());
-               sPrecioCustom.setValue(costo);
-               elemento.setPrecioCustom(costo);
-               for (SubPiezaForm sub : subpiezasArray){
-                    int index=subpiezasArray.indexOf(sub);
-                    double subcosto=elemento.subelementoArray.get(index).getServicio().obtenerCosto( padre.control.matrix.matriz[elemento.subelementoArray.get(index).getServicio().id][elemento.getAceroObject().id],elemento.getKilos());
-                    sub.sPrecioCustom.setValue(subcosto);
-                    elemento.subelementoArray.get(index).setCosto(subcosto);
-               }
+     public void obtenerCostos(){
+               sPrecioCustom.setValue(elemento.calcularCosto());
+               for (SubPiezaForm sub : subpiezasArray){sub.obtenerCosto();}
      }
 
      public void calcularCostosLista(){
           for(PiezaForm p : padre.itemsPiezasArray){
-               p.calcularCostos();
+               p.obtenerCostos();
           }
      }
 
@@ -214,11 +194,9 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener, 
           if (e.getSource() == sNpiezas) {elemento.setPiezas(Integer.parseInt(sNpiezas.getValue().toString()));}
 
           if (e.getSource() == sNKilos) {
-               removerDeMatriz(elemento.servicioObjeto.id, elemento.getAceroObject().id);
-               for (SubPiezaForm sub : subpiezasArray){removerDeMatriz(elemento.subelementoArray.get(subpiezasArray.indexOf(sub)).getServicio().id, elemento.getAceroObject().id);} 
+               elemento.removerTodoDeMatriz();
                elemento.setKilos(Double.parseDouble(sNKilos.getValue().toString()));
-               agregarAMatriz(elemento.servicioObjeto.id, elemento.getAceroObject().id);
-               for (SubPiezaForm sub : subpiezasArray){agregarAMatriz(elemento.subelementoArray.get(subpiezasArray.indexOf(sub)).getServicio().id, elemento.getAceroObject().id);}
+               elemento.agregarTodoAMatriz();
                padre.control.matrix.printMatriz();
                if(padre.control.getAutoCalculo()){calcularCostosLista();}
           }
@@ -249,7 +227,7 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener, 
      public void actionPerformed(ActionEvent e) {
           if (e.getSource() == btnX){
                System.out.println("Voy a eliminar la pieza");
-                    removerTodoDeMatriz();
+                    elemento.removerTodoDeMatriz();
                     System.out.println("Borre los datos de la Matriz");
                     calcularCostosLista();
                     padre.subpanelListaOrdenes.remove(this);
@@ -263,30 +241,28 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener, 
                elemento.subelementoArray.add(subelemento);
                subpiezasArray.add(subpieza);
 
-               agregarAMatriz(subelemento.getServicio().id, elemento.getAceroObject().id);
+               subelemento.agregarAMatriz();
                if(padre.control.getAutoCalculo()){calcularCostosLista();}
                panelSubServicios.add(subpieza);
                this.updateUI();
           }
           if(e.getSource() == cbServicios){
-               removerDeMatriz(elemento.servicioObjeto.id, elemento.getAceroObject().id);
+               elemento.removerDeMatriz();
                elemento.servicioObjeto=padre.control.getServicioFromGeneralArray(cbServicios.getSelectedIndex());
                elemento.setServicio(elemento.servicioObjeto.name);
-               agregarAMatriz(elemento.servicioObjeto.id, elemento.getAceroObject().id);
+               elemento.agregarAMatriz();
                padre.control.matrix.printMatriz();
                if(padre.control.getAutoCalculo()){calcularCostosLista();}
           }
 
           if(e.getSource()== cbAcero){
-               removerDeMatriz(elemento.servicioObjeto.id, elemento.getAceroObject().id);
-               for (SubPiezaForm sub : subpiezasArray){removerDeMatriz(elemento.subelementoArray.get(subpiezasArray.indexOf(sub)).getServicio().id, elemento.getAceroObject().id);}
+               elemento.removerTodoDeMatriz();
 
                elemento.setAcero(cbAcero.getSelectedItem().toString());
                elemento.setAceroObject(padre.control.getAceroFromGeneralArray(cbAcero.getSelectedIndex()));
 
-               agregarAMatriz(elemento.servicioObjeto.id, elemento.getAceroObject().id);
-               for (SubPiezaForm sub : subpiezasArray){agregarAMatriz(elemento.subelementoArray.get(subpiezasArray.indexOf(sub)).getServicio().id, elemento.getAceroObject().id);}
-               
+               elemento.agregarTodoAMatriz();
+
                padre.control.matrix.printMatriz();
                if(padre.control.getAutoCalculo()){calcularCostosLista();}
           }

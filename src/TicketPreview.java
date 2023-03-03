@@ -117,7 +117,7 @@ public class TicketPreview extends JFrame implements ActionListener {
                             +elemento.getKilos()+"\t"
                             +elemento.getPrecioCustom()+"\n";
                             ticket.subtotal=ticket.subtotal+elemento.getPrecioCustom();
-                            for(int i=1;i<elemento.getSubElementoSize();i++){
+                            for(int i=0;i<elemento.getSubElementoSize();i++){
                                 listaArticulos=listaArticulos+"\t"
                                     +elemento.getSubElemento(i).getServicio().nameAbr+"\t"
                                     +"\t"

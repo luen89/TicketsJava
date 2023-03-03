@@ -225,7 +225,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
                 control.setAutoCalculo(true);
                 for(PiezaForm p : itemsPiezasArray){
                     p.setEnablePrecioCustoms(false);
-                    p.calcularCostos();
+                    p.obtenerCostos();
                 }
             }
             else{

@@ -10,11 +10,12 @@ import javax.swing.event.ChangeListener;
  * @author Compa's Team
  */
 public class Ventana extends JFrame{
-    ArrayList<Servicio> arrayServicios = new ArrayList<Servicio>();
+     public ArrayList<Servicio> arrayServicios = new ArrayList<Servicio>();
     ArrayList<Acero> arrayAceros = new ArrayList<Acero>();
     PanelEntrada panelE;
     ControladorPE controlPE;
     PanelRegistros panelRegistros;
+    ServicioPanel panelServicios;
     JTabbedPane pestañas;
     GestorArchivos ga;
     //Controlador miControlador;
@@ -48,11 +49,13 @@ public class Ventana extends JFrame{
         controlPE= new ControladorPE(arrayServicios, arrayAceros);
         panelE=new PanelEntrada(ga, controlPE);
         panelRegistros = new PanelRegistros(ga);
+        panelServicios = new ServicioPanel(ga, this);
         //panel1=new PanelPrueba();
         pestañas=new JTabbedPane();
         
         pestañas.add("Recibo", panelE);
-        pestañas.add("Registros", panelRegistros);     
+        pestañas.add("Registros", panelRegistros);
+        pestañas.add("Servicios", panelServicios);     
         
         pestañas.addChangeListener(new ChangeListener() {
             @Override

@@ -20,7 +20,7 @@ public class VentanaDetalles extends JFrame implements ActionListener{
     // private static final DecimalFormat df = new DecimalFormat("0.00");
     double sumaP = 0.0;
     double sumaT = 0.0;
-    private Ticket ticket;
+    private TicketEntrega ticket;
     private JPanel pPrincipal, pInfoGeneral, pCliente, pCostos;
     private ServiciosDetallesModel modelo;
     private JScrollPane spTabla;
@@ -29,7 +29,7 @@ public class VentanaDetalles extends JFrame implements ActionListener{
     private JTextField txtCostoTotal, txtMontoPagado, txtMontoRestante;
     private JButton btnGuardar, btnEntregar, btnPagar;
     
-    public VentanaDetalles(Ticket ticket, GestorArchivos gestor) {
+    public VentanaDetalles(TicketEntrega ticket, GestorArchivos gestor) {
         this.ticket = ticket;
         this.gestor = gestor;
         this.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -214,7 +214,7 @@ public class VentanaDetalles extends JFrame implements ActionListener{
             SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyy");
             String fecha = formatoFecha.format(ticket.today);
             boolean entregado = true, entregaParcial = false;
-            for (Elemento servicio : ticket.servicios) {
+            for (ElementoEntrega servicio : ticket.servicios) {
                 entregaParcial = (servicio.getPiezasEntregadas() > 0);
                 entregado &= (servicio.getPiezasEntregadas() == servicio.getPiezas());                
             }

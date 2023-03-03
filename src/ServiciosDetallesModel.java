@@ -5,12 +5,12 @@ import javax.swing.table.AbstractTableModel;
 
 class ServiciosDetallesModel extends AbstractTableModel 
 {
-    private ArrayList<Elemento> registros;
+    private ArrayList<ElementoEntrega> registros;
     private String columnas[] = {"Servicio", "Piezas", "Kg", "Acero", "Dureza", "Piezas Entregadas"};
     private boolean editable[] = {false, false, false, false, false, true};
     NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
-    public ServiciosDetallesModel(ArrayList<Elemento>  registros) {
+    public ServiciosDetallesModel(ArrayList<ElementoEntrega>  registros) {
         this.registros = registros;
     }
     
@@ -65,7 +65,7 @@ class ServiciosDetallesModel extends AbstractTableModel
         return editable[columnIndex];
     }
 
-    public void setRegistros(ArrayList<Elemento> registros) {
+    public void setRegistros(ArrayList<ElementoEntrega> registros) {
         this.registros = registros;
         fireTableDataChanged();
     }

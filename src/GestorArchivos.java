@@ -191,8 +191,65 @@ public class GestorArchivos {
             System.out.println("Error no se escribio el archivo.");
         }
     }
+
+    public void writeFileOrder(TicketEntrega ticket){
+        try {
+            //Se crea un nuevo archivo
+            File saveF = new File("src/Registros/Ordenes/"+ticket.nOrden+".txt");
+            if(!saveF.exists()){
+                if (saveF.createNewFile()) {
+                    System.out.println("Archivo creado: " + saveF.getName());
+                  } else {
+                    System.out.println("Archivo ya existente sobreescrito.");
+                  }
+            }          
+            //Se crea un writer
+            FileWriter myWriter;
+                 myWriter = new FileWriter(saveF);
+                    myWriter.write("NUMERO DE ORDEN");
+                    myWriter.write("\n");
+                    myWriter.write(ticket.nOrden+"");
+                    myWriter.write("\n");
+                    myWriter.write("NOMBRE DEL CLIENTE");
+                    myWriter.write("\n");
+                    myWriter.write(ticket.nameCliente+"");
+                    myWriter.write("\n");
+                    myWriter.write("FECHA DE OPERACION");
+                    myWriter.write("\n");
+                    myWriter.write(ticket.today+"");
+                    myWriter.write("\n");
+                    myWriter.write("COSTO TOTAL");
+                    myWriter.write("\n");
+                    myWriter.write(ticket.costoTotal+"");
+                    myWriter.write("\n");
+                    myWriter.write("IVA");
+                    myWriter.write("\n");
+                    myWriter.write(ticket.iva ? "SI" : "NO");
+                    myWriter.write("\n");
+                    myWriter.write("MONTO PAGADO");
+                    myWriter.write("\n");
+                    myWriter.write(ticket.montoPagado+"");
+                    myWriter.write("\n");
+                    myWriter.write("DETALLE DE ORDEN");
+                    myWriter.write("\n");
+            ticket.servicios.forEach(elemento -> {
+                try {
+                    myWriter.write(elemento.getPiezas()+","+elemento.getKilos()+","+elemento.getServicio()+","+elemento.getDescripcion()+","+elemento.getAcero()+","+elemento.getPiezasEntregadas());
+                    myWriter.write("\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+                        
+            //Se cierra el writer
+            myWriter.close();
+            System.out.println("Escrito correctamente.");
+        } catch (IOException e) {
+            System.out.println("Error no se escribio el archivo.");
+        }
+    }
     
-    public Ticket readFileOrder(int nOrden){
+    public TicketEntrega readFileOrder(int nOrden){
         
         File f = new File("src/Registros/Ordenes/"+nOrden+".txt");
         String[] st;
@@ -201,8 +258,8 @@ public class GestorArchivos {
         boolean ivab=false;
         double costoTotalTicket=0.0;
         double mPagado=0.0;
-        Ticket ticketsito;
-        ArrayList<Elemento> elementosOrden = new ArrayList<Elemento>();
+        TicketEntrega ticketsito;
+        ArrayList<ElementoEntrega> elementosOrden = new ArrayList<ElementoEntrega>();
         System.out.println("eNTRE A LEER LA ORDEN "+nOrden);
         //BufferedReader in = new BufferedReader(new FileReader(f));    
         try{            
@@ -239,7 +296,7 @@ public class GestorArchivos {
                     System.out.println("ANDO LEYENDO EL DETALLE DE ORDEN");
                     while ((line = in.readLine()) != null){
                         st=line.split(",");
-                        elementosOrden.add(new Elemento(st[4], st[2], Integer.parseInt(st[0]), Double.parseDouble(st[1]), "", st[3], Integer.parseInt(st[5])));
+                        elementosOrden.add(new ElementoEntrega(st[4], st[2], Integer.parseInt(st[0]), Double.parseDouble(st[1]), "", st[3], Integer.parseInt(st[5])));
                         System.out.println("Piezas "+ st[0]+"\n "+ "Kilos "+st[1]+"\n"+"Servicio"+st[2]+"\n"+ "Descripcion"+st[3]+"\n" +"Acero"+ st[4]+"\n"+"Piezas En."+st[5] +"\n\n");
                     }
                     break;
@@ -253,7 +310,7 @@ public class GestorArchivos {
         catch (IOException e) { 
             System.out.println(e.toString());
         }
-        ticketsito = new Ticket(nOrden,nameCliente,costoTotalTicket,opDate,ivab,mPagado, elementosOrden);    
+        ticketsito = new TicketEntrega(nOrden,nameCliente,costoTotalTicket,opDate,ivab,mPagado, elementosOrden);    
 
         return ticketsito;
     }
@@ -278,6 +335,8 @@ public class GestorArchivos {
             return chooser.getSelectedFile().getPath();
         }    
     }
+
+    
 
     /*public Foto cargarFile() throws FileNotFoundException, IOException{
         String instin;
@@ -352,6 +411,62 @@ public class GestorArchivos {
         }//Se retorna la ia imagen modicada
         return new Foto(aux, fot.getOrigImage(), fot.getMaskImage(), fot.getFileName());
     }*/
+
+    public ArrayList<Servicio> leerServicios(){
+        File f = new File("src/Registros/Servicios.csv");
+        String[] st;
+        ArrayList<Servicio> serviciosArray = new ArrayList<Servicio>();
+        //BufferedReader in = new BufferedReader(new FileReader(f));    
+        try{
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f)));            
+            // DataInputStream in = new DataInputStream(new FileInputStream(f));   
+
+            String line;
+            while ((line = in.readLine()) != null){
+                //System.out.println(line);
+                
+                st=line.split(",");
+                if(st.length==7)
+                serviciosArray.add(new Servicio (Integer.parseInt(st[0]), st[1], Double.parseDouble(st[2]), Double.parseDouble(st[3]), Double.parseDouble(st[4]), Double.parseDouble(st[5]), Double.parseDouble(st[6])));
+                // System.out.println(st[0]+" " + st[1]+" " + Double.parseDouble(st[2])+" " + st[3]+" " + st[4] + " " + st[5]);
+            }          
+                 
+            in.close();
+        }
+        catch (IOException e) { 
+            System.out.println(e.toString());
+        }
+
+        return serviciosArray;
+    }
+
+    public void escribirServicios(ArrayList<Servicio> servicioArray){
+        try {
+            //Se crea un nuevo archivo
+            File saveF = new File("src/Registros/Servicios.csv");
+            if(!saveF.exists()){
+                if (saveF.createNewFile()) {
+                    System.out.println("Archivo creado: " + saveF.getName());
+                  } else {
+                    System.out.println("Archivo ya existente sobreescrito.");
+                  }
+            }          
+            //Se crea un writer
+            FileWriter myWriter;
+                 myWriter = new FileWriter(saveF);
+            //Se escriben todas las instrucciones en el archivo
+            for( Servicio s : servicioArray){
+                myWriter.write(s.id+","+s.name+","+s.costoMin+","+s.costoMed+","+ s.costoKg+","+s.limiteMinimo+","+s.limiteMedio+"\n");
+            }
+           
+    
+            //Se cierra el writer
+            myWriter.close();
+            System.out.println("Escrito correctamente.");
+        } catch (IOException e) {
+            System.out.println("Error no se escribio el archivo.");
+        }
+    }
 
     public ArrayList<EntradaRegistro> leerArchivo(){
         File f = new File("src/Registros/pruebas.csv");

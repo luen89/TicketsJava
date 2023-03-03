@@ -14,7 +14,7 @@ public class ControladorPE {
     
     ArrayList<Servicio> arrayServicios;
     ArrayList<Acero> arrayAceros;
-    ArrayList<Elemento> arrayElementos = new ArrayList<Elemento>();
+    //ArrayList<Elemento> arrayElementos = new ArrayList<Elemento>();
 
     public ControladorPE(ArrayList<Servicio> arrayServicios, ArrayList<Acero> arrayAceros){
         this.arrayServicios=arrayServicios;
