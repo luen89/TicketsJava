@@ -91,7 +91,7 @@ public class TicketPreview extends JFrame implements ActionListener {
                 + "============================================\n"
                 + "SUBTOTAL:\t\t $ {{subtotal}}\n"
                 + "{{IVA}}  \n"
-                + "{{CD}}   $ \n"
+                + "{{CD}}   \n"
                 + "COSTO TOTAL:\t $ {{total}} \n"
                 + "============================================\n"
                 + "  \n"
@@ -141,10 +141,10 @@ public class TicketPreview extends JFrame implements ActionListener {
         ticketModificado = ticketModificado.replace("{{items}}", listaArticulos);
         ticketModificado = ticketModificado.replace("{{subtotal}}", (ticket.subtotal) + "");
         if(ticket.costoTotal>ticket.subtotal){
-            ticketModificado = ticketModificado.replace("{{CD}}", "CARGO: "+(ticket.costoTotal-ticket.subtotal) + "");
+            ticketModificado = ticketModificado.replace("{{CD}}", "CARGO:\t\t"+"$"+(ticket.costoTotal-ticket.subtotal) + "");
         }
         else{
-            ticketModificado = ticketModificado.replace("{{CD}}", "DESCUENTO: "+(ticket.subtotal-ticket.costoTotal) + "");
+            ticketModificado = ticketModificado.replace("{{CD}}", "DESCUENTO:\t\t"+"$"+(ticket.subtotal-ticket.costoTotal) + "");
         }      
         if (ticket.iva) {
             ticketModificado = ticketModificado.replace("{{IVA}}",

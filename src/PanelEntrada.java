@@ -194,6 +194,10 @@ public class PanelEntrada extends JPanel implements ActionListener, ChangeListen
         this.updateUI();
     }
 
+    public void calcularTotal(){
+        jspPrecioCustom.setValue(control.calcularTotal());
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         /* Evento a Boton Agregar nuevo elemento */

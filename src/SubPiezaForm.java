@@ -55,6 +55,7 @@ public class SubPiezaForm extends JPanel implements ChangeListener,ActionListene
     @Override
     public void stateChanged(ChangeEvent e) {
         subelemento.setCosto(Double.parseDouble(sPrecioCustom.getValue().toString()));
+        padre.padre.calcularTotal();
         
     }
 

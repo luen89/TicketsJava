@@ -59,6 +59,17 @@ public class ControladorPE {
         this.total=total;
     }
 
+    public double calcularTotal()
+    {
+        double total=0.0;
+        for(Elemento elm : arrayElementos){
+            total+=elm.precioCustom;
+            for(SubElemento sub : elm.subelementoArray){
+                total+=sub.getCosto();
+            }
+        }
+        return total;
+    }
     public String[] getServiciosNames(){return serviciosNames;}
 
 

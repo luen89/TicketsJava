@@ -208,7 +208,10 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener, 
                if(padre.control.getAutoCalculo()){calcularCostosLista();}
           }
 
-          if(e.getSource() == sPrecioCustom){elemento.setPrecioCustom(Double.parseDouble(sPrecioCustom.getValue().toString()));}
+          if(e.getSource() == sPrecioCustom){
+               elemento.setPrecioCustom(Double.parseDouble(sPrecioCustom.getValue().toString()));
+               padre.calcularTotal();
+          }
 
           System.out.println("Acero: "+elemento.getAcero());
           System.out.println("Piezas: "+elemento.getPiezas());
