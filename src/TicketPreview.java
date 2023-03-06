@@ -91,6 +91,7 @@ public class TicketPreview extends JFrame implements ActionListener {
                 + "============================================\n"
                 + "SUBTOTAL:\t\t $ {{subtotal}}\n"
                 + "{{IVA}}  \n"
+                + "{{CD}}   $ \n"
                 + "COSTO TOTAL:\t $ {{total}} \n"
                 + "============================================\n"
                 + "  \n"
@@ -138,14 +139,20 @@ public class TicketPreview extends JFrame implements ActionListener {
         ticketModificado = ticketModificado.replace("{{fecha}}", fechaFinal);
         ticketModificado = ticketModificado.replace("{{ticket}}", String.format("%04d", ticket.nOrden) + "");
         ticketModificado = ticketModificado.replace("{{items}}", listaArticulos);
-        ticketModificado = ticketModificado.replace("{{subtotal}}", (ticket.subtotal) + "");      
+        ticketModificado = ticketModificado.replace("{{subtotal}}", (ticket.subtotal) + "");
+        if(ticket.costoTotal>ticket.subtotal){
+            ticketModificado = ticketModificado.replace("{{CD}}", "CARGO: "+(ticket.costoTotal-ticket.subtotal) + "");
+        }
+        else{
+            ticketModificado = ticketModificado.replace("{{CD}}", "DESCUENTO: "+(ticket.subtotal-ticket.costoTotal) + "");
+        }      
         if (ticket.iva) {
             ticketModificado = ticketModificado.replace("{{IVA}}",
-                    "IVA:\t\t $ " + df.format(((ticket.subtotal  * 0.16))));
-            ticket.costoTotal=ticket.subtotal+(ticket.subtotal* 0.16);
-        } else {
-            ticketModificado = ticketModificado.replace("{{IVA}}", "\n");
-            ticket.costoTotal=ticket.subtotal;
+                    "IVA:\t\t $ " + df.format(((ticket.costoTotal  * 0.16))));
+            ticket.costoTotal=ticket.costoTotal+(ticket.costoTotal* 0.16);
+        }else{
+            ticketModificado = ticketModificado.replace("{{IVA}}",
+                    " ");
         }
         ticketModificado = ticketModificado.replace("{{total}}", (ticket.costoTotal) + "");
         ticketTextArea.setText(ticketModificado);
@@ -187,9 +194,12 @@ public class TicketPreview extends JFrame implements ActionListener {
             }
             
             //Reinicia la gui para la nueva Orden
+            
             panelA.removeAll();
+            panelA.control.initVars();
             panelA.initComponents();
             panelA.updateUI();
+            
             }
             catch(Exception ex){
                 JOptionPane.showMessageDialog(null, "Error en algun campo");   

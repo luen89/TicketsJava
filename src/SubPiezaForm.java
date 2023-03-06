@@ -45,8 +45,10 @@ public class SubPiezaForm extends JPanel implements ChangeListener,ActionListene
         this.add(btnX); 
     }
 
-    public void obtenerCosto(){
-        sPrecioCustom.setValue(subelemento.calcularCosto());
+    public double obtenerCosto(){
+        double aux=subelemento.calcularCosto();
+        sPrecioCustom.setValue(aux);
+        return aux;
     }
 
 
@@ -69,7 +71,7 @@ public class SubPiezaForm extends JPanel implements ChangeListener,ActionListene
         
         if(e.getSource()==cbServicios){
             subelemento.removerDeMatriz();
-            subelemento.setServicio(padre.padre.control.arrayServicios.get(cbServicios.getSelectedIndex()));
+            subelemento.setServicio(padre.padre.control.getServicioFromGeneralArray(cbServicios.getSelectedIndex()));
             subelemento.agregarAMatriz();
             //subelemento.calcularCosto();
             //sPrecioCustom.setValue(subelemento.getCosto());

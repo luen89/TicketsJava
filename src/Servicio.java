@@ -10,7 +10,7 @@ public class Servicio{
     public double limiteMedio;
     public double limiteMinimo;
 
-    public Servicio(int id, String name, double CostoMin, double CostoMed, double CostoKg, double limiteMinimo, double limiteMedio){
+    public Servicio(int id, String name,String nameAbr, double CostoMin, double CostoMed, double CostoKg, double limiteMinimo, double limiteMedio){
         this.id=id;
         this.name=name;
         this.costoMin=CostoMin;
@@ -18,7 +18,7 @@ public class Servicio{
         this.costoKg=CostoKg;
         this.limiteMinimo=limiteMinimo;
         this.limiteMedio=limiteMedio;
-        nameAbr=name.substring(0, 3).toUpperCase();
+        this.nameAbr=nameAbr;
     }
 
     public double obtenerCosto(double kgBandera, double kg){
@@ -30,6 +30,21 @@ public class Servicio{
             else{costo=kg*costoKg;}
         }
         return costo;    
+    }
+
+    public Object[] getData(int Identificador){
+
+        return new Object[] {
+            Identificador,
+            id,
+            name,
+            nameAbr,
+            costoMin,
+            costoMed,
+            costoKg,
+            limiteMinimo,
+            limiteMedio};
+
     }
 
 }

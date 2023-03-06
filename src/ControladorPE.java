@@ -6,19 +6,30 @@ public class ControladorPE {
 
     
 
-    private boolean iva=false;
-    private boolean autoCalculo=true;
+    private boolean iva;
+    private boolean autoCalculo;
 
     private String[] serviciosNames;
     private String[] acerosNames;
+    private double total;
+
     
-    ArrayList<Servicio> arrayServicios;
-    ArrayList<Acero> arrayAceros;
-    //ArrayList<Elemento> arrayElementos = new ArrayList<Elemento>();
+    private ArrayList<Servicio> arrayServicios;
+    private ArrayList<Acero> arrayAceros;
+    ArrayList<Elemento> arrayElementos;
 
     public ControladorPE(ArrayList<Servicio> arrayServicios, ArrayList<Acero> arrayAceros){
         this.arrayServicios=arrayServicios;
         this.arrayAceros=arrayAceros;
+        initVars();
+    }
+
+    public void initVars(){
+        total=0.0;
+        arrayElementos = new ArrayList<Elemento>();
+        autoCalculo=true;
+        iva=false;
+    
         matrix= new MatrizValidacion(arrayServicios.size(), arrayAceros.size());
 
         serviciosNames= new String[arrayServicios.size()];
@@ -28,7 +39,28 @@ public class ControladorPE {
         for(int i=0;i<arrayAceros.size();i++){acerosNames[i]=arrayAceros.get(i).name;}
     }
 
+    public Elemento createElemento(){
+        Elemento elemento= new Elemento(this,getAceroFromGeneralArray(0).name,getServicioFromGeneralArray(0).name,0,0.0,"","",0);
+        elemento.servicioObjeto=getServicioFromGeneralArray(0);
+        elemento.setAceroObject(getAceroFromGeneralArray(0));
+        arrayElementos.add(elemento);
+        return elemento;
+    }
+
+    public void removeElemento(Elemento elm){
+        arrayElementos.remove(elm);
+    }
+
+    public double getTotal(){
+        return total;
+    }
+
+    public void setTotal(double total){
+        this.total=total;
+    }
+
     public String[] getServiciosNames(){return serviciosNames;}
+
 
     public String[] getAcerosNames(){return acerosNames;}
 

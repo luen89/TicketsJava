@@ -6,13 +6,15 @@ import java.util.Date;
 import java.util.Calendar;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  *
  * @author Luis Enrique Pérez González
  */
 
-public class PanelEntrada extends JPanel implements ActionListener {
+public class PanelEntrada extends JPanel implements ActionListener, ChangeListener {
     private JLabel lbRD, lbGD, lbImagen, lbnOrden, lbCliente, lbPrecioTotalCustom;
     private JButton btImprimir, btAgregar;
     private JPanel panelEncabezado, subpanelEncabezadoDatos, pImprimir,
@@ -154,8 +156,14 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         /* PANEL DE IMPRIMIR */
         /* Inicializacion de panel imprimir */
-        lbPrecioTotalCustom = new JLabel("Si el costo de esta orden es personalizado, agréguelo aquí. Si no, déjelo en 0:");
+        lbPrecioTotalCustom = new JLabel("\t    Total Venta");
+        Font f =lbPrecioTotalCustom.getFont();
+        lbPrecioTotalCustom.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
         smPrecioCustom = new SpinnerNumberModel(0.0, 0.0, null, 0.1);
+
+        jspPrecioCustom = new JSpinner(smPrecioCustom);
+        jspPrecioCustom.setEnabled(false);
+        jspPrecioCustom.addChangeListener(this);
         pImprimir = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         /* botones de Imprimir */
@@ -168,6 +176,8 @@ public class PanelEntrada extends JPanel implements ActionListener {
         /* Adicion de Elementos al panel */
         pImprimir.add(btImprimir);
         pImprimir.add(iva);
+        pImprimir.add(lbPrecioTotalCustom);
+        pImprimir.add(jspPrecioCustom);
 
         /* Creacion del Borde del panel */
         Border bordePanel2 = new TitledBorder(new EtchedBorder(), "Detalles Adicionales");
@@ -201,7 +211,7 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
         if (e.getSource() == btImprimir) {
             // Obtiene el Ticket Logico
-            Ticket ticketsito = new Ticket(Integer.parseInt(txtnOrden.getText()), txtCliente.getText().toUpperCase(),0, initDate,
+            Ticket ticketsito = new Ticket(Integer.parseInt(txtnOrden.getText()), txtCliente.getText().toUpperCase(),control.getTotal(), initDate,
             iva.isSelected(), 0.0, new ArrayList<Elemento>());
             for (int i = 0; i < itemsPiezasArray.size(); i++) {ticketsito.servicios.add(itemsPiezasArray.get(i).getElemento());}
             /*if (contador >= 1) {
@@ -223,16 +233,22 @@ public class PanelEntrada extends JPanel implements ActionListener {
         if (e.getSource() == autoCalculo) {
             if(autoCalculo.isSelected()){
                 control.setAutoCalculo(true);
+                jspPrecioCustom.setEnabled(false);
+                double taux=0.0;
                 for(PiezaForm p : itemsPiezasArray){
                     p.setEnablePrecioCustoms(false);
-                    p.obtenerCostos();
+                    taux+=p.obtenerCostos();
                 }
+                jspPrecioCustom.setValue(taux);
+                control.setTotal(taux);
             }
             else{
                 control.setAutoCalculo(false);
+                jspPrecioCustom.setEnabled(true);
                 for(PiezaForm p : itemsPiezasArray){
                     p.setEnablePrecioCustoms(true);
                 }
+
             }
         }
 
@@ -240,6 +256,13 @@ public class PanelEntrada extends JPanel implements ActionListener {
 
     public void recibir(int id) {
         System.out.println("Imprimiendo desde panel entrada: " + id);
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        if (e.getSource()==jspPrecioCustom){
+            control.setTotal((Double) jspPrecioCustom.getValue());
+        }
     }
 
     /*public Ticket condiciones() {

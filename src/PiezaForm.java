@@ -63,9 +63,11 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener, 
 
 
           // Crea Objeto Elemento
-          elemento = new Elemento(padre.control,padre.control.getAceroFromGeneralArray(0).name, padre.control.getServicioFromGeneralArray(0).name, 0, 0.0,"","",0);
-          elemento.servicioObjeto=padre.control.arrayServicios.get(0);
-          elemento.setAceroObject(padre.control.getAceroFromGeneralArray(0));
+          elemento=padre.control.createElemento();
+          /*elemento = new Elemento(padre.control,padre.control.getAceroFromGeneralArray(0).name, padre.control.getServicioFromGeneralArray(0).name, 0, 0.0,"","",0);
+          elemento.servicioObjeto=padre.control.getServicioFromGeneralArray(0);
+          elemento.setAceroObject(padre.control.getAceroFromGeneralArray(0));*/
+
           // Inicializa la ComboBox de Servicios
           cbServicios = new JComboBox<>(padre.control.getServiciosNames());
           cbServicios.addActionListener(this);
@@ -171,15 +173,20 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener, 
 
 
 
-     public void obtenerCostos(){
-               sPrecioCustom.setValue(elemento.calcularCosto());
-               for (SubPiezaForm sub : subpiezasArray){sub.obtenerCosto();}
+     public double obtenerCostos(){
+               double total=elemento.calcularCosto();
+               sPrecioCustom.setValue(total);
+               for (SubPiezaForm sub : subpiezasArray){total+=sub.obtenerCosto();}
+               return total;
      }
 
      public void calcularCostosLista(){
+          double total=0.0;
           for(PiezaForm p : padre.itemsPiezasArray){
-               p.obtenerCostos();
+               total+=p.obtenerCostos();
           }
+          padre.control.setTotal(total);
+          padre.jspPrecioCustom.setValue(total);
      }
 
      public void setEnablePrecioCustoms(boolean flag){
@@ -225,18 +232,21 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener, 
 
      @Override
      public void actionPerformed(ActionEvent e) {
+          
           if (e.getSource() == btnX){
                System.out.println("Voy a eliminar la pieza");
                     elemento.removerTodoDeMatriz();
+                    padre.control.removeElemento(elemento);
                     System.out.println("Borre los datos de la Matriz");
                     calcularCostosLista();
+                    
                     padre.subpanelListaOrdenes.remove(this);
                     padre.itemsPiezasArray.remove(this);
                     padre.refreshDisplay();
           }
 
           if (e.getSource() == btnplus){
-               SubElemento subelemento = new SubElemento(elemento, padre.control.arrayServicios.get(0),0.0);
+               SubElemento subelemento = new SubElemento(elemento, padre.control.getServicioFromGeneralArray(0),0.0);
                SubPiezaForm subpieza = new SubPiezaForm(this, padre.control.getServiciosNames(), subelemento);
                elemento.subelementoArray.add(subelemento);
                subpiezasArray.add(subpieza);

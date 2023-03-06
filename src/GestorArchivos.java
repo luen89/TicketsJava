@@ -426,8 +426,8 @@ public class GestorArchivos {
                 //System.out.println(line);
                 
                 st=line.split(",");
-                if(st.length==7)
-                serviciosArray.add(new Servicio (Integer.parseInt(st[0]), st[1], Double.parseDouble(st[2]), Double.parseDouble(st[3]), Double.parseDouble(st[4]), Double.parseDouble(st[5]), Double.parseDouble(st[6])));
+                if(st.length==8)
+                serviciosArray.add(new Servicio (Integer.parseInt(st[0]), st[1],st[2] ,Double.parseDouble(st[3]), Double.parseDouble(st[4]), Double.parseDouble(st[5]), Double.parseDouble(st[6]), Double.parseDouble(st[7])));
                 // System.out.println(st[0]+" " + st[1]+" " + Double.parseDouble(st[2])+" " + st[3]+" " + st[4] + " " + st[5]);
             }          
                  
@@ -456,7 +456,7 @@ public class GestorArchivos {
                  myWriter = new FileWriter(saveF);
             //Se escriben todas las instrucciones en el archivo
             for( Servicio s : servicioArray){
-                myWriter.write(s.id+","+s.name+","+s.costoMin+","+s.costoMed+","+ s.costoKg+","+s.limiteMinimo+","+s.limiteMedio+"\n");
+                myWriter.write(s.id+","+s.name+","+s.nameAbr+","+s.costoMin+","+s.costoMed+","+ s.costoKg+","+s.limiteMinimo+","+s.limiteMedio+"\n");
             }
            
     

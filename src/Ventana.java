@@ -13,7 +13,7 @@ public class Ventana extends JFrame{
      public ArrayList<Servicio> arrayServicios = new ArrayList<Servicio>();
     ArrayList<Acero> arrayAceros = new ArrayList<Acero>();
     PanelEntrada panelE;
-    ControladorPE controlPE;
+    public ControladorPE controlPE;
     PanelRegistros panelRegistros;
     ServicioPanel panelServicios;
     JTabbedPane pestañas;
@@ -28,14 +28,26 @@ public class Ventana extends JFrame{
         this.ga = ga;
 
         //Esto se obtendra desde el gestor de archivos despues 
-        arrayServicios.add(new Servicio(0,"Pavonado limpio",220.0,280.0,39.0,3,8));
-        arrayServicios.add(new Servicio(1,"Pavonado Sucio",220.0,280.0,45.0,3,8));
-        arrayServicios.add(new Servicio(2,"Temple Normal",290.0,290.0,95.0,0,4));
-        arrayServicios.add(new Servicio(3,"Temple Doble",310.0,310.0,95.0,0,4));
-        arrayAceros.add(new Acero(0,"Acero0"));
-        arrayAceros.add(new Acero(1,"Acero1"));
-        arrayAceros.add(new Acero(2,"Acero2"));
-        arrayAceros.add(new Acero(3,"Acero3"));
+        arrayServicios.add(new Servicio(0,"Pavonado limpio","PAVL",220.0,280.0,39.0,3,8));
+        arrayServicios.add(new Servicio(1,"Pavonado Sucio","PAVS",220.0,280.0,45.0,3,8));
+        arrayServicios.add(new Servicio(2,"Temple Normal","TEMN",290.0,0.0,95.0,4,0));
+        arrayServicios.add(new Servicio(4,"Temple Doble","TEMD",310.0,0.0,95.0,4,0));
+        arrayServicios.add(new Servicio(5,"Cementacion","CEM",310.0,0.0,95.0,4,0));
+        arrayServicios.add(new Servicio(6,"Cementacion Especial","CEMX",310.0,0.0,120.0,4,0));
+        arrayServicios.add(new Servicio(7,"Normalizado","NORM",250.0,0.0,65.0,4,0));
+        arrayServicios.add(new Servicio(8,"Normalizado Especial","NORX",300.0,0.0,75.0,4,0));
+        arrayServicios.add(new Servicio(8,"Bonificado","BON",310.0,0.0,90.0,4,0));
+        arrayServicios.add(new Servicio(8,"Temple Regionalizado","TEMR",450.0,0.0,120.0,4,0));
+
+
+
+
+        arrayAceros.add(new Acero(0,"4140"));
+        arrayAceros.add(new Acero(1,"8620"));
+        arrayAceros.add(new Acero(2,"1045"));
+        arrayAceros.add(new Acero(3,"C.R"));
+        arrayAceros.add(new Acero(4,"Q1"));
+        arrayAceros.add(new Acero(5,"D2"));
 
 
 
@@ -70,6 +82,13 @@ public class Ventana extends JFrame{
         });
         
         add(pestañas);
+    }
+
+    public void restartPanelEntrada(){
+        controlPE.initVars();
+        panelE.removeAll();
+        panelE.initComponents();
+        panelE.updateUI();
     }
     
     /*  public void setControlador(Controlador putojulio){
