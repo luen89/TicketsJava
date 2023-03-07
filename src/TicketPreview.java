@@ -266,7 +266,7 @@ public class TicketPreview extends JFrame implements ActionListener {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VentanaFoto().setVisible(true);
+                new VentanaFoto(fileGestor).setVisible(true);
             }
         });
     }

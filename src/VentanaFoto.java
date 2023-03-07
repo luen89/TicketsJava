@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOError;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -33,9 +34,10 @@ public class VentanaFoto extends javax.swing.JFrame {
     WebcamPanel webcamPanel = new WebcamPanel(webcam,dimension, false);
     BufferedImage ruta;
     int contador =0;
+    GestorArchivos leerArchivos;
     
     
-    public VentanaFoto() {
+    public VentanaFoto(GestorArchivos leerArchivos) {
         initComponents();
         setLocationRelativeTo(null);
         webcam.setViewSize(dimension1);
@@ -45,6 +47,8 @@ public class VentanaFoto extends javax.swing.JFrame {
         
         lbNombreCamara.setText(webcam.toString());
         apagarBotones();
+
+        this.leerArchivos = leerArchivos;
     }
     
     public void apagarBotones(){
@@ -139,7 +143,12 @@ public class VentanaFoto extends javax.swing.JFrame {
         btnGuardar.setText("Guardar");
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGuardarActionPerformed(evt);
+                try {
+                    btnGuardarActionPerformed(evt);
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -262,11 +271,11 @@ public class VentanaFoto extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnCapturaActionPerformed
 
-    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) throws FileNotFoundException {//GEN-FIRST:event_btnGuardarActionPerformed
         int pregunta = JOptionPane.showConfirmDialog(this, "Guardar foto??", "PREGUNTA", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-        
+        String conta =  String.format("%04d", leerArchivos.getNumOrden());
         if(pregunta == 0){
-            File salidaImagen = new File("src/Imagenes/ImagenesTickets/Ticket"+contador+".png");
+            File salidaImagen = new File("src/Imagenes/ImagenesTickets/Ticket"+conta+".png");
             contador++;
             try{
                 ImageIO.write(ruta, "jpg", salidaImagen);
