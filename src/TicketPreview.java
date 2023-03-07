@@ -91,6 +91,7 @@ public class TicketPreview extends JFrame implements ActionListener {
                 + "============================================\n"
                 + "SUBTOTAL:\t\t $ {{subtotal}}\n"
                 + "{{IVA}}  \n"
+                + "{{CD}}   \n"
                 + "COSTO TOTAL:\t $ {{total}} \n"
                 + "============================================\n"
                 + "  \n"
@@ -111,20 +112,20 @@ public class TicketPreview extends JFrame implements ActionListener {
         ticket.servicios.forEach(elemento -> {
             listaArticulos=listaArticulos
                             +elemento.getPiezas()+"\t"
-                            +elemento.servArray.get(0).nameAbr+"\t"
+                            +elemento.servicioObjeto.nameAbr+"\t"
                             +elemento.getAcero()+"\t"
                             +elemento.getDureza()+"\t"
                             +elemento.getKilos()+"\t"
-                            +elemento.getPrecioCustom(0)+"\n";
-                            ticket.subtotal=ticket.subtotal+elemento.getPrecioCustom(0);
-                            for(int i=1;i<elemento.precioCustom.size();i++){
+                            +elemento.getPrecioCustom()+"\n";
+                            ticket.subtotal=ticket.subtotal+elemento.getPrecioCustom();
+                            for(int i=0;i<elemento.getSubElementoSize();i++){
                                 listaArticulos=listaArticulos+"\t"
-                                    +elemento.servArray.get(i).nameAbr+"\t"
+                                    +elemento.getSubElemento(i).getServicio().nameAbr+"\t"
                                     +"\t"
                                     +"\t"
                                     +"\t"
-                                    +elemento.getPrecioCustom(i)+"\n";
-                                    ticket.subtotal=ticket.subtotal+elemento.getPrecioCustom(i);
+                                    +elemento.getSubElemento(i).getCosto()+"\n";
+                                    ticket.subtotal=ticket.subtotal+elemento.getSubElemento(i).getCosto();
                             }
                             
         });
@@ -138,14 +139,20 @@ public class TicketPreview extends JFrame implements ActionListener {
         ticketModificado = ticketModificado.replace("{{fecha}}", fechaFinal);
         ticketModificado = ticketModificado.replace("{{ticket}}", String.format("%04d", ticket.nOrden) + "");
         ticketModificado = ticketModificado.replace("{{items}}", listaArticulos);
-        ticketModificado = ticketModificado.replace("{{subtotal}}", (ticket.subtotal) + "");      
+        ticketModificado = ticketModificado.replace("{{subtotal}}", (ticket.subtotal) + "");
+        if(ticket.costoTotal>ticket.subtotal){
+            ticketModificado = ticketModificado.replace("{{CD}}", "CARGO:\t\t"+"$"+(ticket.costoTotal-ticket.subtotal) + "");
+        }
+        else{
+            ticketModificado = ticketModificado.replace("{{CD}}", "DESCUENTO:\t\t"+"$"+(ticket.subtotal-ticket.costoTotal) + "");
+        }      
         if (ticket.iva) {
             ticketModificado = ticketModificado.replace("{{IVA}}",
-                    "IVA:\t\t $ " + df.format(((ticket.subtotal  * 0.16))));
-            ticket.costoTotal=ticket.subtotal+(ticket.subtotal* 0.16);
-        } else {
-            ticketModificado = ticketModificado.replace("{{IVA}}", "\n");
-            ticket.costoTotal=ticket.subtotal;
+                    "IVA:\t\t $ " + df.format(((ticket.costoTotal  * 0.16))));
+            ticket.costoTotal=ticket.costoTotal+(ticket.costoTotal* 0.16);
+        }else{
+            ticketModificado = ticketModificado.replace("{{IVA}}",
+                    " ");
         }
         ticketModificado = ticketModificado.replace("{{total}}", (ticket.costoTotal) + "");
         ticketTextArea.setText(ticketModificado);
@@ -187,9 +194,12 @@ public class TicketPreview extends JFrame implements ActionListener {
             }
             
             //Reinicia la gui para la nueva Orden
+            
             panelA.removeAll();
+            panelA.control.initVars();
             panelA.initComponents();
             panelA.updateUI();
+            
             }
             catch(Exception ex){
                 JOptionPane.showMessageDialog(null, "Error en algun campo");   
