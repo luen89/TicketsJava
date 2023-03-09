@@ -255,7 +255,7 @@ public class TicketPreview extends JFrame implements ActionListener {
     public void llamarFoto(){
         System.out.println("Voy a abrir la camara papi");
         //"Main" del archivo VentanaFoto
-        try {
+        /*try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
@@ -272,11 +272,12 @@ public class TicketPreview extends JFrame implements ActionListener {
             java.util.logging.Logger.getLogger(VentanaFoto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new VentanaFoto(fileGestor).setVisible(true);
+                
             }
         });
     }

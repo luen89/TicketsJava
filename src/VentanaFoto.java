@@ -12,6 +12,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
         //Inicio del codigo
@@ -26,7 +27,7 @@ import javax.swing.JOptionPane;
  *
  * @author jafa0 Y Julio Pelo
  */
-public class VentanaFoto extends javax.swing.JFrame {
+public class VentanaFoto extends JFrame {
 
     Dimension dimension = new Dimension(400,300);
     Dimension dimension1 = WebcamResolution.VGA.getSize();//Tambien puede ser HD70
@@ -81,7 +82,9 @@ public class VentanaFoto extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         lbFotoTomada = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
+
+        //setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Opciones"));
