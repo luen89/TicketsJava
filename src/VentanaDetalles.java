@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import javax.imageio.ImageIO;
 
 // import javafx.scene.input.KeyEvent;
@@ -123,13 +125,17 @@ public class VentanaDetalles extends JFrame implements ActionListener{
         tabla = new JTable(modelo);
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        tabla.getColumnModel().getColumn(0).setResizable(true);
+        // tabla.getColumnModel().getColumn(0).setMinWidth(200);
         tabla.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);        
         tabla.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
         tabla.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
         tabla.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
         tabla.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
         tabla.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);     
-        tabla.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);     
+        tabla.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
+        resizeColumnWidth(tabla);
+
 
         spTabla = new JScrollPane(tabla);
         //#endregion
@@ -217,6 +223,21 @@ public class VentanaDetalles extends JFrame implements ActionListener{
                 // throw new UnsupportedOperationException("Unimplemented method 'componentHidden'");
             }
         });
+    }
+
+    private void resizeColumnWidth(JTable table) {
+        final TableColumnModel columnModel = table.getColumnModel();
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            int width = 40; // Min width
+            for (int row = 0; row < table.getRowCount(); row++) {
+                TableCellRenderer renderer = table.getCellRenderer(row, column);
+                Component comp = table.prepareRenderer(renderer, row, column);
+                width = Math.max(comp.getPreferredSize().width +1 , width);
+            }
+            if(width > 300)
+                width=300;
+            columnModel.getColumn(column).setPreferredWidth(width);
+        }
     }
 
 
