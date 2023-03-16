@@ -1,11 +1,14 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
-
+import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.imageio.ImageIO;
 
 // import javafx.scene.input.KeyEvent;
 // import javafx.scene.paint.Color;
@@ -22,13 +25,14 @@ public class VentanaDetalles extends JFrame implements ActionListener{
     double sumaP = 0.0;
     double sumaT = 0.0;
     private TicketEntrega ticket;
-    private JPanel pPrincipal, pInfoGeneral, pCliente, pCostos;
+    private JPanel pPrincipal, pInfoGeneral, pCostos;
     private ServiciosDetallesModel modelo;
     private JScrollPane spTabla;
     private JTable tabla;
     private GestorArchivos gestor;
     private JTextField txtCostoTotal, txtMontoPagado, txtMontoRestante;
     private JButton btnGuardar, btnEntregar, btnPagar;
+    private static JLabel labelImage;
     
     public VentanaDetalles(TicketEntrega ticket, GestorArchivos gestor) {
         this.ticket = ticket;
@@ -49,16 +53,23 @@ public class VentanaDetalles extends JFrame implements ActionListener{
         JLabel lbOrden = new JLabel("Orden:   ");
         JTextField txtOrden = new JTextField(String.valueOf(ticket.nOrden));
         txtOrden.setEditable(false);
+
         JLabel lbFecha = new JLabel("Fecha: ");
         JTextField txtFecha = new JTextField(ticket.today.toString());
         txtFecha.setEditable(false);
+
+        JLabel lbCliente = new JLabel("Cliente: ");
+        JTextField txtCliente = new JTextField(ticket.nameCliente);
+        txtCliente.setEditable(false);
+
         pInfoGeneral = new JPanel();
         pInfoGeneral.setLayout (new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.weightx = 1.0;
+        constraints.weighty = 1.0;
         constraints.gridwidth = 1; // El área de texto ocupa dos columnas.
         constraints.gridheight = 1; // El área de texto ocupa 2 filas.
-        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.fill = GridBagConstraints.BOTH;
 
         JPanel pOrden = new JPanel();
         pOrden.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -70,27 +81,19 @@ public class VentanaDetalles extends JFrame implements ActionListener{
         pFecha.add(lbFecha);
         pFecha.add(txtFecha);
 
-        pCliente = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel lbCliente = new JLabel("Cliente: ");
-        JTextField txtCliente = new JTextField(ticket.nameCliente);
-        txtCliente.setEditable(false);
+        JPanel pCliente = new JPanel();
+        pCliente.setLayout(new FlowLayout(FlowLayout.LEFT));
         pCliente.add(lbCliente);
         pCliente.add(txtCliente);
 
-        String nombreFoto = "src/Imagenes/ImagenesTickets/Ticket" + String.format("%04d", ticket.nOrden) + ".png";            
-        File foto = new File(nombreFoto);
-
-        if(!foto.exists()){
-            nombreFoto = "src/Imagenes/Aguila_logo.png";
-        }
-
-        JPanel pPreviewImagen = new JPanel();
         
-        ImageIcon icon = new ImageIcon(nombreFoto);
-        pPreviewImagen.add(new JLabel(icon));
+        construirImagen();        
+
+        JPanel pPreviewImagen = new JPanel();        
+        pPreviewImagen.add(labelImage);
 
         constraints.gridx = 0; // El área de texto empieza en la columna cero.
-        constraints.gridy = 0; // El área de texto empieza en la fila cero        
+        constraints.gridy = 0; // El área de texto empieza en la fila cero
         pInfoGeneral.add(pOrden, constraints);
 
         constraints.gridx = 0; // El área de texto empieza en la columna cero.
@@ -103,9 +106,12 @@ public class VentanaDetalles extends JFrame implements ActionListener{
 
         constraints.gridx = 1; // El área de texto empieza en la columna cero.
         constraints.gridy = 0; // El área de texto empieza en la fila cero
+        // constraints.gridwidth = 3; // El área de texto ocupa dos columnas.
         constraints.gridheight = 3; // El área de texto ocupa 2 filas.
         pInfoGeneral.add(pPreviewImagen, constraints);
+        // constraints.gridwidth = 1; // El área de texto ocupa dos columnas.
         constraints.gridheight = 1; // El área de texto ocupa 2 filas.
+        constraints.weighty = 0.0; // El área de texto ocupa 2 filas.
         //#endregion            
 
         //#region Panel de Cliente
@@ -117,15 +123,15 @@ public class VentanaDetalles extends JFrame implements ActionListener{
         tabla = new JTable(modelo);
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        tabla.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        tabla.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);        
         tabla.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
         tabla.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
         tabla.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
         tabla.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
         tabla.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);     
+        tabla.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);     
 
         spTabla = new JScrollPane(tabla);
-        spTabla.setPreferredSize(new Dimension(800, 200));
         //#endregion
 
         //#region Panel de Boton Entregar
@@ -165,40 +171,86 @@ public class VentanaDetalles extends JFrame implements ActionListener{
         btnGuardar = new JButton("Guardar");
         btnGuardar.addActionListener(this);
         JPanel pBotonGuardar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        pBotonGuardar.add(btnGuardar);   
+        pBotonGuardar.add(btnGuardar);
         //#endregion     
         
         //#region Panel Principal
         pPrincipal = new JPanel();
-        pPrincipal.setLayout (new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        constraints.insets = new Insets(5, 5, 5, 5);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 0;
+        pPrincipal.setLayout (new BoxLayout(pPrincipal, BoxLayout.Y_AXIS));        
         
-        pPrincipal.add(pInfoGeneral, c);
+        pPrincipal.add(pInfoGeneral);
+        pPrincipal.add(spTabla);
 
-        c.gridy = 1;
-        pPrincipal.add(pCliente, c);
+        JPanel panelAbajo = new JPanel();
+        panelAbajo.setLayout(new BoxLayout(panelAbajo, BoxLayout.Y_AXIS));
+        panelAbajo.add(pBotonEntregar);
+        panelAbajo.add(pCostos);
+        panelAbajo.add(pBotonGuardar);
 
-        c.gridy = 2;
-        pPrincipal.add(spTabla, c);
+        pPrincipal.add(panelAbajo);
 
-        c.gridy = 4;
-        pPrincipal.add(pBotonEntregar, c);
-        c.gridy = 5;
-        pPrincipal.add(pCostos, c);
-        c.gridy = 6;
-        pPrincipal.add(pBotonGuardar, c);
         setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
         add(pPrincipal);
         //#endregion
+
+        this.addComponentListener(new ComponentListener() {  
+            @Override
+            public void componentResized(ComponentEvent e) {
+                construirImagen();                
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                // TODO Auto-generated method stub
+                // throw new UnsupportedOperationException("Unimplemented method 'componentMoved'");
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+                // TODO Auto-generated method stub
+                // throw new UnsupportedOperationException("Unimplemented method 'componentShown'");
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                // TODO Auto-generated method stub
+                // throw new UnsupportedOperationException("Unimplemented method 'componentHidden'");
+            }
+        });
     }
 
+
+    private void construirImagen() {
+        try {
+            String nombreFoto = "src/Imagenes/ImagenesTickets/Ticket" + String.format("%04d", ticket.nOrden) + ".png";            
+            File foto = new File(nombreFoto);
+    
+            if(!foto.exists()){
+                nombreFoto = "src/Imagenes/Aguila_logo.png";
+            }
+
+            BufferedImage bufferedImage = ImageIO.read(new File(nombreFoto));
+            int heightImagen = bufferedImage.getHeight();
+
+            double proporcion = ((double) this.getHeight() * 0.35) / (double) heightImagen;
+            int widthImagenNueva = (int) (bufferedImage.getWidth() * proporcion);
+            int heightImagenNueva = (int) (heightImagen * proporcion);
+            Image image = bufferedImage.getScaledInstance(widthImagenNueva, heightImagenNueva, Image.SCALE_DEFAULT);
+            if(labelImage == null)
+                labelImage = new JLabel(new ImageIcon(image));
+            else
+                labelImage.setIcon(new ImageIcon(image));
+        } catch (Exception e) {
+            if(labelImage != null){
+                labelImage = new JLabel("No se pudo cargar la imagen");
+            }
+            else{
+                labelImage.setText("No se pudo cargar la imagen");
+            }
+
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
