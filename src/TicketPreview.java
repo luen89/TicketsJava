@@ -7,8 +7,11 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import javax.swing.*;
 import java.lang.InterruptedException;
+import java.io.File;
 import java.io.IOException;
 import javax.swing.JOptionPane;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  *
@@ -16,17 +19,17 @@ import javax.swing.JOptionPane;
  */
 public class TicketPreview extends JFrame implements ActionListener {
     public PanelEntrada panelA;
-    JLabel sustitoImagen;
     JTextArea ticketTextArea;
     private JPanel subpanelTicket,subpanelImagenBoton,spBoton, spBtnFoto;
     private JScrollPane scrollTicket;
     GestorArchivos fileGestor;
     JTextField verOrden;
-    JButton boton, btnFoto;
+    JButton btnImprimir, btnFoto, btnRegistrar, btnSiguiente;
     Ticket ticket;
     String listaArticulos = "";
     private static final DecimalFormat df = new DecimalFormat("0.00");
     VentanaFoto vFoto;
+    JLabel labelHayFoto, labelHayRegistro;
 
 
     public TicketPreview(Ticket ticket, GestorArchivos gestor , PanelEntrada panelA) {
@@ -52,25 +55,35 @@ public class TicketPreview extends JFrame implements ActionListener {
         scrollTicket.getVerticalScrollBar().setUnitIncrement(16);
         
         subpanelImagenBoton = new JPanel( new GridLayout(3,0));
-        sustitoImagen = new JLabel("Aqui va la Imagen");
 
-        spBtnFoto = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        spBtnFoto = new JPanel(new GridLayout(0,1));
         btnFoto = new JButton("Tomar Foto");
         btnFoto.addActionListener(this);
+        btnRegistrar = new JButton("Registrar");
+        btnRegistrar.addActionListener(this);
+        btnImprimir = new JButton("Imprimir");
+        btnImprimir.addActionListener(this);
         
         spBoton = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        boton = new JButton("Imprimir y Registrar");
-        boton.addActionListener(this);
+        btnSiguiente = new JButton("Siguiente");
+        btnSiguiente.addActionListener(this);
         this.ticketTextArea = new JTextArea();
         ticketTextArea.setBackground(Color.WHITE);
         ticketTextArea.setForeground(Color.BLACK);
         ticketTextArea.setAlignmentX(JTextArea.LEFT_ALIGNMENT);
         ticketTextArea.setEditable(false);
 
+        labelHayFoto = new JLabel("");
+        labelHayRegistro = new JLabel("");
+
         spBtnFoto.add(btnFoto);
-        spBoton.add(boton);
+        spBtnFoto.add(labelHayFoto);
+        spBtnFoto.add(btnImprimir);
+        spBtnFoto.add(btnRegistrar);
+        spBtnFoto.add(labelHayRegistro);
+
+        spBoton.add(btnSiguiente);
         subpanelTicket.add(ticketTextArea);
-        subpanelImagenBoton.add(sustitoImagen);
         subpanelImagenBoton.add(spBtnFoto);
         subpanelImagenBoton.add(spBoton);
 
@@ -157,6 +170,9 @@ public class TicketPreview extends JFrame implements ActionListener {
         ticketModificado = ticketModificado.replace("{{total}}", (ticket.costoTotal) + "");
         ticketTextArea.setText(ticketModificado);
 
+        buscarFotoOrden();
+        buscarRegistro();
+
         this.add(scrollTicket);
         this.add(subpanelImagenBoton);
     }
@@ -173,19 +189,27 @@ public class TicketPreview extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == boton) {
-            try{
-            llamarImpresora();
-            
+        if (e.getSource() == btnRegistrar){
              //Registra la Orden en el Registro General
-            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyy");
-            String fecha = formatoFecha.format(panelA.jspGiveDate.getValue());
-            fileGestor.writeFile(new EntradaRegistro(panelA.txtnOrden.getText(), panelA.txtCliente.getText(), ticket.costoTotal,
-                    "POR PAGAR", "POR ENTREGAR", fecha));
+             SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyy");
+             String fecha = formatoFecha.format(panelA.jspGiveDate.getValue());
+             fileGestor.writeFile(new EntradaRegistro(panelA.txtnOrden.getText(), panelA.txtCliente.getText(), ticket.costoTotal,
+                     "POR PAGAR", "POR ENTREGAR", fecha));
+ 
+             //Crea el registro Particular de la Orden
+             fileGestor.writeFileOrder(ticket);
 
-            //Crea el registro Particular de la Orden
-            fileGestor.writeFileOrder(ticket);
+            buscarRegistro();
+        }
 
+        if(e.getSource() == btnImprimir){
+            try{llamarImpresora();}
+            catch(Exception excep){}
+            
+        }
+        
+        if (e.getSource() == btnSiguiente) {
+            try{
             //Incrementa el numero de Orden
             try {
                 fileGestor.incremetNumOrden();
@@ -203,7 +227,8 @@ public class TicketPreview extends JFrame implements ActionListener {
             }
             catch(Exception ex){
                 JOptionPane.showMessageDialog(null, "Error en algun campo");   
-            }     
+            }
+            this.dispose();     
         }
 
         if (e.getSource() == btnFoto){
@@ -254,32 +279,51 @@ public class TicketPreview extends JFrame implements ActionListener {
 
     public void llamarFoto(){
         System.out.println("Voy a abrir la camara papi");
-        //"Main" del archivo VentanaFoto
-        /*try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VentanaFoto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VentanaFoto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VentanaFoto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VentanaFoto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
         
         /* Create and display the form */
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VentanaFoto(fileGestor).setVisible(true);
+                VentanaFoto ventanaFoto = new VentanaFoto(fileGestor);
+                ventanaFoto.addWindowListener(new WindowAdapter() {
+                    public void windowClosed(WindowEvent e) {
+                        buscarFotoOrden();
+                    }
+                });
+            ventanaFoto.setVisible(true);
                 
             }
-        });
+        }); //en qué te ayudo Jon?
+    }
+
+    public void buscarFotoOrden(){
+        boolean existeFoto = false;
+       
+        String nombreFoto = "src/Imagenes/ImagenesTickets/Ticket" + String.format("%04d", ticket.nOrden) + ".png";
+        System.out.println(nombreFoto);
+        File foto = new File(nombreFoto);
+
+        existeFoto = foto.exists();
+        labelHayFoto.setText(existeFoto ? "Ya existe una foto para esta orden" : "Aún no hay foto para esta orden");
+        labelHayFoto.setForeground(existeFoto ? Color.GREEN : Color.RED);
+
+        Font fuenteLabel = labelHayFoto.getFont();
+        Font negritas = new Font(fuenteLabel.getName(), Font.BOLD, fuenteLabel.getSize());
+        labelHayFoto.setFont(negritas);
+    }
+
+    public void buscarRegistro(){
+        boolean existeRegistro = false;
+        String nombreRegistro = "src/Registros/Ordenes/"+Integer.valueOf(ticket.nOrden).toString() + ".txt";
+        File foto = new File(nombreRegistro);
+
+        existeRegistro = foto.exists();
+        labelHayRegistro.setText(existeRegistro ? "Esta orden ya está registrada" : "Aún no se registra esta orden");
+        labelHayRegistro.setForeground(existeRegistro ? Color.GREEN : Color.RED);
+
+        Font fuenteLabel = labelHayRegistro.getFont();
+        Font negritas = new Font(fuenteLabel.getName(), Font.BOLD, fuenteLabel.getSize());
+        labelHayRegistro.setFont(negritas);
     }
 
 }

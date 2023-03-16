@@ -176,8 +176,12 @@ public class GestorArchivos {
                     myWriter.write("DETALLE DE ORDEN");
                     myWriter.write("\n");
             ticket.servicios.forEach(elemento -> {
+                String serviciosData= elemento.getServicio();
+                for (SubElemento sub : elemento.subelementoArray){
+                    serviciosData=serviciosData+"-"+sub.getServicio().name;
+                }
                 try {
-                    myWriter.write(elemento.getPiezas()+","+elemento.getKilos()+","+elemento.getServicio()+","+elemento.getDescripcion()+","+elemento.getAcero()+","+elemento.getPiezasEntregadas());
+                    myWriter.write(elemento.getPiezas()+","+elemento.getKilos()+","+serviciosData+","+elemento.getDescripcion()+","+elemento.getAcero()+","+elemento.getPiezasEntregadas()+","+elemento.getDureza());
                     myWriter.write("\n");
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -234,7 +238,7 @@ public class GestorArchivos {
                     myWriter.write("\n");
             ticket.servicios.forEach(elemento -> {
                 try {
-                    myWriter.write(elemento.getPiezas()+","+elemento.getKilos()+","+elemento.getServicio()+","+elemento.getDescripcion()+","+elemento.getAcero()+","+elemento.getPiezasEntregadas());
+                    myWriter.write(elemento.getPiezas()+","+elemento.getKilos()+","+elemento.getServicio()+","+elemento.getDescripcion()+","+elemento.getAcero()+","+elemento.getPiezasEntregadas()+","+elemento.getDureza());
                     myWriter.write("\n");
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -296,7 +300,7 @@ public class GestorArchivos {
                     System.out.println("ANDO LEYENDO EL DETALLE DE ORDEN");
                     while ((line = in.readLine()) != null){
                         st=line.split(",");
-                        elementosOrden.add(new ElementoEntrega(st[4], st[2], Integer.parseInt(st[0]), Double.parseDouble(st[1]), "", st[3], Integer.parseInt(st[5])));
+                        elementosOrden.add(new ElementoEntrega(st[4], st[2], Integer.parseInt(st[0]), Double.parseDouble(st[1]), st[6], st[3], Integer.parseInt(st[5])));
                         System.out.println("Piezas "+ st[0]+"\n "+ "Kilos "+st[1]+"\n"+"Servicio"+st[2]+"\n"+ "Descripcion"+st[3]+"\n" +"Acero"+ st[4]+"\n"+"Piezas En."+st[5] +"\n\n");
                     }
                     break;

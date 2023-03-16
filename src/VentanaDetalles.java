@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.SimpleDateFormat;
 
 import javax.swing.*;
@@ -62,29 +63,53 @@ public class VentanaDetalles extends JFrame implements ActionListener{
         JPanel pOrden = new JPanel();
         pOrden.setLayout(new FlowLayout(FlowLayout.LEFT));
         pOrden.add(lbOrden);
-        pOrden.add(txtOrden);
+        pOrden.add(txtOrden);        
 
         JPanel pFecha = new JPanel();
-        pFecha.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        pFecha.setLayout(new FlowLayout(FlowLayout.LEFT));
         pFecha.add(lbFecha);
         pFecha.add(txtFecha);
 
-        constraints.gridx = 0; // El área de texto empieza en la columna cero.
-        constraints.gridy = 0; // El área de texto empieza en la fila cero        
-        pInfoGeneral.add(pOrden, constraints);
-
-        constraints.gridx = 1; // El área de texto empieza en la columna cero.
-        constraints.gridy = 0; // El área de texto empieza en la fila cero
-        pInfoGeneral.add(pFecha, constraints);   
-        //#endregion            
-
-        //#region Panel de Cliente
         pCliente = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel lbCliente = new JLabel("Cliente: ");
         JTextField txtCliente = new JTextField(ticket.nameCliente);
         txtCliente.setEditable(false);
         pCliente.add(lbCliente);
         pCliente.add(txtCliente);
+
+        String nombreFoto = "src/Imagenes/ImagenesTickets/Ticket" + String.format("%04d", ticket.nOrden) + ".png";            
+        File foto = new File(nombreFoto);
+
+        if(!foto.exists()){
+            nombreFoto = "src/Imagenes/Aguila_logo.png";
+        }
+
+        JPanel pPreviewImagen = new JPanel();
+        
+        ImageIcon icon = new ImageIcon(nombreFoto);
+        pPreviewImagen.add(new JLabel(icon));
+
+        constraints.gridx = 0; // El área de texto empieza en la columna cero.
+        constraints.gridy = 0; // El área de texto empieza en la fila cero        
+        pInfoGeneral.add(pOrden, constraints);
+
+        constraints.gridx = 0; // El área de texto empieza en la columna cero.
+        constraints.gridy = 1; // El área de texto empieza en la fila cero
+        pInfoGeneral.add(pFecha, constraints);
+
+        constraints.gridx = 0; // El área de texto empieza en la columna cero.
+        constraints.gridy = 2; // El área de texto empieza en la fila cero
+        pInfoGeneral.add(pCliente, constraints);
+
+        constraints.gridx = 1; // El área de texto empieza en la columna cero.
+        constraints.gridy = 0; // El área de texto empieza en la fila cero
+        constraints.gridheight = 3; // El área de texto ocupa 2 filas.
+        pInfoGeneral.add(pPreviewImagen, constraints);
+        constraints.gridheight = 1; // El área de texto ocupa 2 filas.
+        //#endregion            
+
+        //#region Panel de Cliente
+        
         //#endregion
 
         //#region Panel de Tabla

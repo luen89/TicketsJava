@@ -290,6 +290,8 @@ public class VentanaFoto extends JFrame {
             lbFotoTomada.setIcon(null);
             btnGuardar.setEnabled(false);
             btnCaptura.setText("Capturar");
+
+            String bandera = "Mensaje";
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
 

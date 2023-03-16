@@ -19,11 +19,11 @@ public class ServicioPanel extends JPanel implements ActionListener{
 
     JTable tabla;
     Ticket ticket;
-    JPanel panel, panelEdicion, panelValores;
+    JPanel panel, panelIdentificador, panelValores, panelEdicion;
     JComboBox<String> jcAcciones;
 
-    JTextField jtid, jtGroup ,jtName, jtCostoMin, jtCostoMed, jtCostoKg, jtLimiteMin, jtLimiteMed;
-    JLabel jlid, jlGroup ,jlName, jlCostoMin, jlCostoMed, jlCostoKg, jlLimiteMin, jlLimiteMed;
+    JTextField jtid, jtNameAbr ,jtName, jtCostoMin, jtCostoMed, jtCostoKg, jtLimiteMin, jtLimiteMed;
+    JLabel jlid, jlNameAbrv ,jlName, jlCostoMin, jlCostoMed, jlCostoKg, jlLimiteMin, jlLimiteMed;
     JButton jbAction;
     JScrollPane scroll;
     GestorArchivos fileGestor;
@@ -78,16 +78,16 @@ public class ServicioPanel extends JPanel implements ActionListener{
         jcAcciones= new JComboBox<String>(accionesString);
         jcAcciones.addActionListener(this);
         jlid= new JLabel(columnNames[0]);
-        jlGroup= new JLabel(columnNames[1]);
-        jlName= new JLabel(columnNames[2]);
-        jlCostoMin= new JLabel(columnNames[3]);
-        jlCostoMed= new JLabel(columnNames[4]); 
-        jlCostoKg= new JLabel(columnNames[5]); 
-        jlLimiteMin= new JLabel(columnNames[6]); 
-        jlLimiteMed= new JLabel(columnNames[7]);
+        jlNameAbrv= new JLabel(columnNames[2]);
+        jlName= new JLabel(columnNames[3]);
+        jlCostoMin= new JLabel(columnNames[4]);
+        jlCostoMed= new JLabel(columnNames[5]); 
+        jlCostoKg= new JLabel(columnNames[6]); 
+        jlLimiteMin= new JLabel(columnNames[7]); 
+        jlLimiteMed= new JLabel(columnNames[8]);
 
         jtid= new JTextField(5);        
-        jtGroup= new JTextField(5);
+        jtNameAbr= new JTextField(5);
         jtName= new JTextField(5);
         jtCostoMin= new JTextField(5);
         jtCostoMed= new JTextField(5);
@@ -101,16 +101,15 @@ public class ServicioPanel extends JPanel implements ActionListener{
         jtid.setVisible(false);
 
 
-
-        panelEdicion= new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelEdicion.add(jlid);
-        panelEdicion.add(jtid);
-        panelEdicion.add(jcAcciones);
-        panelEdicion.add(jbAction);
+        panelIdentificador= new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelIdentificador.add(jlid);
+        panelIdentificador.add(jtid);
+        panelIdentificador.add(jcAcciones);
+        panelIdentificador.add(jbAction);
 
         panelValores = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelValores.add(jlGroup);
-        panelValores.add(jtGroup);
+        panelValores.add(jlNameAbrv);
+        panelValores.add(jtNameAbr);
         panelValores.add(jlName);
         panelValores.add(jtName);
         panelValores.add(jlCostoMin);
@@ -125,6 +124,10 @@ public class ServicioPanel extends JPanel implements ActionListener{
         panelValores.add(jtLimiteMed);
         panelValores.setVisible(true);
 
+        panelEdicion= new JPanel(new GridLayout(0,1));
+        panelEdicion.add(panelIdentificador);
+        panelEdicion.add(panelValores);
+
 
         tabla.setEnabled(false);
         scroll = new JScrollPane(tabla);
@@ -135,7 +138,6 @@ public class ServicioPanel extends JPanel implements ActionListener{
         panel.add(scroll);
         this.add(panel);
         this.add(panelEdicion);
-        this.add(panelValores);
 
     }
 
@@ -175,11 +177,12 @@ public class ServicioPanel extends JPanel implements ActionListener{
 
         if(e.getSource()==jbAction){
             if(jcAcciones.getSelectedItem()=="Agregar"){
+                int index=padre.arrayServicios.size();
 
                 padre.arrayServicios.add(new Servicio(
-                    Integer.parseInt(jtGroup.getText()),
+                    index,
                     jtName.getText(),
-                    "NEW",
+                    jtNameAbr.getText(),
                     Double.parseDouble(jtCostoMin.getText()) ,
                     Double.parseDouble(jtCostoMed.getText()) ,
                     Double.parseDouble(jtCostoKg.getText()), 
@@ -195,9 +198,22 @@ public class ServicioPanel extends JPanel implements ActionListener{
             }    
 
             if(jcAcciones.getSelectedItem()=="Editar"){
-
+                int index= Integer.parseInt(jtid.getText());
+                Servicio serv=padre.arrayServicios.get(index);
+                serv.name=jtName.getText();
+                serv.nameAbr=jtNameAbr.getText();
+                serv.costoMin=Double.parseDouble(jtCostoMin.getText()) ;
+                serv.costoMed=Double.parseDouble(jtCostoMed.getText()) ;
+                serv.costoKg=Double.parseDouble(jtCostoKg.getText());
+                serv.limiteMinimo= Double.parseDouble(jtLimiteMin.getText());
+                serv.limiteMedio= Double.parseDouble(jtLimiteMed.getText());
             }
+
+        
             if(jcAcciones.getSelectedItem()=="Eliminar"){
+                int index= Integer.parseInt(jtid.getText());
+                padre.arrayServicios.remove(index);
+
 
             }
         }

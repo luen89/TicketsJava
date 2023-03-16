@@ -6,8 +6,8 @@ import javax.swing.table.AbstractTableModel;
 class ServiciosDetallesModel extends AbstractTableModel 
 {
     private ArrayList<ElementoEntrega> registros;
-    private String columnas[] = {"Servicio", "Piezas", "Kg", "Acero", "Dureza", "Piezas Entregadas"};
-    private boolean editable[] = {false, false, false, false, false, true};
+    private String columnas[] = {"Servicio", "Descripcion", "Piezas", "Kg", "Acero", "Dureza", "Piezas Entregadas"};
+    private boolean editable[] = {false, false, false, false, false, false, true};
     NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
     public ServiciosDetallesModel(ArrayList<ElementoEntrega>  registros) {
@@ -19,23 +19,24 @@ class ServiciosDetallesModel extends AbstractTableModel
     }
 
     public int getColumnCount() {
-        return 6;
+        return 7;
     }
 
     public Object getValueAt (int rowIndex, int columnIndex) {
         switch(columnIndex) {
             case 0: return registros.get(rowIndex).getServicio();
-            case 1: return registros.get(rowIndex).getPiezas();
-            case 2: return String.format("%,.2f", registros.get(rowIndex).getKilos());
-            case 3: return registros.get(rowIndex).getAcero();
-            case 4: return registros.get(rowIndex).getDureza();
-            case 5: return registros.get(rowIndex).getPiezasEntregadas();
+            case 1: return registros.get(rowIndex).getDescripcion();
+            case 2: return registros.get(rowIndex).getPiezas();
+            case 3: return String.format("%,.2f", registros.get(rowIndex).getKilos());
+            case 4: return registros.get(rowIndex).getAcero();
+            case 5: return registros.get(rowIndex).getDureza();
+            case 6: return registros.get(rowIndex).getPiezasEntregadas();
         }
         return columnIndex;
     }
 
     public void setValueAt (Object value, int rowIndex, int columnIndex) {
-        if(columnIndex != 5)
+        if(columnIndex != 6)
             return;
             
         int max = registros.get(rowIndex).getPiezas();
