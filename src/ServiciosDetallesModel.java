@@ -48,10 +48,11 @@ class ServiciosDetallesModel extends AbstractTableModel
             if(val < 0){
                 val = 0;
             }
-            registros.get(rowIndex).setPiezasEntregadas(val);                
+            registros.get(rowIndex).setPiezasEntregadas(val);
         } catch (Exception e) {
             System.out.println("Error al convertir a entero");
         }
+        fireTableCellUpdated(rowIndex, columnIndex);
     }
 
     public Class getColumnClass (int columIndex) {

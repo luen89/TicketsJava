@@ -4,9 +4,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -20,21 +24,21 @@ import javax.imageio.ImageIO;
  * @author Zyngy Coding
  */
 public class VentanaDetalles extends JFrame implements ActionListener{
-
-    JTextArea ticketTextArea;
-    String listaArticulos = "";
-    // private static final DecimalFormat df = new DecimalFormat("0.00");
-    double sumaP = 0.0;
-    double sumaT = 0.0;
+    private final String[] _STATUS_PAGO = {"PAGADO", "POR PAGAR"};
+    private final String[] _STATUS_ENTREGA = {"ENTREGADO", "ENTREGA PARCIAL", "POR ENTREGAR"};
+    
     private TicketEntrega ticket;
-    private JPanel pPrincipal, pInfoGeneral, pCostos;
-    private ServiciosDetallesModel modelo;
+    private JPanel pPrincipal, pDatosGenerales, pPreviewImagen, pCostosYOpciones, pSuperior, pInferior;
     private JScrollPane spTabla;
     private JTable tabla;
+    private ServiciosDetallesModel modelo;
+    private JTextField txtCostoTotal, txtMontoPagado, txtMontoRestante, txtStatusPago, txtStatusEntrega;
+    private JButton btnGuardar, btnEntregar, btnPagar, btnVerImagen;
+    private JLabel lbImage, lbCambiosSinGuardar;
+    private String nombreFoto;
+    private int statusEntrega, statusPago;
+    private boolean existeFoto;
     private GestorArchivos gestor;
-    private JTextField txtCostoTotal, txtMontoPagado, txtMontoRestante;
-    private JButton btnGuardar, btnEntregar, btnPagar;
-    private static JLabel labelImage;
     
     public VentanaDetalles(TicketEntrega ticket, GestorArchivos gestor) {
         this.ticket = ticket;
@@ -52,73 +56,57 @@ public class VentanaDetalles extends JFrame implements ActionListener{
 
     private void initComponents() {
         //#region Panel Datos Generales
-        JLabel lbOrden = new JLabel("Orden:   ");
+        obtenerStatus();
+        JLabel lbOrden = new JLabel(" Orden: ");
         JTextField txtOrden = new JTextField(String.valueOf(ticket.nOrden));
         txtOrden.setEditable(false);
 
-        JLabel lbFecha = new JLabel("Fecha: ");
-        JTextField txtFecha = new JTextField(ticket.today.toString());
+        JLabel lbFecha = new JLabel(" Fecha: ");
+        JTextField txtFecha = new JTextField(formatDate(ticket.today));
         txtFecha.setEditable(false);
 
-        JLabel lbCliente = new JLabel("Cliente: ");
+        JLabel lbCliente = new JLabel(" Cliente: ");
         JTextField txtCliente = new JTextField(ticket.nameCliente);
         txtCliente.setEditable(false);
 
-        pInfoGeneral = new JPanel();
-        pInfoGeneral.setLayout (new GridBagLayout());
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.weightx = 1.0;
-        constraints.weighty = 1.0;
-        constraints.gridwidth = 1; // El área de texto ocupa dos columnas.
-        constraints.gridheight = 1; // El área de texto ocupa 2 filas.
-        constraints.fill = GridBagConstraints.BOTH;
+        JLabel lbStatusPago = new JLabel(" Status Pago: ");
+        txtStatusPago = new JTextField();
+        txtStatusPago.setEditable(false);
 
-        JPanel pOrden = new JPanel();
-        pOrden.setLayout(new FlowLayout(FlowLayout.LEFT));
-        pOrden.add(lbOrden);
-        pOrden.add(txtOrden);        
+        JLabel lbStatusEntrega = new JLabel(" Status Entrega: ");
+        txtStatusEntrega = new JTextField();
+        txtStatusEntrega.setEditable(false);
 
-        JPanel pFecha = new JPanel();
-        pFecha.setLayout(new FlowLayout(FlowLayout.LEFT));
-        pFecha.add(lbFecha);
-        pFecha.add(txtFecha);
+        actualizarTxtStatus();                        
+    
+        pDatosGenerales = new JPanel();
+        pDatosGenerales.setLayout(new GridLayout(0, 2));
+        pDatosGenerales.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Datos Generales"));
 
-        JPanel pCliente = new JPanel();
-        pCliente.setLayout(new FlowLayout(FlowLayout.LEFT));
-        pCliente.add(lbCliente);
-        pCliente.add(txtCliente);
+        pDatosGenerales.add(lbOrden);
+        pDatosGenerales.add(txtOrden);        
 
+        pDatosGenerales.add(lbFecha);
+        pDatosGenerales.add(txtFecha);
+
+        pDatosGenerales.add(lbCliente);
+        pDatosGenerales.add(txtCliente);
+
+        pDatosGenerales.add(lbStatusPago);
+        pDatosGenerales.add(txtStatusPago);
+
+        pDatosGenerales.add(lbStatusEntrega);
+        pDatosGenerales.add(txtStatusEntrega);        
         
         construirImagen();        
 
-        JPanel pPreviewImagen = new JPanel();        
-        pPreviewImagen.add(labelImage);
+        pPreviewImagen = new JPanel(new BorderLayout());
+        pPreviewImagen.add(lbImage, BorderLayout.CENTER);
 
-        constraints.gridx = 0; // El área de texto empieza en la columna cero.
-        constraints.gridy = 0; // El área de texto empieza en la fila cero
-        pInfoGeneral.add(pOrden, constraints);
-
-        constraints.gridx = 0; // El área de texto empieza en la columna cero.
-        constraints.gridy = 1; // El área de texto empieza en la fila cero
-        pInfoGeneral.add(pFecha, constraints);
-
-        constraints.gridx = 0; // El área de texto empieza en la columna cero.
-        constraints.gridy = 2; // El área de texto empieza en la fila cero
-        pInfoGeneral.add(pCliente, constraints);
-
-        constraints.gridx = 1; // El área de texto empieza en la columna cero.
-        constraints.gridy = 0; // El área de texto empieza en la fila cero
-        // constraints.gridwidth = 3; // El área de texto ocupa dos columnas.
-        constraints.gridheight = 3; // El área de texto ocupa 2 filas.
-        pInfoGeneral.add(pPreviewImagen, constraints);
-        // constraints.gridwidth = 1; // El área de texto ocupa dos columnas.
-        constraints.gridheight = 1; // El área de texto ocupa 2 filas.
-        constraints.weighty = 0.0; // El área de texto ocupa 2 filas.
-        //#endregion            
-
-        //#region Panel de Cliente
-        
-        //#endregion
+        pSuperior = new JPanel();
+        pSuperior.setLayout(new GridLayout(0, 2));
+        pSuperior.add(pDatosGenerales);
+        pSuperior.add(pPreviewImagen);
 
         //#region Panel de Tabla
         modelo = new ServiciosDetallesModel(ticket.servicios);
@@ -126,7 +114,6 @@ public class VentanaDetalles extends JFrame implements ActionListener{
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         tabla.getColumnModel().getColumn(0).setResizable(true);
-        // tabla.getColumnModel().getColumn(0).setMinWidth(200);
         tabla.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);        
         tabla.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
         tabla.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
@@ -135,65 +122,91 @@ public class VentanaDetalles extends JFrame implements ActionListener{
         tabla.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);     
         tabla.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
         resizeColumnWidth(tabla);
-
+        modelo.addTableModelListener(new TableModelListener() {
+            public void tableChanged(TableModelEvent evt) 
+            {
+                System.out.println("cambio en tabla");
+                cambioEnPiezasEntregadas();
+                actualizarTxtStatus();
+                actualizarBtnStatus();
+            }
+        });
 
         spTabla = new JScrollPane(tabla);
         //#endregion
 
-        //#region Panel de Boton Entregar
-        btnEntregar = new JButton("Entregar Piezas");
+        //#region Panel Opciones
+        btnVerImagen = new JButton("Ver Foto");
+        btnVerImagen.setEnabled(existeFoto);
+        btnVerImagen.addActionListener(this);
+
+        btnPagar = new JButton("Marcar como PAGADO");
+        btnPagar.addActionListener(this);
+
+        btnEntregar = new JButton("Marcar como ENTREGADO");
         btnEntregar.addActionListener(this);
-        JPanel pBotonEntregar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        pBotonEntregar.add(btnEntregar);   
+
+        JPanel pOpciones = new JPanel(new GridLayout(0, 2));
+        pOpciones.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Opciones"));
+        pOpciones.add(btnPagar);
+        pOpciones.add(btnEntregar);
+        pOpciones.add(btnVerImagen);
+        actualizarBtnStatus();
         //#endregion
 
-        //#region Panel de Costos y Pagos
-        JLabel lbCostoTotal = new JLabel("Total: ");
+        //#region Panel de Costos
+        JLabel lbCostoTotal = new JLabel(" Total: ");
         txtCostoTotal = new JTextField(formatDouble(ticket.costoTotal));
         txtCostoTotal.setEditable(false);
-        JLabel lbMontoPagado = new JLabel("Pagado: ");
+
+        JLabel lbMontoPagado = new JLabel(" Pagado: ");
         txtMontoPagado = new JTextField(formatDouble(ticket.montoPagado));
         
-        JLabel lbMontoRestante = new JLabel("Restante: ");
+        JLabel lbMontoRestante = new JLabel(" Restante: ");
         txtMontoRestante = new JTextField(formatDouble(ticket.costoTotal - ticket.montoPagado));
         txtMontoRestante.setEditable(false);
-        txtMontoPagado.addActionListener(this);        
+        txtMontoPagado.addActionListener(this);
         
-        btnPagar = new JButton("Pagar");
-        btnPagar.addActionListener(this);
-        
-        pCostos = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel pCostos = new JPanel(new GridLayout(0, 2));
+        pCostos.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Costos"));
         pCostos.add(lbCostoTotal);
         pCostos.add(txtCostoTotal);
         pCostos.add(lbMontoPagado);
         pCostos.add(txtMontoPagado);
         pCostos.add(lbMontoRestante);
         pCostos.add(txtMontoRestante);
-        if(ticket.montoPagado < ticket.costoTotal)
-            pCostos.add(btnPagar);
+        //#endregion
+
+        //#region Panel Costos y Opciones
+        pCostosYOpciones = new JPanel(new GridLayout(0, 2));
+        pCostosYOpciones.add(pCostos);
+        pCostosYOpciones.add(pOpciones);
         //#endregion
 
         //#region Panel de Boton Guardar
+        lbCambiosSinGuardar = new JLabel("¡Cambios sin guardar! ");
+        lbCambiosSinGuardar.setForeground(Color.RED);
+        lbCambiosSinGuardar.setVisible(false);
+
         btnGuardar = new JButton("Guardar");
         btnGuardar.addActionListener(this);
         JPanel pBotonGuardar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        pBotonGuardar.add(lbCambiosSinGuardar);
         pBotonGuardar.add(btnGuardar);
         //#endregion     
         
+        pInferior = new JPanel();
+        pInferior.setLayout(new BoxLayout(pInferior, BoxLayout.Y_AXIS));
+        pInferior.add(pCostosYOpciones);
+        pInferior.add(pBotonGuardar);
+
         //#region Panel Principal
         pPrincipal = new JPanel();
         pPrincipal.setLayout (new BoxLayout(pPrincipal, BoxLayout.Y_AXIS));        
         
-        pPrincipal.add(pInfoGeneral);
+        pPrincipal.add(pSuperior);
         pPrincipal.add(spTabla);
-
-        JPanel panelAbajo = new JPanel();
-        panelAbajo.setLayout(new BoxLayout(panelAbajo, BoxLayout.Y_AXIS));
-        panelAbajo.add(pBotonEntregar);
-        panelAbajo.add(pCostos);
-        panelAbajo.add(pBotonGuardar);
-
-        pPrincipal.add(panelAbajo);
+        pPrincipal.add(pInferior);
 
         setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
         add(pPrincipal);
@@ -225,6 +238,40 @@ public class VentanaDetalles extends JFrame implements ActionListener{
         });
     }
 
+    private void cambioEnPiezasEntregadas() {
+        boolean entregado = true, entregaParcial = false;
+        for (ElementoEntrega servicio : ticket.servicios) {
+            entregaParcial |= (servicio.getPiezasEntregadas() > 0);
+            entregado &= (servicio.getPiezasEntregadas() == servicio.getPiezas());                
+        }
+        statusEntrega = (entregado) ? 0 : (entregaParcial) ? 1 : 2;
+    }
+
+    private void actualizarTxtStatus() {
+        txtStatusEntrega.setText(_STATUS_ENTREGA[statusEntrega]);
+        txtStatusEntrega.setForeground(statusEntrega == 0 ? Color.GREEN : Color.RED);
+        
+        txtStatusPago.setText(_STATUS_PAGO[statusPago]);
+        txtStatusPago.setForeground(statusPago == 0 ? Color.GREEN : Color.RED);
+        if(lbCambiosSinGuardar != null)
+            lbCambiosSinGuardar.setVisible(true);
+    }
+
+    private void actualizarBtnStatus() {
+        btnEntregar.setEnabled(statusEntrega != 0);
+        btnPagar.setEnabled(statusPago != 0);
+    }
+
+    private void obtenerStatus() {        
+        boolean entregado = true, entregaParcial = false;
+        for (ElementoEntrega servicio : ticket.servicios) {
+            entregaParcial = (servicio.getPiezasEntregadas() > 0);
+            entregado &= (servicio.getPiezasEntregadas() == servicio.getPiezas());                
+        }
+        statusEntrega = (entregado) ? 0 : (entregaParcial) ? 1 : 2;
+        statusPago = (ticket.costoTotal == ticket.montoPagado) ? 0 : 1;
+    }
+
     private void resizeColumnWidth(JTable table) {
         final TableColumnModel columnModel = table.getColumnModel();
         for (int column = 0; column < table.getColumnCount(); column++) {
@@ -240,33 +287,34 @@ public class VentanaDetalles extends JFrame implements ActionListener{
         }
     }
 
-
     private void construirImagen() {
         try {
-            String nombreFoto = "src/Imagenes/ImagenesTickets/Ticket" + String.format("%04d", ticket.nOrden) + ".png";            
+            nombreFoto = "src/Imagenes/ImagenesTickets/Ticket" + String.format("%04d", ticket.nOrden) + ".png";            
             File foto = new File(nombreFoto);
     
-            if(!foto.exists()){
+            existeFoto = foto.exists();
+
+            if(!existeFoto){
                 nombreFoto = "src/Imagenes/Aguila_logo.png";
             }
 
             BufferedImage bufferedImage = ImageIO.read(new File(nombreFoto));
             int heightImagen = bufferedImage.getHeight();
 
-            double proporcion = ((double) this.getHeight() * 0.35) / (double) heightImagen;
+            double proporcion = ((double) this.getHeight() * 0.3) / (double) heightImagen;
             int widthImagenNueva = (int) (bufferedImage.getWidth() * proporcion);
             int heightImagenNueva = (int) (heightImagen * proporcion);
             Image image = bufferedImage.getScaledInstance(widthImagenNueva, heightImagenNueva, Image.SCALE_DEFAULT);
-            if(labelImage == null)
-                labelImage = new JLabel(new ImageIcon(image));
+            if(lbImage == null)
+                lbImage = new JLabel(new ImageIcon(image));
             else
-                labelImage.setIcon(new ImageIcon(image));
+                lbImage.setIcon(new ImageIcon(image));
         } catch (Exception e) {
-            if(labelImage != null){
-                labelImage = new JLabel("No se pudo cargar la imagen");
+            if(lbImage != null){
+                lbImage = new JLabel("No se pudo cargar la imagen");
             }
             else{
-                labelImage.setText("No se pudo cargar la imagen");
+                lbImage.setText("No se pudo cargar la imagen");
             }
 
             e.printStackTrace();
@@ -284,8 +332,17 @@ public class VentanaDetalles extends JFrame implements ActionListener{
                 if(monto > ticket.costoTotal){
                     throw new Exception("Monto Pagado no puede ser mayor al Costo Total");
                 }
+
+                if(monto == ticket.costoTotal){
+                    statusPago = 0;
+                }
+                else{
+                    statusPago = 1;
+                }
                 txtMontoPagado.setText(formatDouble(monto));
                 txtMontoRestante.setText(formatDouble(ticket.costoTotal - monto));
+                actualizarTxtStatus();
+                actualizarBtnStatus();
             }
             catch(Exception ex){
                 txtMontoPagado.setText(formatDouble(ticket.montoPagado));
@@ -311,15 +368,10 @@ public class VentanaDetalles extends JFrame implements ActionListener{
             // Se actualiza el registro en el archivo general
             SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyy");
             String fecha = formatoFecha.format(ticket.today);
-            boolean entregado = true, entregaParcial = false;
-            for (ElementoEntrega servicio : ticket.servicios) {
-                entregaParcial = (servicio.getPiezasEntregadas() > 0);
-                entregado &= (servicio.getPiezasEntregadas() == servicio.getPiezas());                
-            }
-            String STATUS_ENTREGA = (entregado) ? "ENTREGADO" : (entregaParcial) ? "ENTREGA PARCIAL" : "POR ENTREGAR";
-            String STATUS_PAGO = (ticket.costoTotal == ticket.montoPagado) ? "PAGADO" : "POR PAGAR";
+            
+            statusPago = (ticket.costoTotal == ticket.montoPagado) ? 0 : 1;
             gestor.actualizarRegistroEnArchivo(new EntradaRegistro(String.format("%04d", ticket.nOrden), ticket.nameCliente, ticket.costoTotal,
-            STATUS_PAGO, STATUS_ENTREGA, fecha));
+            _STATUS_PAGO[statusPago], _STATUS_ENTREGA[statusEntrega], fecha));
             
             // Se actualiza el ticket en el archivo
             gestor.writeFileOrder(ticket);
@@ -332,15 +384,28 @@ public class VentanaDetalles extends JFrame implements ActionListener{
             System.out.println("Pagar");
             txtMontoPagado.setText(formatDouble(ticket.costoTotal));
             txtMontoRestante.setText("0.00");
+            statusPago = 0;
+            actualizarTxtStatus();
+            actualizarBtnStatus();
         }
         // SI SE PRESIONA EL BOTON ENTREGAR
         if(e.getSource() == btnEntregar){
             // Se llenan todas las celdas de la tabla en el campo de piezas entregadas
             System.out.println("Entregar");
             for (int i = 0; i < ticket.servicios.size(); i++) {
-                modelo.setValueAt(ticket.servicios.get(i).getPiezas(), i, 5);
+                modelo.setValueAt(ticket.servicios.get(i).getPiezas(), i, 6);
             }        
-            modelo.actualizarTabla();            
+            modelo.actualizarTabla();
+        }
+        if(e.getSource() == btnVerImagen && existeFoto){
+            try {
+                File f = new File(nombreFoto);
+                Desktop dt = Desktop.getDesktop();
+                dt.open(f);
+                System.out.println("Se abrió la imagen");                
+            } catch (Exception ex) {
+                System.out.println("Error al abrir la imagen");                
+            }
         }
     }
 
@@ -349,4 +414,16 @@ public class VentanaDetalles extends JFrame implements ActionListener{
         return String.format("%.2f", d);
     }    
     
+    private String formatDate(Date d) {        
+        String strDate;
+
+        try{
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");  
+            strDate = dateFormat.format(d);
+        } catch (Exception e){
+            strDate = d.toString();
+        }
+
+        return strDate;
+    }
 }
