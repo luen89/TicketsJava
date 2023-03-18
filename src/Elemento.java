@@ -140,7 +140,7 @@ public class Elemento {
     }
 
     public boolean Validar(){
-        if(acero == "" || servicio == "" || piezas==0 || kilos==0.0 || servicio=="Seleccionar" || acero=="Seleccionar")
+        if(acero == "" || servicio == "" || descripcion == "" || dureza == "" || piezas==0 || kilos==0.0 || servicio=="Seleccionar" || acero=="Seleccionar")
         return false;
         else
         return true;

@@ -65,7 +65,7 @@ public class TicketPreview extends JFrame implements ActionListener {
         btnImprimir.addActionListener(this);
         
         spBoton = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        btnSiguiente = new JButton("Siguiente");
+        btnSiguiente = new JButton("Finalizar y Siguiente Orden");
         btnSiguiente.addActionListener(this);
         this.ticketTextArea = new JTextArea();
         ticketTextArea.setBackground(Color.WHITE);
@@ -78,9 +78,9 @@ public class TicketPreview extends JFrame implements ActionListener {
 
         spBtnFoto.add(btnFoto);
         spBtnFoto.add(labelHayFoto);
-        spBtnFoto.add(btnImprimir);
         spBtnFoto.add(btnRegistrar);
         spBtnFoto.add(labelHayRegistro);
+        spBtnFoto.add(btnImprimir);
 
         spBoton.add(btnSiguiente);
         subpanelTicket.add(ticketTextArea);
