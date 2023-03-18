@@ -2,6 +2,8 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 
@@ -15,7 +17,7 @@ import javax.swing.table.TableModel;
  *
  * @author Luis Enrique Pérez González
  */
-public class ServicioPanel extends JPanel implements ActionListener{
+public class ServicioPanel extends JPanel implements ActionListener, FocusListener{
 
     JTable tabla;
     Ticket ticket;
@@ -78,8 +80,8 @@ public class ServicioPanel extends JPanel implements ActionListener{
         jcAcciones= new JComboBox<String>(accionesString);
         jcAcciones.addActionListener(this);
         jlid= new JLabel(columnNames[0]);
-        jlNameAbrv= new JLabel(columnNames[2]);
-        jlName= new JLabel(columnNames[3]);
+        jlName= new JLabel(columnNames[2]);
+        jlNameAbrv= new JLabel(columnNames[3]);
         jlCostoMin= new JLabel(columnNames[4]);
         jlCostoMed= new JLabel(columnNames[5]); 
         jlCostoKg= new JLabel(columnNames[6]); 
@@ -88,17 +90,18 @@ public class ServicioPanel extends JPanel implements ActionListener{
 
         jtid= new JTextField(5);        
         jtNameAbr= new JTextField(5);
-        jtName= new JTextField(5);
+        jtName= new JTextField(15);
         jtCostoMin= new JTextField(5);
         jtCostoMed= new JTextField(5);
         jtCostoKg= new JTextField(5);
         jtLimiteMin= new JTextField(5);
         jtLimiteMed= new JTextField(5);
 
-        jbAction = new JButton("Agregar");
+        jbAction = new JButton("Guardar Cambios");
         jbAction.addActionListener(this);
         jlid.setVisible(false);
         jtid.setVisible(false);
+        jtid.addFocusListener(this);
 
 
         panelIdentificador= new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -108,10 +111,10 @@ public class ServicioPanel extends JPanel implements ActionListener{
         panelIdentificador.add(jbAction);
 
         panelValores = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelValores.add(jlNameAbrv);
-        panelValores.add(jtNameAbr);
         panelValores.add(jlName);
         panelValores.add(jtName);
+        panelValores.add(jlNameAbrv);
+        panelValores.add(jtNameAbr);
         panelValores.add(jlCostoMin);
         panelValores.add(jtCostoMin);
         panelValores.add(jlCostoMed);
@@ -178,7 +181,6 @@ public class ServicioPanel extends JPanel implements ActionListener{
         if(e.getSource()==jbAction){
             if(jcAcciones.getSelectedItem()=="Agregar"){
                 int index=padre.arrayServicios.size();
-
                 padre.arrayServicios.add(new Servicio(
                     index,
                     jtName.getText(),
@@ -194,8 +196,8 @@ public class ServicioPanel extends JPanel implements ActionListener{
                 DefaultTableModel modelaux= (DefaultTableModel) tabla.getModel();
                 modelaux.addRow(padre.arrayServicios.get(padre.arrayServicios.size()-1).getData(padre.arrayServicios.size()-1));
                 padre.restartPanelEntrada();
-
             }    
+
 
             if(jcAcciones.getSelectedItem()=="Editar"){
                 int index= Integer.parseInt(jtid.getText());
@@ -207,19 +209,75 @@ public class ServicioPanel extends JPanel implements ActionListener{
                 serv.costoKg=Double.parseDouble(jtCostoKg.getText());
                 serv.limiteMinimo= Double.parseDouble(jtLimiteMin.getText());
                 serv.limiteMedio= Double.parseDouble(jtLimiteMed.getText());
+                
+                DefaultTableModel modelaux= (DefaultTableModel) tabla.getModel();
+                modelaux.removeRow(index);
+                modelaux.insertRow(index, padre.arrayServicios.get(index).getData(index));
+                padre.restartPanelEntrada();
             }
 
         
-            if(jcAcciones.getSelectedItem()=="Eliminar"){
+            if(jcAcciones.getSelectedItem()=="Borrar"){
                 int index= Integer.parseInt(jtid.getText());
                 padre.arrayServicios.remove(index);
 
+                DefaultTableModel modelaux= (DefaultTableModel) tabla.getModel();
+                if(padre.arrayServicios.size()<=1){return;}
+                
+                for(int i=index;i<padre.arrayServicios.size()+1;i++){
+                    System.out.println("Indice de Borrado: "+i);
+                    modelaux.removeRow(index);
+                }
 
+                for(int i=index;i<padre.arrayServicios.size();i++){
+                System.out.println("Indice de Agregado: "+i);
+                Servicio aux = padre.arrayServicios.get(i);
+                aux.id=i;
+                modelaux.addRow(new Object[]{                
+                    i,
+                    aux.id,
+                    aux.name,
+                    aux.nameAbr,
+                    aux.costoMin,
+                    aux.costoMed,
+                    aux.costoKg,
+                    aux.limiteMinimo,
+                    aux.limiteMedio
+                });
+                }
+                padre.restartPanelEntrada();
             }
+
+            fileGestor.escribirServicios(padre.arrayServicios);
+            
+
         }
 
 
         
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+        // TODO Auto-generated method stub
+        //throw new UnsupportedOperationException("Unimplemented method 'focusGained'");
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        // TODO Auto-generated method stub
+        if(e.getSource()==jtid){
+            if(jcAcciones.getSelectedItem()=="Editar"){
+                int index= Integer.parseInt(jtid.getText());
+                jtName.setText(padre.arrayServicios.get(index).name);
+                jtNameAbr.setText(padre.arrayServicios.get(index).nameAbr);
+                jtCostoMin.setText(padre.arrayServicios.get(index).costoMin+"");
+                jtCostoMed.setText(padre.arrayServicios.get(index).costoMed+"");
+                jtCostoKg.setText(padre.arrayServicios.get(index).costoKg+"");
+                jtLimiteMin.setText(padre.arrayServicios.get(index).limiteMinimo+"");
+                jtLimiteMed.setText(padre.arrayServicios.get(index).limiteMedio+"");
+            }
+        }
     }
     
     

@@ -27,18 +27,22 @@ public class Ventana extends JFrame{
         setLocationRelativeTo(null);
         this.ga = ga;
 
-        //Esto se obtendra desde el gestor de archivos despues 
-        arrayServicios.add(new Servicio(0,"Pavonado limpio","PAVL",220.0,280.0,39.0,3,8));
-        arrayServicios.add(new Servicio(1,"Pavonado Sucio","PAVS",220.0,280.0,45.0,3,8));
-        arrayServicios.add(new Servicio(2,"Temple Normal","TEMN",290.0,0.0,95.0,4,0));
-        arrayServicios.add(new Servicio(4,"Temple Doble","TEMD",310.0,0.0,95.0,4,0));
-        arrayServicios.add(new Servicio(5,"Cementacion","CEM",310.0,0.0,95.0,4,0));
-        arrayServicios.add(new Servicio(6,"Cementacion Especial","CEMX",310.0,0.0,120.0,4,0));
-        arrayServicios.add(new Servicio(7,"Normalizado","NORM",250.0,0.0,65.0,4,0));
-        arrayServicios.add(new Servicio(8,"Normalizado Especial","NORX",300.0,0.0,75.0,4,0));
-        arrayServicios.add(new Servicio(8,"Bonificado","BON",310.0,0.0,90.0,4,0));
-        arrayServicios.add(new Servicio(8,"Temple Regionalizado","TEMR",450.0,0.0,120.0,4,0));
-
+        //Esto se obtendra desde el gestor de archivos despues
+        arrayServicios=ga.leerServicios();
+        if(arrayServicios.isEmpty()){
+            System.out.println("Archivo vacio o inexistente se crean servicios predefinidos"); 
+            arrayServicios.add(new Servicio(0,"Pavonado limpio","PAVL",220.0,280.0,39.0,3,8));
+            arrayServicios.add(new Servicio(1,"Pavonado Sucio","PAVS",220.0,280.0,45.0,3,8));
+            arrayServicios.add(new Servicio(2,"Temple Normal","TEMN",290.0,0.0,95.0,4,0));
+            arrayServicios.add(new Servicio(3,"Temple Doble","TEMD",310.0,0.0,95.0,4,0));
+            arrayServicios.add(new Servicio(4,"Cementacion","CEM",310.0,0.0,95.0,4,0));
+            arrayServicios.add(new Servicio(5,"Cementacion Especial","CEMX",310.0,0.0,120.0,4,0));
+            arrayServicios.add(new Servicio(6,"Normalizado","NORM",250.0,0.0,65.0,4,0));
+            arrayServicios.add(new Servicio(7,"Normalizado Especial","NORX",300.0,0.0,75.0,4,0));
+            arrayServicios.add(new Servicio(8,"Bonificado","BON",310.0,0.0,90.0,4,0));
+            arrayServicios.add(new Servicio(9,"Temple Regionalizado","TEMR",450.0,0.0,120.0,4,0));
+            ga.escribirServicios(arrayServicios);
+        }
 
 
 
