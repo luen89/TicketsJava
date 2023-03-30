@@ -109,12 +109,12 @@ public class PiezaForm extends JPanel implements ChangeListener, FocusListener, 
           lbPrecioCustom =  new JLabel(" Costo");
 
           // Inicializa el Spinner de Piezas
-          smNpiezas = new SpinnerNumberModel(0, 0, 100, 1);
+          smNpiezas = new SpinnerNumberModel(0, 0, 10000, 1);
           sNpiezas = new JSpinner(smNpiezas);
           sNpiezas.addChangeListener(this);
 
           // Inicializa el Spinner de Kilos
-          smNkilos = new SpinnerNumberModel(0.0, 0.0, 100.0, 0.1);
+          smNkilos = new SpinnerNumberModel(0.0, 0.0, 10000.0, 0.1);
           sNKilos = new JSpinner(smNkilos);
           sNKilos.addChangeListener(this);
 
