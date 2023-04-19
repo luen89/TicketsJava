@@ -416,6 +416,62 @@ public class GestorArchivos {
         return new Foto(aux, fot.getOrigImage(), fot.getMaskImage(), fot.getFileName());
     }*/
 
+    public ArrayList<Acero> leerAceros(){
+        File f = new File("src/Registros/Aceros.csv");
+        String[] st;
+        ArrayList<Acero> aceroArray = new ArrayList<Acero>();
+        //BufferedReader in = new BufferedReader(new FileReader(f));    
+        try{
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f)));            
+            // DataInputStream in = new DataInputStream(new FileInputStream(f));   
+
+            String line;
+            while ((line = in.readLine()) != null){
+                //System.out.println(line);
+                
+                st=line.split(",");
+                if(st.length==8)
+                aceroArray.add(new Acero (Integer.parseInt(st[0]), st[1],st[2]));
+                // System.out.println(st[0]+" " + st[1]+" " + Double.parseDouble(st[2])+" " + st[3]+" " + st[4] + " " + st[5]);
+            }          
+                 
+            in.close();
+        }
+        catch (IOException e) { 
+            System.out.println(e.toString());
+        }
+
+        return aceroArray;
+    }
+
+    public void escribirAceros(ArrayList<Acero> aceroArray){
+        try {
+            //Se crea un nuevo archivo
+            File saveF = new File("src/Registros/Aceros.csv");
+            if(!saveF.exists()){
+                if (saveF.createNewFile()) {
+                    System.out.println("Archivo creado: " + saveF.getName());
+                  } else {
+                    System.out.println("Archivo ya existente sobreescrito.");
+                  }
+            }          
+            //Se crea un writer
+            FileWriter myWriter;
+                 myWriter = new FileWriter(saveF);
+            //Se escriben todas las instrucciones en el archivo
+            for( Acero a : aceroArray){
+                myWriter.write(a.id+","+a.name+","+a.nameAbrv+"\n");
+            }
+           
+    
+            //Se cierra el writer
+            myWriter.close();
+            System.out.println("Escrito correctamente.");
+        } catch (IOException e) {
+            System.out.println("Error no se escribio el archivo.");
+        }
+    }
+
     public ArrayList<Servicio> leerServicios(){
         File f = new File("src/Registros/Servicios.csv");
         String[] st;

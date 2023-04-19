@@ -16,6 +16,7 @@ public class Ventana extends JFrame{
     public ControladorPE controlPE;
     PanelRegistros panelRegistros;
     ServicioPanel panelServicios;
+    AceroPanel panelAceros;
     JTabbedPane pestañas;
     GestorArchivos ga;
     //Controlador miControlador;
@@ -44,14 +45,20 @@ public class Ventana extends JFrame{
             ga.escribirServicios(arrayServicios);
         }
 
+        arrayAceros=ga.leerAceros();
+        if(arrayAceros.isEmpty()){
+            arrayAceros.add(new Acero(0,"4140"));
+            arrayAceros.add(new Acero(1,"8620"));
+            arrayAceros.add(new Acero(2,"1045"));
+            arrayAceros.add(new Acero(3,"C.R"));
+            arrayAceros.add(new Acero(4,"Q1"));
+            arrayAceros.add(new Acero(5,"D2"));
+            ga.escribirAceros(arrayAceros);
+        }
 
 
-        arrayAceros.add(new Acero(0,"4140"));
-        arrayAceros.add(new Acero(1,"8620"));
-        arrayAceros.add(new Acero(2,"1045"));
-        arrayAceros.add(new Acero(3,"C.R"));
-        arrayAceros.add(new Acero(4,"Q1"));
-        arrayAceros.add(new Acero(5,"D2"));
+
+        
 
 
 
@@ -66,12 +73,14 @@ public class Ventana extends JFrame{
         panelE=new PanelEntrada(ga, controlPE);
         panelRegistros = new PanelRegistros(ga);
         panelServicios = new ServicioPanel(ga, this);
+        panelAceros = new AceroPanel(ga, this);
         //panel1=new PanelPrueba();
         pestañas=new JTabbedPane();
         
         pestañas.add("Recibo", panelE);
         pestañas.add("Registros", panelRegistros);
-        pestañas.add("Servicios", panelServicios);     
+        pestañas.add("Servicios", panelServicios);  
+        pestañas.add("Aceros",panelAceros);   
         
         pestañas.addChangeListener(new ChangeListener() {
             @Override
