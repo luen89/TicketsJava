@@ -8,6 +8,7 @@ import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 
 import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -21,11 +22,11 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
 
     JTable tabla;
     Ticket ticket;
-    JPanel panel, panelIdentificador, panelValores, panelEdicion;
+    JPanel panel, panelIdentificador, panelValores, panelEdicion, panelLimites, panelCostos, panelNombre;
     JComboBox<String> jcAcciones;
 
     JTextField jtid, jtNameAbr ,jtName, jtCostoMin, jtCostoMed, jtCostoKg, jtLimiteMin, jtLimiteMed;
-    JLabel jlid, jlNameAbrv ,jlName, jlCostoMin, jlCostoMed, jlCostoKg, jlLimiteMin, jlLimiteMed;
+    JLabel jlid, jlNameAbrv ,jlName, jlCostoMin, jlCostoMed, jlCostoKg, jlLimiteMin, jlLimiteMed, jlAccion;
     JButton jbAction;
     JScrollPane scroll;
     GestorArchivos fileGestor;
@@ -35,13 +36,13 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
     public ServicioPanel(GestorArchivos fileGestor, Ventana padre){
         this.padre=padre;
         this.fileGestor = fileGestor;
-        this.setLayout(new GridLayout(0,1));
+        this.setLayout(new FlowLayout(FlowLayout.CENTER));
         initComponents();
       
     }
 
     private void initComponents() {
-        String [] columnNames ={"Identificador","id grupo", "Nombre","Nombre Abrev","Costo Minimo","Costo Medio","Costo Kg","Limite Minimo","Limite Medio"};
+        String [] columnNames ={"Identificador","id grupo", "Nombre","Nombre Abreviado","Costo Minimo","Costo Medio","Costo Kg","Limite Minimo","Limite Medio"};
         Object[][] data = new Object[padre.arrayServicios.size()][9];
         int i=0;
         System.out.println("Tamaño Arreglo: "+padre.arrayServicios.size());
@@ -77,16 +78,17 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
             */
         }
         String[] accionesString={"Agregar","Editar","Borrar"};
+        jlAccion = new JLabel("Accion a realizar: ");
         jcAcciones= new JComboBox<String>(accionesString);
         jcAcciones.addActionListener(this);
         jlid= new JLabel(columnNames[0]);
         jlName= new JLabel(columnNames[2]);
         jlNameAbrv= new JLabel(columnNames[3]);
-        jlCostoMin= new JLabel(columnNames[4]);
-        jlCostoMed= new JLabel(columnNames[5]); 
-        jlCostoKg= new JLabel(columnNames[6]); 
-        jlLimiteMin= new JLabel(columnNames[7]); 
-        jlLimiteMed= new JLabel(columnNames[8]);
+        jlCostoMin= new JLabel("Minimo");
+        jlCostoMed= new JLabel("Medio"); 
+        jlCostoKg= new JLabel("Por Kilogramo"); 
+        jlLimiteMin= new JLabel("Se cobra minimo si peso menor a :"); 
+        jlLimiteMed= new JLabel("Se cobra medio si peso menor a :");
 
         jtid= new JTextField(5);        
         jtNameAbr= new JTextField(5);
@@ -99,37 +101,68 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
 
         jbAction = new JButton("Guardar Cambios");
         jbAction.addActionListener(this);
+        
         jlid.setVisible(false);
         jtid.setVisible(false);
         jtid.addFocusListener(this);
 
 
-        panelIdentificador= new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelIdentificador= new JPanel(new GridLayout(0,2));
+        panelIdentificador.add(jlAccion);
+        panelIdentificador.add(jcAcciones);
         panelIdentificador.add(jlid);
         panelIdentificador.add(jtid);
-        panelIdentificador.add(jcAcciones);
         panelIdentificador.add(jbAction);
 
-        panelValores = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelValores.add(jlName);
-        panelValores.add(jtName);
-        panelValores.add(jlNameAbrv);
-        panelValores.add(jtNameAbr);
-        panelValores.add(jlCostoMin);
-        panelValores.add(jtCostoMin);
-        panelValores.add(jlCostoMed);
-        panelValores.add(jtCostoMed);
-        panelValores.add(jlCostoKg);
-        panelValores.add(jtCostoKg);
-        panelValores.add(jlLimiteMin);
-        panelValores.add(jtLimiteMin);
-        panelValores.add(jlLimiteMed);
-        panelValores.add(jtLimiteMed);
+        panelValores = new JPanel(new GridLayout(0,1));
+        panelNombre = new JPanel(new GridLayout(0,2));
+        panelCostos  = new JPanel(new GridLayout(0,2));
+        panelLimites = new JPanel(new GridLayout(0,2));
+
+        panelNombre.add(jlName);
+        panelNombre.add(jtName);
+        panelNombre.add(jlNameAbrv);
+        panelNombre.add(jtNameAbr);
+
+        panelCostos.add(jlCostoMin);
+        panelCostos.add(jtCostoMin);
+        panelCostos.add(jlCostoMed);
+        panelCostos.add(jtCostoMed);
+        panelCostos.add(jlCostoKg);
+        panelCostos.add(jtCostoKg);
+
+        panelLimites.add(jlLimiteMin);
+        panelLimites.add(jtLimiteMin);
+        panelLimites.add(jlLimiteMed);
+        panelLimites.add(jtLimiteMed);
+
+        Font a = new Font("Calibri", 1, 14);
+
+        Border bordeIdentificador = new TitledBorder(new EtchedBorder(Color.orange, Color.orange), "Control", 1, 2, a,
+        Color.black);
+        panelIdentificador.setBorder(bordeIdentificador);
+
+        Border bordeCostos = new TitledBorder(new EtchedBorder(Color.orange, Color.orange), "Costos", 1, 2, a,
+        Color.black);
+        panelCostos.setBorder(bordeCostos);
+
+        Border bordeNombre = new TitledBorder(new EtchedBorder(Color.orange, Color.orange), "General", 1, 2, a,
+        Color.black);
+        panelNombre.setBorder(bordeNombre);
+
+        Border bordeLimites = new TitledBorder(new EtchedBorder(Color.orange, Color.orange), "Limites en Kilogramos", 1, 2, a,
+        Color.black);
+        panelLimites.setBorder(bordeLimites);
+
+
         panelValores.setVisible(true);
 
         panelEdicion= new JPanel(new GridLayout(0,1));
         panelEdicion.add(panelIdentificador);
-        panelEdicion.add(panelValores);
+        panelEdicion.add(panelNombre);
+        panelEdicion.add(panelCostos);
+        panelEdicion.add(panelLimites);
+        //panelEdicion.add(panelValores);
 
 
         tabla.setEnabled(false);
@@ -137,7 +170,8 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
         scroll.setPreferredSize(new Dimension(800,400));
         tabla.setFillsViewportHeight(true);
         resizeColumnWidth(tabla);
-        panel=new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        panel=new JPanel(new FlowLayout(FlowLayout.LEFT));
         panel.add(scroll);
         this.add(panel);
         this.add(panelEdicion);
@@ -164,8 +198,14 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==jcAcciones){
-            if(jcAcciones.getSelectedItem()=="Borrar"){panelValores.setVisible(false);}
-            else{panelValores.setVisible(true);}
+            if(jcAcciones.getSelectedItem()=="Borrar"){
+                panelCostos.setVisible(false);
+                panelLimites.setVisible(false);
+                panelNombre.setVisible(false);
+            }
+            else{panelCostos.setVisible(true);
+                panelLimites.setVisible(true);
+                panelNombre.setVisible(true);}
             
             if(jcAcciones.getSelectedItem()=="Agregar"){
                 jtid.setVisible(false);
