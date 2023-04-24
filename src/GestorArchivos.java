@@ -430,7 +430,7 @@ public class GestorArchivos {
                 //System.out.println(line);
                 
                 st=line.split(",");
-                if(st.length==8)
+                if(st.length==3)
                 aceroArray.add(new Acero (Integer.parseInt(st[0]), st[1],st[2]));
                 // System.out.println(st[0]+" " + st[1]+" " + Double.parseDouble(st[2])+" " + st[3]+" " + st[4] + " " + st[5]);
             }          

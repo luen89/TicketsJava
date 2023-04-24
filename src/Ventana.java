@@ -47,6 +47,7 @@ public class Ventana extends JFrame{
 
         arrayAceros=ga.leerAceros();
         if(arrayAceros.isEmpty()){
+            System.out.println("Archivo vacio o inexistente se crean aceros predefinidos"); 
             arrayAceros.add(new Acero(0,"4140"));
             arrayAceros.add(new Acero(1,"8620"));
             arrayAceros.add(new Acero(2,"1045"));

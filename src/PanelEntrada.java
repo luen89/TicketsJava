@@ -15,8 +15,11 @@ import javax.swing.event.ChangeListener;
  */
 
 public class PanelEntrada extends JPanel implements ActionListener, ChangeListener {
+    private Boolean bTicketExt=true;
     private JLabel lbRD, lbGD, lbImagen, lbnOrden, lbCliente, lbPrecioTotalCustom;
     private JButton btImprimir, btAgregar;
+    private JRadioButton rbTicketExtendido, rbTicketSimplificado;
+    private ButtonGroup ticketGroup;
     private JPanel panelEncabezado, subpanelEncabezadoDatos, pImprimir,
             panelDetalleOrden, pIncrementoOrdenes;
     public JPanel subpanelListaOrdenes, pPrecioTotalCustom;
@@ -173,11 +176,24 @@ public class PanelEntrada extends JPanel implements ActionListener, ChangeListen
         /* Checkbox del IVA */
         iva = new JCheckBox("¿Requiere factura?");
 
+        /*Radio Buttons de la confiuracion del Ticket */
+        rbTicketExtendido= new JRadioButton("Ticket Extendido");
+        rbTicketExtendido.addActionListener(this);
+        rbTicketExtendido.setSelected(bTicketExt);
+        rbTicketSimplificado = new JRadioButton("Ticket Simplificado");
+        rbTicketSimplificado.addActionListener(this);
+        rbTicketSimplificado.setSelected(!bTicketExt);
+        ticketGroup = new ButtonGroup();
+        ticketGroup.add(rbTicketExtendido);
+        ticketGroup.add(rbTicketSimplificado);
+
         /* Adicion de Elementos al panel */
         pImprimir.add(btImprimir);
         pImprimir.add(iva);
         pImprimir.add(lbPrecioTotalCustom);
         pImprimir.add(jspPrecioCustom);
+        pImprimir.add(rbTicketExtendido);
+        pImprimir.add(rbTicketSimplificado);
 
         /* Creacion del Borde del panel */
         Border bordePanel2 = new TitledBorder(new EtchedBorder(), "Detalles Adicionales");
@@ -200,6 +216,8 @@ public class PanelEntrada extends JPanel implements ActionListener, ChangeListen
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(e.getSource()== rbTicketExtendido){bTicketExt=true;}
+        if(e.getSource()== rbTicketSimplificado){bTicketExt=false;}
         /* Evento a Boton Agregar nuevo elemento */
         if (e.getSource() == btAgregar) {
             // Crea e inicializa un nuevo formulario
@@ -224,7 +242,7 @@ public class PanelEntrada extends JPanel implements ActionListener, ChangeListen
             try {
                 ticketsito.validarTicket();
                 // Crea la previsualizacion del ticket
-                tPreview = new TicketPreview(ticketsito, fileGestor, this);
+                tPreview = new TicketPreview(ticketsito, fileGestor, this,bTicketExt);
                 // System.out.println("Entré");
                 tPreview.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 tPreview.setVisible(true);

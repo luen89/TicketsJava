@@ -9,6 +9,8 @@ import java.text.DecimalFormat;
 
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -18,15 +20,18 @@ import javax.swing.table.TableModel;
  *
  * @author Luis Enrique Pérez González
  */
-public class ServicioPanel extends JPanel implements ActionListener, FocusListener{
+public class ServicioPanel extends JPanel implements ActionListener, ChangeListener{
+
+    private SpinnerNumberModel smIdentificador;
+     private JSpinner sIdentificador;
 
     JTable tabla;
     Ticket ticket;
-    JPanel panel, panelIdentificador, panelValores, panelEdicion, panelLimites, panelCostos, panelNombre;
+    JPanel panel, panelIdentificador,  panelEdicion, panelLimites, panelCostos, panelNombre;
     JComboBox<String> jcAcciones;
 
-    JTextField jtid, jtNameAbr ,jtName, jtCostoMin, jtCostoMed, jtCostoKg, jtLimiteMin, jtLimiteMed;
-    JLabel jlid, jlNameAbrv ,jlName, jlCostoMin, jlCostoMed, jlCostoKg, jlLimiteMin, jlLimiteMed, jlAccion;
+    JTextField  jtNameAbr ,jtName, jtCostoMin, jtCostoMed, jtCostoKg, jtLimiteMin, jtLimiteMed;
+    JLabel jlid, jlNameAbrv ,jlName, jlCostoMin, jlCostoMed, jlCostoKg, jlLimiteMin, jlLimiteMed, jlAccion , jlDataService;
     JButton jbAction;
     JScrollPane scroll;
     GestorArchivos fileGestor;
@@ -90,7 +95,7 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
         jlLimiteMin= new JLabel("Se cobra minimo si peso menor a :"); 
         jlLimiteMed= new JLabel("Se cobra medio si peso menor a :");
 
-        jtid= new JTextField(5);        
+        //jtid= new JTextField(5);        
         jtNameAbr= new JTextField(5);
         jtName= new JTextField(15);
         jtCostoMin= new JTextField(5);
@@ -99,22 +104,28 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
         jtLimiteMin= new JTextField(5);
         jtLimiteMed= new JTextField(5);
 
+        // Inicializa el Spinner del Identificador
+        
+        smIdentificador = new SpinnerNumberModel(0, 0, padre.arrayServicios.size()-1, 1);
+        sIdentificador = new JSpinner(smIdentificador);
+        sIdentificador.addChangeListener(this);
+
         jbAction = new JButton("Guardar Cambios");
         jbAction.addActionListener(this);
         
         jlid.setVisible(false);
-        jtid.setVisible(false);
-        jtid.addFocusListener(this);
+        sIdentificador.setVisible(false);
+        //jtid.setVisible(false);
+        //jtid.addFocusListener(this);
 
 
         panelIdentificador= new JPanel(new GridLayout(0,2));
         panelIdentificador.add(jlAccion);
         panelIdentificador.add(jcAcciones);
         panelIdentificador.add(jlid);
-        panelIdentificador.add(jtid);
+        panelIdentificador.add(sIdentificador);
         panelIdentificador.add(jbAction);
 
-        panelValores = new JPanel(new GridLayout(0,1));
         panelNombre = new JPanel(new GridLayout(0,2));
         panelCostos  = new JPanel(new GridLayout(0,2));
         panelLimites = new JPanel(new GridLayout(0,2));
@@ -138,7 +149,7 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
 
         Font a = new Font("Calibri", 1, 14);
 
-        Border bordeIdentificador = new TitledBorder(new EtchedBorder(Color.orange, Color.orange), "Control", 1, 2, a,
+        Border bordeIdentificador = new TitledBorder(new EtchedBorder(Color.blue, Color.orange), "Control", 1, 2, a,
         Color.black);
         panelIdentificador.setBorder(bordeIdentificador);
 
@@ -154,11 +165,16 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
         Color.black);
         panelLimites.setBorder(bordeLimites);
 
+        Font b = new Font("Calibri", 1, 20);
 
-        panelValores.setVisible(true);
+        jlDataService = new JLabel("Datos del Servicio");
+        jlDataService.setFont(b);
+
+
 
         panelEdicion= new JPanel(new GridLayout(0,1));
         panelEdicion.add(panelIdentificador);
+        panelEdicion.add(jlDataService);
         panelEdicion.add(panelNombre);
         panelEdicion.add(panelCostos);
         panelEdicion.add(panelLimites);
@@ -199,26 +215,30 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==jcAcciones){
             if(jcAcciones.getSelectedItem()=="Borrar"){
+                jlDataService.setVisible(false);
                 panelCostos.setVisible(false);
                 panelLimites.setVisible(false);
                 panelNombre.setVisible(false);
             }
-            else{panelCostos.setVisible(true);
+            else{
+                jlDataService.setVisible(true);
+                panelCostos.setVisible(true);
                 panelLimites.setVisible(true);
                 panelNombre.setVisible(true);}
             
             if(jcAcciones.getSelectedItem()=="Agregar"){
-                jtid.setVisible(false);
+                sIdentificador.setVisible(false);
                 jlid.setVisible(false);
                 
             }
             else{
                 jlid.setVisible(true);
-                jtid.setVisible(true);
+                sIdentificador.setVisible(true);
             }
         }
 
         if(e.getSource()==jbAction){
+            try{
             if(jcAcciones.getSelectedItem()=="Agregar"){
                 int index=padre.arrayServicios.size();
                 padre.arrayServicios.add(new Servicio(
@@ -236,11 +256,13 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
                 DefaultTableModel modelaux= (DefaultTableModel) tabla.getModel();
                 modelaux.addRow(padre.arrayServicios.get(padre.arrayServicios.size()-1).getData(padre.arrayServicios.size()-1));
                 padre.restartPanelEntrada();
+                smIdentificador.setMaximum(padre.arrayServicios.size()-1);
+                JOptionPane.showMessageDialog(this, "Servicio Agregado Correctamente");
             }    
 
 
             if(jcAcciones.getSelectedItem()=="Editar"){
-                int index= Integer.parseInt(jtid.getText());
+                int index= Integer.parseInt(sIdentificador.getValue().toString());
                 Servicio serv=padre.arrayServicios.get(index);
                 serv.name=jtName.getText();
                 serv.nameAbr=jtNameAbr.getText();
@@ -254,11 +276,12 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
                 modelaux.removeRow(index);
                 modelaux.insertRow(index, padre.arrayServicios.get(index).getData(index));
                 padre.restartPanelEntrada();
+                JOptionPane.showMessageDialog(this, "Servicio Actualizado Correctamente");
             }
 
         
             if(jcAcciones.getSelectedItem()=="Borrar"){
-                int index= Integer.parseInt(jtid.getText());
+                int index= Integer.parseInt(sIdentificador.getValue().toString());
                 padre.arrayServicios.remove(index);
 
                 DefaultTableModel modelaux= (DefaultTableModel) tabla.getModel();
@@ -286,29 +309,28 @@ public class ServicioPanel extends JPanel implements ActionListener, FocusListen
                 });
                 }
                 padre.restartPanelEntrada();
+                smIdentificador.setMaximum(padre.arrayServicios.size()-1);
+                JOptionPane.showMessageDialog(this, "Servicio Borrado Correctamente");
+
             }
 
             fileGestor.escribirServicios(padre.arrayServicios);
-            
+        }catch(Exception exc){
+            JOptionPane.showMessageDialog(this, "Ocurrio un error. \n Verifique que los campos esten rellenos de forma correcta \n Si el error persiste puede que el archivo de guardado este corrupto");
 
         }
+            
 
-
-        
+        }     
     }
 
-    @Override
-    public void focusGained(FocusEvent e) {
-        // TODO Auto-generated method stub
-        //throw new UnsupportedOperationException("Unimplemented method 'focusGained'");
-    }
 
     @Override
-    public void focusLost(FocusEvent e) {
+    public void stateChanged(ChangeEvent e) {
         // TODO Auto-generated method stub
-        if(e.getSource()==jtid){
+        if(e.getSource()==sIdentificador){
             if(jcAcciones.getSelectedItem()=="Editar"){
-                int index= Integer.parseInt(jtid.getText());
+                int index= Integer.parseInt(sIdentificador.getValue().toString());
                 jtName.setText(padre.arrayServicios.get(index).name);
                 jtNameAbr.setText(padre.arrayServicios.get(index).nameAbr);
                 jtCostoMin.setText(padre.arrayServicios.get(index).costoMin+"");

@@ -27,15 +27,17 @@ public class TicketPreview extends JFrame implements ActionListener {
     JButton btnImprimir, btnFoto, btnRegistrar, btnSiguiente;
     Ticket ticket;
     String listaArticulos = "";
+    Boolean boolticketExt;
     private static final DecimalFormat df = new DecimalFormat("0.00");
     VentanaFoto vFoto;
     JLabel labelHayFoto, labelHayRegistro;
 
 
-    public TicketPreview(Ticket ticket, GestorArchivos gestor , PanelEntrada panelA) {
+    public TicketPreview(Ticket ticket, GestorArchivos gestor , PanelEntrada panelA, Boolean boolticketExt) {
         this.panelA=panelA;
         this.fileGestor = gestor;
         this.ticket = ticket;
+        this.boolticketExt=boolticketExt;
         this.setLayout(new GridLayout(0, 2));
 
         setTitle("Ticket Preview");
@@ -86,7 +88,27 @@ public class TicketPreview extends JFrame implements ActionListener {
         subpanelTicket.add(ticketTextArea);
         subpanelImagenBoton.add(spBtnFoto);
         subpanelImagenBoton.add(spBoton);
+        String ticketModificado;
 
+        if(boolticketExt){ticketModificado=generarTicketExtendido();}
+        else{ticketModificado=generarTicketSimplificado();}
+
+        ticketTextArea.setText(ticketModificado);
+
+        buscarFotoOrden();
+        buscarRegistro();
+
+        this.add(scrollTicket);
+        this.add(subpanelImagenBoton);
+    }
+
+    public static final String primeraMayuscula(String str) {
+        if (str == null || str.length() == 0)
+            return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public String generarTicketSimplificado(){
         String ticketHeader = "\n"
                 + "\n"
                 + "  AGUILA TRATAMIENTOS TERMICOS Y SERVICIOS  \n"
@@ -126,7 +148,7 @@ public class TicketPreview extends JFrame implements ActionListener {
             listaArticulos=listaArticulos
                             +elemento.getPiezas()+"\t"
                             +elemento.servicioObjeto.nameAbr+"\t"
-                            +elemento.getAcero()+"\t"
+                            +elemento.getAceroObject().nameAbrv+"\t"
                             +elemento.getDureza()+"\t"
                             +elemento.getKilos()+"\t"
                             +elemento.getPrecioCustom()+"\n";
@@ -168,19 +190,97 @@ public class TicketPreview extends JFrame implements ActionListener {
                     " ");
         }
         ticketModificado = ticketModificado.replace("{{total}}", (ticket.costoTotal) + "");
-        ticketTextArea.setText(ticketModificado);
+        
+        return ticketModificado;
 
-        buscarFotoOrden();
-        buscarRegistro();
-
-        this.add(scrollTicket);
-        this.add(subpanelImagenBoton);
     }
 
-    public static final String primeraMayuscula(String str) {
-        if (str == null || str.length() == 0)
-            return str;
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    public String generarTicketExtendido(){
+         String ticketHeader = "\n"
+                + "\n"
+                + "  AGUILA TRATAMIENTOS TERMICOS Y SERVICIOS  \n"
+                + "\n"
+                + "Calle 21 de Marzo #7-A, Col.San Jose el Conde"
+                + "                Puebla, Puebla \n"
+                + "============================================\n"
+                + "Ticket # {{ticket}} \n"
+                + "{{fecha}} \n"
+                + "Cliente: {{nombre}} \n\n"
+                + "Detalle de producto\n"
+                + "============================================\n"
+                + "LISTA DE ARTICULOS \n\n"
+                + "{{items}}\n"
+                + "============================================\n"
+                + "SUBTOTAL:\t\t $ {{subtotal}}\n"
+                + "{{IVA}}  \n"
+                + "{{CD}}   \n"
+                + "COSTO TOTAL:\t $ {{total}} \n"
+                + "============================================\n"
+                + "  \n"
+                + "  \n"
+                + "  \n"
+                + "       ________________________________\n"
+                + "             Firma de quien entrega\n\n\n"
+                + "       ________________________________\n"
+                + "             Firma de quien recibe\n"
+                + "============================================\n"
+                + "        GRACIAS POR SU PREFERENCIA...       \n"
+                + "           ******::::::::*******"
+                + "\n"
+                + "\n";
+
+        String ticketModificado = ticketHeader;
+        
+        ticket.servicios.forEach(elemento -> {
+            listaArticulos=listaArticulos
+                            +"Numero de Piezas: "+elemento.getPiezas()+"\n"
+                            +"Acero: "+elemento.getAcero()+"\n"
+                            +"Dureza: "+elemento.getDureza()+"\n"
+                            +"Peso en Kg:  "+elemento.getKilos()+"\n"
+                            +"Descripcion: "+elemento.getDescripcion()+"\n"
+                            +"Servicio: "+elemento.servicioObjeto.name+"\t\t"
+                            
+                            +"Costo: $"+elemento.getPrecioCustom()+"\n";
+                            ticket.subtotal=ticket.subtotal+elemento.getPrecioCustom();
+                            for(int i=0;i<elemento.getSubElementoSize();i++){
+                                listaArticulos=listaArticulos+"Servicio-"+(i+2)+": "
+                                    +elemento.getSubElemento(i).getServicio().name+"\t"
+                                    +"\t"
+                                    +"Costo: $"+elemento.getSubElemento(i).getCosto()+"\n";
+                                    ticket.subtotal=ticket.subtotal+elemento.getSubElemento(i).getCosto();
+                            }
+                            listaArticulos=listaArticulos+"\n\n";
+                            
+        });
+
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("EEEE dd 'de' MMMM 'del' yyyy', a las' hh:mm:ss",
+                new Locale("es"));
+
+        String fechaFinal = primeraMayuscula(formatoFecha.format(ticket.today).toString());
+
+        ticketModificado = ticketModificado.replace("{{nombre}}", ticket.nameCliente);
+        ticketModificado = ticketModificado.replace("{{fecha}}", fechaFinal);
+        ticketModificado = ticketModificado.replace("{{ticket}}", String.format("%04d", ticket.nOrden) + "");
+        ticketModificado = ticketModificado.replace("{{items}}", listaArticulos);
+        ticketModificado = ticketModificado.replace("{{subtotal}}", (ticket.subtotal) + "");
+        if(ticket.costoTotal>ticket.subtotal){
+            ticketModificado = ticketModificado.replace("{{CD}}", "CARGO:\t\t"+"$"+(ticket.costoTotal-ticket.subtotal) + "");
+        }
+        else{
+            ticketModificado = ticketModificado.replace("{{CD}}", "DESCUENTO:\t\t"+"$"+(ticket.subtotal-ticket.costoTotal) + "");
+        }      
+        if (ticket.iva) {
+            ticketModificado = ticketModificado.replace("{{IVA}}",
+                    "IVA:\t\t $ " + df.format(((ticket.costoTotal  * 0.16))));
+            ticket.costoTotal=ticket.costoTotal+(ticket.costoTotal* 0.16);
+        }else{
+            ticketModificado = ticketModificado.replace("{{IVA}}",
+                    " ");
+        }
+        ticketModificado = ticketModificado.replace("{{total}}", (ticket.costoTotal) + "");
+        
+        return ticketModificado;
+
     }
 
     public String getTicketString() {

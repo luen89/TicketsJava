@@ -8,6 +8,11 @@ import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -17,15 +22,17 @@ import javax.swing.table.TableModel;
  *
  * @author Luis Enrique Pérez González
  */
-public class AceroPanel extends JPanel implements ActionListener, FocusListener{
+public class AceroPanel extends JPanel implements ActionListener, ChangeListener{
 
     JTable tabla;
     Ticket ticket;
-    JPanel panel, panelIdentificador, panelValores, panelEdicion;
+    JPanel panel, panelIdentificador, panelNombre, panelEdicion;
     JComboBox<String> jcAcciones;
 
-    JTextField jtid, jtNameAbr ,jtName;
-    JLabel jlid, jlNameAbrv ,jlName;
+    private SpinnerNumberModel smIdentificador;
+    private JSpinner sIdentificador;
+    JTextField jtName, jtNameAbr;
+    JLabel jlid, jlNameAbrv ,jlName,jlAccion, jlDataAcero;
     JButton jbAction;
     JScrollPane scroll;
     GestorArchivos fileGestor;
@@ -35,13 +42,14 @@ public class AceroPanel extends JPanel implements ActionListener, FocusListener{
     public AceroPanel(GestorArchivos fileGestor, Ventana padre){
         this.padre=padre;
         this.fileGestor = fileGestor;
-        this.setLayout(new GridLayout(0,1));
+        this.setLayout(new FlowLayout(FlowLayout.CENTER));
         initComponents();
       
     }
 
+
     private void initComponents() {
-        String [] columnNames ={"Identificador","id grupo", "Nombre","Nombre Abrev"};
+        String [] columnNames ={"Identificador","id grupo", "Nombre","Nombre Abreviado"};
         Object[][] data = new Object[padre.arrayAceros.size()][4];
         int i=0;
         System.out.println("Tamaño Arreglo: "+padre.arrayAceros.size());
@@ -78,42 +86,66 @@ public class AceroPanel extends JPanel implements ActionListener, FocusListener{
         jlName= new JLabel(columnNames[2]);
         jlNameAbrv= new JLabel(columnNames[3]);
 
-        jtid= new JTextField(5);
+       // jtid= new JTextField(5);
         jtName= new JTextField(15);
        
         jtNameAbr= new JTextField(5);
 
-
+        jlAccion = new JLabel("Accion a realizar: ");
         jbAction = new JButton("Guardar Cambios");
         jbAction.addActionListener(this);
         jlid.setVisible(false);
-        jtid.setVisible(false);
-        jtid.addFocusListener(this);
+        smIdentificador = new SpinnerNumberModel(0, 0, padre.arrayAceros.size()-1, 1);
+        sIdentificador = new JSpinner(smIdentificador);
+        sIdentificador.setVisible(false);
+        sIdentificador.addChangeListener(this);
+        //jtid.setVisible(false);
+        //jtid.addFocusListener(this);
 
 
-        panelIdentificador= new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelIdentificador.add(jlid);
-        panelIdentificador.add(jtid);
+        panelIdentificador= new JPanel(new GridLayout(0,2));
+        panelIdentificador.add(jlAccion);
         panelIdentificador.add(jcAcciones);
+        panelIdentificador.add(jlid);
+        panelIdentificador.add(sIdentificador);
         panelIdentificador.add(jbAction);
+        
 
-        panelValores = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelValores.add(jlName);
-        panelValores.add(jtName);
-        panelValores.add(jlNameAbrv);
-        panelValores.add(jtNameAbr);
-        panelValores.setVisible(true);
+        panelNombre = new JPanel(new GridLayout(0,2));
+
+        panelNombre.add(jlName);
+        panelNombre.add(jtName);
+        panelNombre.add(jlNameAbrv);
+        panelNombre.add(jtNameAbr);
+        panelNombre.setVisible(true);
+
+        Font a = new Font("Calibri", 1, 14);
+
+        Border bordeIdentificador = new TitledBorder(new EtchedBorder(Color.blue, Color.blue), "Control", 1, 2, a,
+        Color.black);
+        panelIdentificador.setBorder(bordeIdentificador);
+
+        Border bordeNombre = new TitledBorder(new EtchedBorder(Color.orange, Color.orange), "General", 1, 2, a,
+        Color.black);
+        panelNombre.setBorder(bordeNombre);
+
+        Font b = new Font("Calibri", 1, 22);
+
+        jlDataAcero= new JLabel("Datos del Acero");
+        jlDataAcero.setFont(b);
+        
 
         panelEdicion= new JPanel(new GridLayout(0,1));
         panelEdicion.add(panelIdentificador);
-        panelEdicion.add(panelValores);
-
+        panelEdicion.add(jlDataAcero);
+        panelEdicion.add(panelNombre);
+        
 
         tabla.setEnabled(false);
         scroll = new JScrollPane(tabla);
         scroll.setPreferredSize(new Dimension(800,400));
         tabla.setFillsViewportHeight(true);
-        resizeColumnWidth(tabla);
+        //resizeColumnWidth(tabla);
         panel=new JPanel(new FlowLayout(FlowLayout.CENTER));
         panel.add(scroll);
         this.add(panel);
@@ -141,21 +173,22 @@ public class AceroPanel extends JPanel implements ActionListener, FocusListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==jcAcciones){
-            if(jcAcciones.getSelectedItem()=="Borrar"){panelValores.setVisible(false);}
-            else{panelValores.setVisible(true);}
+            if(jcAcciones.getSelectedItem()=="Borrar"){panelNombre.setVisible(false);}
+            else{panelNombre.setVisible(true);}
             
             if(jcAcciones.getSelectedItem()=="Agregar"){
-                jtid.setVisible(false);
+                sIdentificador.setVisible(false);
                 jlid.setVisible(false);
                 
             }
             else{
                 jlid.setVisible(true);
-                jtid.setVisible(true);
+                sIdentificador.setVisible(true);
             }
         }
 
         if(e.getSource()==jbAction){
+        try{
             if(jcAcciones.getSelectedItem()=="Agregar"){
                 int index=padre.arrayAceros.size();
                 padre.arrayAceros.add(new Acero(
@@ -168,11 +201,13 @@ public class AceroPanel extends JPanel implements ActionListener, FocusListener{
                 DefaultTableModel modelaux= (DefaultTableModel) tabla.getModel();
                 modelaux.addRow(padre.arrayAceros.get(padre.arrayAceros.size()-1).getData(padre.arrayAceros.size()-1));
                 padre.restartPanelEntrada();
+                smIdentificador.setMaximum(padre.arrayAceros.size()-1);
+                JOptionPane.showMessageDialog(this, "Acero Agregado Correctamente");
             }    
 
 
             if(jcAcciones.getSelectedItem()=="Editar"){
-                int index= Integer.parseInt(jtid.getText());
+                int index= Integer.parseInt(sIdentificador.getValue().toString());
                 Acero acer=padre.arrayAceros.get(index);
                 acer.name=jtName.getText();
                 acer.nameAbrv=jtNameAbr.getText();
@@ -181,11 +216,12 @@ public class AceroPanel extends JPanel implements ActionListener, FocusListener{
                 modelaux.removeRow(index);
                 modelaux.insertRow(index, padre.arrayAceros.get(index).getData(index));
                 padre.restartPanelEntrada();
+                JOptionPane.showMessageDialog(this, "Acero Actualizado Correctamente");
             }
 
         
             if(jcAcciones.getSelectedItem()=="Borrar"){
-                int index= Integer.parseInt(jtid.getText());
+                int index= Integer.parseInt(sIdentificador.getValue().toString());
                 padre.arrayAceros.remove(index);
 
                 DefaultTableModel modelaux= (DefaultTableModel) tabla.getModel();
@@ -207,11 +243,17 @@ public class AceroPanel extends JPanel implements ActionListener, FocusListener{
                     aux.nameAbrv,
                 });
                 }
+                smIdentificador.setMaximum(padre.arrayAceros.size()-1);
                 padre.restartPanelEntrada();
+                JOptionPane.showMessageDialog(this, "Acero Borrado Correctamente");
+
             }
 
             fileGestor.escribirAceros(padre.arrayAceros);
-            
+        }
+        catch(Exception ex){
+            JOptionPane.showMessageDialog(this, "Ocurrio un error");
+        }
 
         }
 
@@ -219,18 +261,13 @@ public class AceroPanel extends JPanel implements ActionListener, FocusListener{
         
     }
 
-    @Override
-    public void focusGained(FocusEvent e) {
-        // TODO Auto-generated method stub
-        //throw new UnsupportedOperationException("Unimplemented method 'focusGained'");
-    }
 
     @Override
-    public void focusLost(FocusEvent e) {
+    public void stateChanged(ChangeEvent e) {
         // TODO Auto-generated method stub
-        if(e.getSource()==jtid){
+        if(e.getSource()==sIdentificador){
             if(jcAcciones.getSelectedItem()=="Editar"){
-                int index= Integer.parseInt(jtid.getText());
+                int index= Integer.parseInt(sIdentificador.getValue().toString());
                 jtName.setText(padre.arrayAceros.get(index).name);
                 jtNameAbr.setText(padre.arrayAceros.get(index).nameAbrv);
             }
