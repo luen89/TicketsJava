@@ -63,7 +63,7 @@ public class TicketPreview extends JFrame implements ActionListener {
         btnFoto.addActionListener(this);
         btnRegistrar = new JButton("Registrar");
         btnRegistrar.addActionListener(this);
-        btnImprimir = new JButton("Imprimir");
+        btnImprimir = new JButton("Imprimir y Guardar");
         btnImprimir.addActionListener(this);
         
         spBoton = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -303,7 +303,10 @@ public class TicketPreview extends JFrame implements ActionListener {
         }
 
         if(e.getSource() == btnImprimir){
-            try{llamarImpresora();}
+            try{
+                fileGestor.saveTicketFile(getTicketString(), ticket.nOrden);
+                //llamarImpresora();
+            }
             catch(Exception excep){}
             
         }

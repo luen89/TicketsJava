@@ -195,6 +195,7 @@ public class PanelEntrada extends JPanel implements ActionListener, ChangeListen
         pImprimir.add(rbTicketExtendido);
         pImprimir.add(rbTicketSimplificado);
 
+
         /* Creacion del Borde del panel */
         Border bordePanel2 = new TitledBorder(new EtchedBorder(), "Detalles Adicionales");
         pImprimir.setBorder(bordePanel2);

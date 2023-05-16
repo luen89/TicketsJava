@@ -50,11 +50,38 @@ public class GestorArchivos {
 
 
 
-    public void saveInstruction(String aux){
-        //Se agrega la instruccion a un arreglo de instruccionoes
-        instruccion.add(aux);
-        System.out.println(instruccion.get(index));
-        index++;
+    public void saveTicketFile(String ticketString,int nOrden){
+        try {
+            //Se crea un nuevo archivo
+            File saveF = new File("src/Registros/Tickets/"+nOrden+".tkt");
+            if(!saveF.exists()){
+                if (saveF.createNewFile()) {
+                    System.out.println("Archivo creado: " + saveF.getName());
+                  } else {
+                    System.out.println("Archivo ya existente sobreescrito.");
+                  }
+            }          
+            //Se crea un writer
+            FileWriter myWriter;
+                 myWriter = new FileWriter(saveF,true);
+            //Se escriben todas las instrucciones en el archivo
+            myWriter.write(ticketString);
+            //Se cierra el writer
+            myWriter.close();
+            System.out.println("Escrito correctamente.");
+        } catch (IOException e) {
+            System.out.println("Error no se escribio el archivo.");
+        }
+    }
+
+    public String loadTicketFile(int nOrden) throws Exception{
+        File f = new File("src/Registros/Tickets/"+nOrden+".tkt");
+        String content = "";
+        //BufferedReader in = new BufferedReader(new FileReader(f));    
+            if (f.exists())            
+            content = new String(Files.readAllBytes(Paths.get("src/Registros/Tickets/"+nOrden+".tkt")));
+            
+       return content;
     }
 
     /*public void reiniciar(Foto f, boolean limpiar){

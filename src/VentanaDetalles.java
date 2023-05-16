@@ -33,7 +33,7 @@ public class VentanaDetalles extends JFrame implements ActionListener{
     private JTable tabla;
     private ServiciosDetallesModel modelo;
     private JTextField txtCostoTotal, txtMontoPagado, txtMontoRestante, txtStatusPago, txtStatusEntrega;
-    private JButton btnGuardar, btnEntregar, btnPagar, btnVerImagen;
+    private JButton btnGuardar, btnEntregar, btnPagar, btnVerImagen ,btnReimprimir;
     private JLabel lbImage, lbCambiosSinGuardar;
     private String nombreFoto;
     private int statusEntrega, statusPago;
@@ -146,11 +146,16 @@ public class VentanaDetalles extends JFrame implements ActionListener{
         btnEntregar = new JButton("Marcar como ENTREGADO");
         btnEntregar.addActionListener(this);
 
+        btnReimprimir = new JButton("Reimprimir");
+        btnReimprimir.addActionListener(this);
+
+
         JPanel pOpciones = new JPanel(new GridLayout(0, 2));
         pOpciones.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Opciones"));
         pOpciones.add(btnPagar);
         pOpciones.add(btnEntregar);
         pOpciones.add(btnVerImagen);
+        pOpciones.add(btnReimprimir);
         actualizarBtnStatus();
         //#endregion
 
@@ -405,6 +410,23 @@ public class VentanaDetalles extends JFrame implements ActionListener{
                 System.out.println("Se abrió la imagen");                
             } catch (Exception ex) {
                 System.out.println("Error al abrir la imagen");                
+            }
+        }
+        //SI SE PRESIONA EL BOTON REIMPRIMIR
+        if(e.getSource()== btnReimprimir){
+            VentanaReimpresion miVentanaReimpresion;
+            try{
+            String s = gestor.loadTicketFile(ticket.nOrden);
+            if(s!=""){
+                System.out.println("La cadena del ticket no es vacia");
+                miVentanaReimpresion = new VentanaReimpresion(s);
+                miVentanaReimpresion.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                miVentanaReimpresion.setVisible(true);
+            }
+            else
+                System.out.println("Archivo Corrupto o Inexistente");
+            } catch (Exception ex) {
+                System.out.println("Error al abrir el archivo de ticket");  
             }
         }
     }
