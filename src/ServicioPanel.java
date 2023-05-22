@@ -245,11 +245,11 @@ public class ServicioPanel extends JPanel implements ActionListener, ChangeListe
                     index,
                     jtName.getText(),
                     jtNameAbr.getText(),
-                    Double.parseDouble(jtCostoMin.getText()) ,
-                    Double.parseDouble(jtCostoMed.getText()) ,
-                    Double.parseDouble(jtCostoKg.getText()), 
-                    Double.parseDouble(jtLimiteMin.getText()),
-                    Double.parseDouble(jtLimiteMed.getText())
+                    stringToDouble(jtCostoMin.getText()) ,
+                    stringToDouble(jtCostoMed.getText()) ,
+                    stringToDouble(jtCostoKg.getText()), 
+                    stringToDouble(jtLimiteMin.getText()),
+                    stringToDouble(jtLimiteMed.getText())
                     ));
                 
 
@@ -266,11 +266,13 @@ public class ServicioPanel extends JPanel implements ActionListener, ChangeListe
                 Servicio serv=padre.arrayServicios.get(index);
                 serv.name=jtName.getText();
                 serv.nameAbr=jtNameAbr.getText();
-                serv.costoMin=Double.parseDouble(jtCostoMin.getText()) ;
-                serv.costoMed=Double.parseDouble(jtCostoMed.getText()) ;
-                serv.costoKg=Double.parseDouble(jtCostoKg.getText());
-                serv.limiteMinimo= Double.parseDouble(jtLimiteMin.getText());
-                serv.limiteMedio= Double.parseDouble(jtLimiteMed.getText());
+                serv.costoMin=Math.abs(stringToDouble(jtCostoMin.getText())) ;
+                serv.costoMed=stringToDouble(jtCostoMed.getText()) ;
+                serv.costoKg=stringToDouble(jtCostoKg.getText());
+                serv.limiteMinimo= stringToDouble(jtLimiteMin.getText());
+                serv.limiteMedio= stringToDouble(jtLimiteMed.getText());
+
+               
                 
                 DefaultTableModel modelaux= (DefaultTableModel) tabla.getModel();
                 modelaux.removeRow(index);
@@ -342,5 +344,10 @@ public class ServicioPanel extends JPanel implements ActionListener, ChangeListe
         }
     }
     
-    
+    private double stringToDouble(String s) throws Exception{
+        double numero = Double.parseDouble(s);
+        if (numero < 0)
+            throw new Exception("El numero no puede ser negativo");
+        return numero;
+    }
 }

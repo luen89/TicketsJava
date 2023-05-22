@@ -61,9 +61,9 @@ public class TicketPreview extends JFrame implements ActionListener {
         spBtnFoto = new JPanel(new GridLayout(0,1));
         btnFoto = new JButton("Tomar Foto");
         btnFoto.addActionListener(this);
-        btnRegistrar = new JButton("Registrar");
+        btnRegistrar = new JButton("Registrar y Guardar Ticket");
         btnRegistrar.addActionListener(this);
-        btnImprimir = new JButton("Imprimir y Guardar");
+        btnImprimir = new JButton("Imprimir");
         btnImprimir.addActionListener(this);
         
         spBoton = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -291,9 +291,15 @@ public class TicketPreview extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnRegistrar){
              //Registra la Orden en el Registro General
+             fileGestor.saveTicketFile(getTicketString(), ticket.nOrden);
              SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyy");
              String fecha = formatoFecha.format(panelA.jspGiveDate.getValue());
+
+            if(existeArchivo("src/Registros/Ordenes/"+Integer.valueOf(ticket.nOrden).toString() + ".txt"))
              fileGestor.writeFile(new EntradaRegistro(panelA.txtnOrden.getText(), panelA.txtCliente.getText(), ticket.costoTotal,
+                     "POR PAGAR", "POR ENTREGAR", fecha));
+            else
+                fileGestor.actualizarRegistroEnArchivo(new EntradaRegistro(panelA.txtnOrden.getText(), panelA.txtCliente.getText(), ticket.costoTotal,
                      "POR PAGAR", "POR ENTREGAR", fecha));
  
              //Crea el registro Particular de la Orden
@@ -304,10 +310,12 @@ public class TicketPreview extends JFrame implements ActionListener {
 
         if(e.getSource() == btnImprimir){
             try{
-                fileGestor.saveTicketFile(getTicketString(), ticket.nOrden);
-                //llamarImpresora();
+               
+                llamarImpresora();
             }
-            catch(Exception excep){}
+            catch(Exception excep){
+                JOptionPane.showMessageDialog(this, "Ocurrio un error con la impresora. \n Verique los mensajes de la terminal para de rastrear el error");
+            }
             
         }
         
@@ -318,6 +326,7 @@ public class TicketPreview extends JFrame implements ActionListener {
                 fileGestor.incremetNumOrden();
                 panelA.txtnOrden.setText(String.format("%04d", fileGestor.getNumOrden()));
             } catch (Exception excp) {
+                JOptionPane.showMessageDialog(this, "Ocurrio un error con los archivos de guardado. \n Verique los mensajes de la terminal para de rastrear el error");
             }
             
             //Reinicia la gui para la nueva Orden
@@ -329,7 +338,7 @@ public class TicketPreview extends JFrame implements ActionListener {
             
             }
             catch(Exception ex){
-                JOptionPane.showMessageDialog(null, "Error en algun campo");   
+                JOptionPane.showMessageDialog(null, "Error en algun campo");
             }
             this.dispose();     
         }
@@ -352,6 +361,7 @@ public class TicketPreview extends JFrame implements ActionListener {
             }
         } catch (IOException | InterruptedException e) {
             System.out.println("Error obteniendo impresoras: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error obteniendo impresoras: " + e.getMessage());
         }
         // Aquí tu serial en caso de tener uno
         final String serial = "";
@@ -376,6 +386,7 @@ public class TicketPreview extends JFrame implements ActionListener {
             conectorPlugin.imprimirEn("Termico");
             System.out.println("Impreso correctamente");
         } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ocurrio un error con la impresora. \n Verique los mensajes de la terminal para de rastrear el error");
             System.out.println("Error imprimiendo: " + e.getMessage());
         }
     }
@@ -390,6 +401,7 @@ public class TicketPreview extends JFrame implements ActionListener {
                 VentanaFoto ventanaFoto = new VentanaFoto(fileGestor);
                 ventanaFoto.addWindowListener(new WindowAdapter() {
                     public void windowClosed(WindowEvent e) {
+                        ventanaFoto.apagarCamara();
                         buscarFotoOrden();
                     }
                 });
@@ -415,18 +427,23 @@ public class TicketPreview extends JFrame implements ActionListener {
         labelHayFoto.setFont(negritas);
     }
 
-    public void buscarRegistro(){
+    public boolean buscarRegistro(){
         boolean existeRegistro = false;
         String nombreRegistro = "src/Registros/Ordenes/"+Integer.valueOf(ticket.nOrden).toString() + ".txt";
-        File foto = new File(nombreRegistro);
+        File archivoRegistro = new File(nombreRegistro);
 
-        existeRegistro = foto.exists();
+        existeRegistro = archivoRegistro.exists();
         labelHayRegistro.setText(existeRegistro ? "Esta orden ya está registrada" : "Aún no se registra esta orden");
         labelHayRegistro.setForeground(existeRegistro ? Color.GREEN : Color.RED);
 
         Font fuenteLabel = labelHayRegistro.getFont();
         Font negritas = new Font(fuenteLabel.getName(), Font.BOLD, fuenteLabel.getSize());
         labelHayRegistro.setFont(negritas);
+        return existeRegistro;
     }
 
+    private boolean existeArchivo(String nombreArchivo) {
+        File archivo = new File(nombreArchivo);
+        return archivo.exists();
+    }
 }

@@ -22,7 +22,7 @@ public class Ventana extends JFrame{
     //Controlador miControlador;
     
     public Ventana(GestorArchivos ga){
-        setTitle("Pavonado");
+        setTitle("Punto de Venta Aguila Servicios Termicos version 1.11");
         setSize(1150,560);
         this.setResizable(true);
         setLocationRelativeTo(null);

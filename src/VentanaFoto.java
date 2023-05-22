@@ -14,6 +14,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
         //Inicio del codigo
     /*
@@ -219,7 +221,7 @@ public class VentanaFoto extends JFrame {
                 .addContainerGap(46, Short.MAX_VALUE))
         );
 
-        pack();
+        pack();        
     }// </editor-fold>//GEN-END:initComponents
 
     private void textoCuandoCargaCamara(String texto){
@@ -253,6 +255,10 @@ public class VentanaFoto extends JFrame {
         hilo.start();
         btnInicio.setEnabled(false);
     }//GEN-LAST:event_btnInicioActionPerformed
+
+    public void apagarCamara(){
+        webcamPanel.stop();
+    }
 
     private void btnApagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApagarActionPerformed
         webcamPanel.stop();

@@ -359,10 +359,13 @@ public class VentanaDetalles extends JFrame implements ActionListener{
             // Se comprueba que el monto pagado sea válido
             try {
                 double montoPagado = Double.parseDouble(txtMontoPagado.getText());
+                if(montoPagado < 0){
+                    throw new Exception();
+                }
                 if (montoPagado > ticket.costoTotal) {
                     JOptionPane.showMessageDialog(this, "Monto Pagado no puede ser mayor al Costo Total");
                     return;
-                }                
+                }
                 ticket.montoPagado = montoPagado;
 
             } catch (Exception ex) {
@@ -426,6 +429,7 @@ public class VentanaDetalles extends JFrame implements ActionListener{
             else
                 System.out.println("Archivo Corrupto o Inexistente");
             } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Ocurrio un error. \n Verique los mensajes de la terminal para de rastrear el error");
                 System.out.println("Error al abrir el archivo de ticket");  
             }
         }

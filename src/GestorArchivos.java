@@ -63,7 +63,7 @@ public class GestorArchivos {
             }          
             //Se crea un writer
             FileWriter myWriter;
-                 myWriter = new FileWriter(saveF,true);
+                 myWriter = new FileWriter(saveF);
             //Se escriben todas las instrucciones en el archivo
             myWriter.write(ticketString);
             //Se cierra el writer

@@ -81,6 +81,7 @@ public class PanelEntrada extends JPanel implements ActionListener, ChangeListen
             txtnOrden.setText(String.format("%04d", fileGestor.getNumOrden()));
         } // Obtener numero de archivo
         catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ocurrio un error con los archivos de guardado de la orden. \n Verique los mensajes de la terminal para de rastrear el error");
             System.out.println(e.getMessage());
         }
 
