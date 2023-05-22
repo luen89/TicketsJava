@@ -426,8 +426,10 @@ public class VentanaDetalles extends JFrame implements ActionListener{
                 miVentanaReimpresion.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 miVentanaReimpresion.setVisible(true);
             }
-            else
+            else{
+                JOptionPane.showMessageDialog(this, "Ocurrio un error con el archivo del Ticket. \n Verique los mensajes de la terminal para de rastrear el error");
                 System.out.println("Archivo Corrupto o Inexistente");
+            }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Ocurrio un error. \n Verique los mensajes de la terminal para de rastrear el error");
                 System.out.println("Error al abrir el archivo de ticket");  
