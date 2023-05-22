@@ -295,7 +295,7 @@ public class TicketPreview extends JFrame implements ActionListener {
              SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyy");
              String fecha = formatoFecha.format(panelA.jspGiveDate.getValue());
 
-            if(existeArchivo("src/Registros/Ordenes/"+Integer.valueOf(ticket.nOrden).toString() + ".txt"))
+            if(!existeArchivo("src/Registros/Ordenes/"+Integer.valueOf(ticket.nOrden).toString() + ".txt"))
              fileGestor.writeFile(new EntradaRegistro(panelA.txtnOrden.getText(), panelA.txtCliente.getText(), ticket.costoTotal,
                      "POR PAGAR", "POR ENTREGAR", fecha));
             else
