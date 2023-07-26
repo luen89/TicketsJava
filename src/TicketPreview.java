@@ -199,6 +199,7 @@ public class TicketPreview extends JFrame implements ActionListener {
          String ticketHeader = "\n"
                 + "\n"
                 + "  AGUILA TRATAMIENTOS TERMICOS Y SERVICIOS  \n"
+                + "            www.aguilapavonado.com  \n"
                 + "\n"
                 + "Calle 21 de Marzo #7-A, Col.San Jose el Conde"
                 + "                Puebla, Puebla \n"
